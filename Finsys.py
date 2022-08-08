@@ -1,3 +1,6 @@
+from ssl import HAS_SNI
+from sys import is_finalizing
+from unicodedata import name
 import matplotlib.pyplot as plt
 from calendar import c
 from cgitb import enable, reset, text
@@ -15,7 +18,7 @@ from tkinter.font import BOLD
 from urllib.parse import parse_qs
 from PIL import ImageTk, Image, ImageFile
 from matplotlib.font_manager import json_dump
-from numpy import choose, empty, place
+from numpy import choose, empty, histogram_bin_edges, place
 import pandas as pd
 from tkinter.messagebox import showinfo
 import tkinter.scrolledtext as scrolledtext
@@ -48,6 +51,7 @@ from matplotlib.figure import Figure
 import numpy as np
 import re
 from datetime import date,datetime, timedelta
+import webbrowser
 
 finsysdb = mysql.connector.connect(
     host="localhost", user="root", password="", database="newfinsys", port="3306"
@@ -1954,10 +1958,24 @@ def main_sign_in():
                             shippincode = ic_entry_cus_p14.get()
                             shipcountry = ic_entry_cus_c15.get()
 
+                            usri_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usri_val = (nm_ent.get(),)
+                            fbcursor.execute(usri_sql,usri_val)
+                            usri_data = fbcursor.fetchone()
+
+                            cmpi_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmpi_val = (usri_data[0],)
+                            fbcursor.execute(cmpi_sql,cmpi_val)
+                            cmpi_data = fbcursor.fetchone()
+                            cid = cmpi_data[0]
+
                             cus_sql = "INSERT INTO app1_customer (title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                            cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,13)
+                            cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid)
                             fbcursor.execute(cus_sql,cus_val)
                             finsysdb.commit()
+
+                            inv_frame_2.destroy()
+                            inv_frame_1.grid(row=0,column=0,sticky='nsew')
                         
 
                         inv_canvas_2.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("acpoly1"))
@@ -2017,18 +2035,31 @@ def main_sign_in():
                         label_2 = Label(inv_canvas_2,width=10,height=1,text="GSTIN", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = inv_canvas_2.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel9"))
 
-                        ic_cus_entry_str_1 = StringVar()
-                        ic_entry_cus_5=Entry(inv_canvas_2,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'),textvariable=ic_cus_entry_str_1)
-                        ic_cus_entry_str_1.set(' 29APPCK7465F1Z1')
+
+                        def ic_gst_in(event):
+                            if ic_entry_cus_5.get()=="29APPCK7465F1Z1":
+                                ic_entry_cus_5.delete(0,END)
+                            else:
+                                pass
+                        
+                        ic_entry_cus_5=Entry(inv_canvas_2,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
                         window_ic_entry_cus_5 = inv_canvas_2.create_window(0, 0, anchor="nw", height=30,window=ic_entry_cus_5, tags=("acentry5"))
+                        ic_entry_cus_5.insert(0,"29APPCK7465F1Z1")
+                        ic_entry_cus_5.bind("<Button-1>",ic_gst_in)
 
                         label_2 = Label(inv_canvas_2,width=10,height=1,text="PAN NO", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = inv_canvas_2.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel10"))
 
-                        ic_cus_entry_str_2 = StringVar()
-                        ic_entry_cus_6=Entry(inv_canvas_2,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'),textvariable=ic_cus_entry_str_2)
-                        ic_cus_entry_str_2.set(' APPCK7465F')
+                        def ic_pan_no(event):
+                            if ic_entry_cus_6.get()=="APPCK7465F":
+                                ic_entry_cus_6.delete(0,END)
+                            else:
+                                pass
+
+                        ic_entry_cus_6=Entry(inv_canvas_2,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
                         window_ic_entry_cus_6 = inv_canvas_2.create_window(0, 0, anchor="nw", height=30,window=ic_entry_cus_6, tags=("acentry6"))
+                        ic_entry_cus_6.insert(0,"APPCK7465F")
+                        ic_entry_cus_6.bind("<Button-1>",ic_pan_no)
 
                         label_2 = Label(inv_canvas_2,width=5,height=1,text="Email", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = inv_canvas_2.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel11"))
@@ -2508,6 +2539,7 @@ def main_sign_in():
                             dcanvas.coords("ailabel26",dwidth/1.54,dheight/0.406)
                             dcanvas.coords("ailabel27",dwidth/1.54,dheight/0.392)
                             dcanvas.coords("ailabel28",dwidth/1.72,dheight/1.12)
+                            dcanvas.coords("ailabel29",dwidth/1.67,dheight/0.947)
 
                             dcanvas.coords("aientry1",dwidth/3.0,dheight/1.295)
                             dcanvas.coords("aientry2",dwidth/18.00,dheight/0.91)
@@ -2537,6 +2569,7 @@ def main_sign_in():
                             dcanvas.coords("aientry26",dwidth/1.33,dheight/0.407)
                             dcanvas.coords("aientry27",dwidth/1.33,dheight/0.393)
                             dcanvas.coords("aientry28",dwidth/18.00,dheight/1.295)
+                            dcanvas.coords("aientry29",dwidth/1.65,dheight/0.91)
 
                             dcanvas.coords("aicombo2",dwidth/3.00,dheight/1.074)
                             dcanvas.coords("aicombo3",dwidth/18.00,dheight/0.695)
@@ -2724,6 +2757,12 @@ def main_sign_in():
                         
                         eai_b_entry_1=Entry(inv_canvas_edit_1,width=42,justify=LEFT,background='#2f516f',foreground="white")
                         window_eai_b_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=150, window=eai_b_entry_1,tags=('aientry2'))
+
+                        label_2 = Label(inv_canvas_edit_1,width=10,height=1,text="Invoice No:", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel29'))
+
+                        ein_b_entry_1=Entry(inv_canvas_edit_1,width=42,justify=LEFT,background='#2f516f',foreground="white")
+                        window_ein_b_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=ein_b_entry_1,tags=('aientry29'))
 
                         label_2 = Label(inv_canvas_edit_1,width=12,height=1,text="Place of supply", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel10'))
@@ -3413,10 +3452,24 @@ def main_sign_in():
                         shippincode = entry_cus_pin.get()
                         shipcountry = entry_cus_c15.get()
 
+                        usr_sql = "SELECT id FROM auth_user WHERE username=%s"
+                        usr_val = (nm_ent.get(),)
+                        fbcursor.execute(usr_sql,usr_val)
+                        usr_data = fbcursor.fetchone()
+
+                        cmp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                        cmp_val = (usr_data[0],)
+                        fbcursor.execute(cmp_sql,cmp_val)
+                        cmp_data = fbcursor.fetchone()
+                        cid = cmp_data[0]
+
                         cus_sql = "INSERT INTO app1_customer (title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                        cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,13)
+                        cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid)
                         fbcursor.execute(cus_sql,cus_val)
                         finsysdb.commit()
+
+                        cus_frame_1.destroy()
+                        cus_frame.grid(row=0,column=0,sticky='nsew')
 
                     cus_canvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("acpoly1"))
 
@@ -3475,18 +3528,31 @@ def main_sign_in():
                     label_2 = Label(cus_canvas_1,width=10,height=1,text="GSTIN", font=('arial 12'),background="#1b3857",fg="white") 
                     window_label_2 = cus_canvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel9"))
 
-                    cus_entry_str_1 = StringVar()
-                    entry_cus_gin5=Entry(cus_canvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'),textvariable=cus_entry_str_1)
-                    cus_entry_str_1.set(' 29APPCK7465F1Z1')
+                    def ac_gst_in(event):
+                        if entry_cus_gin5.get()=="29APPCK7465F1Z1":
+                            entry_cus_gin5.delete(0,END)
+                        else:
+                            pass
+                    
+                    entry_cus_gin5=Entry(cus_canvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
                     window_entry_cus_gin5 = cus_canvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_cus_gin5, tags=("acentry5"))
+                    entry_cus_gin5.insert(0,"29APPCK7465F1Z1")
+                    entry_cus_gin5.bind("<Button-1>",ac_gst_in)
+
 
                     label_2 = Label(cus_canvas_1,width=10,height=1,text="PAN NO", font=('arial 12'),background="#1b3857",fg="white") 
                     window_label_2 = cus_canvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel10"))
 
-                    cus_entry_str_2 = StringVar()
-                    entry_cus_pan6=Entry(cus_canvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'),textvariable=cus_entry_str_2)
-                    cus_entry_str_2.set(' APPCK7465F')
+                    def ac_pan_no(event):
+                        if entry_cus_pan6.get()=="APPCK7465F":
+                            entry_cus_pan6.delete(0,END)
+                        else:
+                            pass
+
+                    entry_cus_pan6=Entry(cus_canvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
                     window_entry_cus_pan6 = cus_canvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_cus_pan6, tags=("acentry6"))
+                    entry_cus_pan6.insert(0,"APPCK7465F")
+                    entry_cus_pan6.bind("<Button-1>",ac_pan_no)
 
                     label_2 = Label(cus_canvas_1,width=5,height=1,text="Email", font=('arial 12'),background="#1b3857",fg="white") 
                     window_label_2 = cus_canvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel11"))
@@ -3764,7 +3830,7 @@ def main_sign_in():
                             location = ecus_4.get()
                             gsttype = comb_ecus_2.get()
                             gstin = entry_ecus_5.get()
-                            panno = ecus_entry_str_2.get()
+                            panno = entry_ecus_6.get()
                             email = entry_ecus_7.get()
                             website = entry_ecus_8.get()
                             mobile = entry_ecus_9.get()
@@ -3779,10 +3845,24 @@ def main_sign_in():
                             shippincode = entry_ecus_pin14.get()
                             shipcountry = entry_ecus_co15.get()
 
+                            usre_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usre_val = (nm_ent.get(),)
+                            fbcursor.execute(usre_sql,usre_val)
+                            usre_data = fbcursor.fetchone()
+
+                            cmpne_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmpne_val = (usre_data[0],)
+                            fbcursor.execute(cmpne_sql,cmpne_val)
+                            cmpne_data = fbcursor.fetchone()
+                            cid = cmpne_data[0]
+
                             cus_sql = "UPDATE app1_customer set title=%s,firstname=%s,lastname=%s,company=%s,location=%s,gsttype=%s,gstin=%s,panno=%s,email=%s,website=%s,mobile=%s,street=%s,city=%s,state=%s,pincode=%s,country=%s,shipstreet=%s,shipcity=%s,shipstate=%s,shippincode=%s,shipcountry=%s where cid_id=%s"
-                            cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,13)
+                            cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid)
                             fbcursor.execute(cus_sql,cus_val)
                             finsysdb.commit()
+
+                            cus_eframe_1.destroy()
+                            cus_frame.grid(row=0,column=0,sticky='nsew')
 
                         cus_sql_2 = "SELECT * FROM app1_customer"
                         fbcursor.execute(cus_sql_2)
@@ -3858,10 +3938,9 @@ def main_sign_in():
 
                         label_2 = Label(cus_ecanvas_1,width=10,height=1,text="GSTIN", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel9"))
+                        
 
-                        ecus_entry_str_1 = StringVar()
-                        entry_ecus_5=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'),textvariable=ecus_entry_str_1)
-                        ecus_entry_str_1.set(' 29APPCK7465F1Z1')
+                        entry_ecus_5=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
                         window_entry_ecus_5 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_5, tags=("acentry5"))
                         entry_ecus_5.delete(0,'end')
                         entry_ecus_5.insert(0, ecus_records[7])
@@ -3869,9 +3948,7 @@ def main_sign_in():
                         label_2 = Label(cus_ecanvas_1,width=10,height=1,text="PAN NO", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel10"))
 
-                        ecus_entry_str_2 = StringVar()
-                        entry_ecus_6=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'),textvariable=ecus_entry_str_2)
-                        ecus_entry_str_2.set(' APPCK7465F')
+                        entry_ecus_6=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
                         window_entry_ecus_6 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_6, tags=("acentry6"))
                         entry_ecus_6.delete(0,'end')
                         entry_ecus_6.insert(0, ecus_records[8])
@@ -4098,7 +4175,7 @@ def main_sign_in():
                     x11 = dwidth/63
                     x21 = dwidth/1.021
                     y11 = dheight/2.8
-                    y21 = dheight/0.850
+                    y21 = dheight/0.750
 
 
                     dcanvas.coords("ppoly2",x11 + r2,y11,
@@ -4126,31 +4203,21 @@ def main_sign_in():
                     x11,y11,
                     )
 
-                    dcanvas.coords("pline1", dwidth/22.00, dheight/1.24, dwidth/1.060, dheight/1.24)
-                    dcanvas.coords("pline2", dwidth/22.00, dheight/1.13, dwidth/1.060, dheight/1.13)
-                    dcanvas.coords("pline3", dwidth/22.00, dheight/1.015, dwidth/1.060, dheight/1.015)
-                    dcanvas.coords("pline4", dwidth/22.00, dheight/1.24, dwidth/22.00, dheight/1.015)
-                    dcanvas.coords("pline5", dwidth/1.060, dheight/1.24, dwidth/1.060, dheight/1.015)
-                    dcanvas.coords("pline6", dwidth/5.00, dheight/1.24, dwidth/5.00, dheight/1.015)
-                    dcanvas.coords("pline7", dwidth/2.50, dheight/1.24, dwidth/2.50, dheight/1.015)
-                    dcanvas.coords("pline8", dwidth/1.80, dheight/1.24, dwidth/1.80, dheight/1.015)
-                    dcanvas.coords("pline9", dwidth/1.40, dheight/1.24, dwidth/1.40, dheight/1.015)
-                    dcanvas.coords("pline10", dwidth/1.20, dheight/1.24, dwidth/1.20, dheight/1.015)
+
 
                     dcanvas.coords("pimage1",dwidth/5.29,dheight/2.15)
                     dcanvas.coords("pimage2",dwidth/2.05,dheight/2.15)
 
                     dcanvas.coords("plabel2",dwidth/5.60,dheight/1.60)
                     dcanvas.coords("plabel3",dwidth/2.09,dheight/1.60)
-                    dcanvas.coords("plabel4",dwidth/10.55,dheight/1.21)
-                    dcanvas.coords("plabel5",dwidth/3.60,dheight/1.21)
-                    dcanvas.coords("plabel6",dwidth/2.15,dheight/1.21)
-                    dcanvas.coords("plabel7",dwidth/1.63,dheight/1.21)
-                    dcanvas.coords("plabel8",dwidth/1.35,dheight/1.21)
-                    dcanvas.coords("plabel9",dwidth/1.17,dheight/1.21)
-
+                    
                     dcanvas.coords("pcombo1",dwidth/1.18,dheight/1.10)
-                    dcanvas.coords("pbutton1",dwidth/1.28,dheight/1.45)
+
+                    dcanvas.coords("pbutton1",dwidth/2.2,dheight/1.4)
+                    dcanvas.coords("pbutton2",dwidth/1.645,dheight/1.4)
+                    dcanvas.coords("pbutton3",dwidth/1.315,dheight/1.4)
+
+                    dcanvas.coords("ptree1",dwidth/12,dheight/1.21)
 
                 pro_canvas=Canvas(pro_frame, bg='#2f516f', width=1325, height=600, scrollregion=(0,0,700,1000))
 
@@ -4197,35 +4264,62 @@ def main_sign_in():
                 window_label_2 = pro_canvas.create_window(0, 0, anchor="nw", window=label_2,tags=('plabel3'))
 
 
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline1'))
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline2'))
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline3'))
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline4'))
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline5'))
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline6'))
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline7'))
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline8'))
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline9'))
-                pro_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('pline10'))
+                fgth = ttk.Style()
+                fgth.configure('mystyle105.Treeview.Heading', background='#2f516f',State='DISABLE')
 
+                pro_tree = ttk.Treeview(pro_canvas, columns = (1,2,3,4,5,6), height = 10, show = "headings",style='mystyle105.Treeview')
+                pro_tree.pack(side = 'top')
+                pro_tree.heading(1)
+                pro_tree.heading(2, text="TYPE")
+                pro_tree.heading(3, text="NAME")
+                pro_tree.heading(4, text="SKU")
+                pro_tree.heading(5, text="HSN/SAC")
+                pro_tree.heading(6, text="QUANTITY")
+                
+                pro_tree.column(1, width = 50)
+                pro_tree.column(2, width = 250)
+                pro_tree.column(3, width = 300)
+                pro_tree.column(4, width = 150)
+                pro_tree.column(5, width = 200)
+                pro_tree.column(6, width = 150)
+                window_label_4 = pro_canvas.create_window(0, 0, anchor="nw", window=pro_tree,tags=('ptree1'))
+                
+                p_sql_1 = "SELECT * FROM app1_inventory"
+                fbcursor.execute(p_sql_1)
+                p_data_1 = fbcursor.fetchall()
 
-                label_2 = Label(pro_canvas,width=9,height=1,text="TYPE", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_2 = pro_canvas.create_window(0, 0, anchor="nw", window=label_2,tags=('plabel4'))
+                count = 0
+                for i in p_data_1:
+                    if True:
+                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                    else:
+                        pass
+                count += 1
 
-                label_3 = Label(pro_canvas,width=5,height=1,text="NAME", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_3 = pro_canvas.create_window(0, 0, anchor="nw", window=label_3,tags=('plabel5'))
+                p_sql_2 = "SELECT * FROM app1_noninventory"
+                fbcursor.execute(p_sql_2)
+                p_data_2 = fbcursor.fetchall()
 
-                label_4 = Label(pro_canvas,width=5,height=1,text="SKU", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = pro_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('plabel6'))
+                count = 0
+                for i in p_data_2:
+                    if True:
+                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                    else:
+                        pass
+                count += 1
 
-                label_4 = Label(pro_canvas,width=8,height=1,text="HSN/SAC", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = pro_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('plabel7'))
+                p_sql_3 = "SELECT * FROM app1_service"
+                fbcursor.execute(p_sql_3)
+                p_data_3 = fbcursor.fetchall()
 
-                label_4 = Label(pro_canvas,width=11,height=1,text="QUANTITY", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = pro_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('plabel8'))
+                count = 0
+                for i in p_data_3:
+                    if True:
+                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                    else:
+                        pass
+                count += 1
 
-                label_4 = Label(pro_canvas,width=11,height=1,text="ACTION", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = pro_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('plabel9'))
 
             
                 # Define the style for combobox widget
@@ -4233,10 +4327,10 @@ def main_sign_in():
                 # style.theme_use('clam')
                 # style.configure("TCombobox", fieldbackground= "#2f516f", background= "#2f516f")
 
-                cus_comb_1 = ttk.Combobox(pro_canvas,font=('arial 10'),foreground="white")
-                cus_comb_1['values'] = ("Actions","Edit","Delete")
-                cus_comb_1.current(0)
-                window_cus_comb_1 = pro_canvas.create_window(1135, 560, anchor="nw", width=110,height=30,window=cus_comb_1,tags=('pcombo1'))
+                # cus_comb_1 = ttk.Combobox(pro_canvas,font=('arial 10'),foreground="white")
+                # cus_comb_1['values'] = ("Actions","Edit","Delete")
+                # cus_comb_1.current(0)
+                # window_cus_comb_1 = pro_canvas.create_window(1135, 560, anchor="nw", width=110,height=30,window=cus_comb_1,tags=('pcombo1'))
 
 
                 def add_product():
@@ -4673,6 +4767,47 @@ def main_sign_in():
                         p_canvas_2.config(yscrollcommand=vertibar.set)
                         p_canvas_2.grid(row=0,column=0,sticky='nsew')
 
+                        def add_new_pro_inv():
+                            name = entry_inv_item_1.get()
+                            sku = entry_inv_item_2.get()
+                            hsn = entry_inv_item_h2.get()
+                            unit = comb_inv_item_u1.get()
+                            category = entry_inv_item_3.get()
+                            initialqty = entry_inv_item_4.get()
+                            date = entry_inv_item_aod5.get_date()
+                            stockalrt = entry_inv_item_6.get()
+                            invacnt = comb_inv_item_i2.get()
+                            description = entry_inv_item_7.get('1.0', 'end-1c')
+                            salesprice = entry_inv_item_8.get()
+                            incomeacnt = comb_inv_item_in4.get()
+                            tax = comb_inv_item_t3.get()
+                            purchaseinfo = entry_inv_item_9.get('1.0', 'end-1c')
+                            cost = entry_inv_item_10.get()
+                            expacnt = comb_inv_item_ex6.get()
+                            purtax = comb_inv_item_pu5.get()
+                            revcharge = entry_inv_item_11.get()
+                            presupplier = comb_inv_item_pr7.get()
+
+                            usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usrp_val = (nm_ent.get(),)
+                            fbcursor.execute(usrp_sql,usrp_val)
+                            usrp_data = fbcursor.fetchone()
+
+                            cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmpp_val = (usrp_data[0],)
+                            fbcursor.execute(cmpp_sql,cmpp_val)
+                            cmpp_data = fbcursor.fetchone()
+                            cid = cmpp_data[0]
+                            
+                            i_p_sql = "INSERT INTO app1_inventory(name,sku,hsn,unit,category,initialqty,date,stockalrt,invacnt,description,salesprice,incomeacnt,tax,purchaseinfo,cost,expacnt,purtax,revcharge,presupplier,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                            i_p_val = (name,sku,hsn,unit,category,initialqty,date,stockalrt,invacnt,description,salesprice,incomeacnt,tax,purchaseinfo,cost,expacnt,purtax,revcharge,presupplier,cid)
+                            fbcursor.execute(i_p_sql,i_p_val)
+                            finsysdb.commit()
+
+                            pro_frame_2.destroy()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
+
+
 
                         p_canvas_2.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('ippoly1'))
 
@@ -4700,27 +4835,40 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=4,height=1,text="SKU", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1, tags=('iplabel4'))
 
-                        str_inv_item_1 = StringVar()
-                        entry_inv_item_2=Entry(p_canvas_2,width=90,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_inv_item_1)
-                        str_inv_item_1.set('  Eg: N41554')
+                        def p_sku_1(event):
+                            if entry_inv_item_2.get()=="N41554":
+                                entry_inv_item_2.delete(0,END)
+                            else:
+                                pass
+                        
+                        entry_inv_item_2=Entry(p_canvas_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_entry_inv_item_2 = p_canvas_2.create_window(0, 0, anchor="nw", height=30,window=entry_inv_item_2, tags=('ipentry2'))
+                        entry_inv_item_2.insert(0,"N41554")
+                        entry_inv_item_2.bind("<Button-1>",p_sku_1)
+
 
                         label_1 = Label(p_canvas_2,width=9,height=1,text="HSN Code", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1, tags=('iplabel5'))
 
-                        entry_inv_item_2=Entry(p_canvas_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_entry_inv_item_2 = p_canvas_2.create_window(0, 0, anchor="nw", height=30,window=entry_inv_item_2, tags=('ipentry3'))
+                        entry_inv_item_h2=Entry(p_canvas_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_entry_entry_inv_item_h2 = p_canvas_2.create_window(0, 0, anchor="nw", height=30,window=entry_inv_item_h2, tags=('ipentry3'))
 
-                        label_1 = Label(p_canvas_2,width=30,height=1,text="Not sure about HSN Code..? Click here", font=('arial 12'),background="#1b3857",fg="skyblue") 
-                        window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1, tags=('iplabel6'))
+                        #Define a callback function
+                        def callback(url):
+                            webbrowser.open_new_tab(url)
+
+                        link_1 = Label(p_canvas_2,width=30,height=1,text="Not sure about HSN Code..? Click here", font=('arial 12'),background="#1b3857",fg="skyblue") 
+                        window_link_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=link_1, tags=('iplabel6'))
+                        link_1.bind("<Button-1>", lambda e:
+                        callback("https://gstcouncil.gov.in/sites/default/files/goods-rates-booklet-03July2017.pdf"))
 
                         label_1 = Label(p_canvas_2,width=5,height=1,text="Unit", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1, tags=('iplabel7'))
 
-                        comb_inv_item_1 = ttk.Combobox(p_canvas_2, font=('arial 10'),foreground="white")
-                        comb_inv_item_1['values'] = ("Choose...","BAG Bags","BAL Bale BOU","BDL Bundles","BKL Buckles","BOX Box","BTL Bottles","CAN Cans","CTN Cartons","CCM Cubic centimeters","CBM Cubic meters","CMS Centimeters","DRM Drums","DOZ Dozens","GGK Great gross GYD","GRS GrossGMS","KME Kilometre","KGS Kilograms","KLR Kilo litre","MTS Metric ton","MLT Mili litre","MTR Meters","NOS Numbers","PAC Packs","PCS Pieces","PRS Pairs","QTL Quintal","ROL Rolls","SQY Square Yards","SET Sets","SQF Square feet","SQM Square meters","TBS Tablets","TUB Tubes","TGM Ten Gross","THD Thousands","TON Tonnes","UNT Units","UGS US Gallons","YDS Yards",)
-                        comb_inv_item_1.current(0)
-                        window_comb_inv_item_1 = p_canvas_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_item_1, tags=('ipcombo1'))
+                        comb_inv_item_u1 = ttk.Combobox(p_canvas_2, font=('arial 10'))
+                        comb_inv_item_u1['values'] = ("Choose...","BAG Bags","BAL Bale BOU","BDL Bundles","BKL Buckles","BOX Box","BTL Bottles","CAN Cans","CTN Cartons","CCM Cubic centimeters","CBM Cubic meters","CMS Centimeters","DRM Drums","DOZ Dozens","GGK Great gross GYD","GRS GrossGMS","KME Kilometre","KGS Kilograms","KLR Kilo litre","MTS Metric ton","MLT Mili litre","MTR Meters","NOS Numbers","PAC Packs","PCS Pieces","PRS Pairs","QTL Quintal","ROL Rolls","SQY Square Yards","SET Sets","SQF Square feet","SQM Square meters","TBS Tablets","TUB Tubes","TGM Ten Gross","THD Thousands","TON Tonnes","UNT Units","UGS US Gallons","YDS Yards",)
+                        comb_inv_item_u1.current(0)
+                        window_comb_inv_item_u1 = p_canvas_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_item_u1, tags=('ipcombo1'))
 
                         label_1 = Label(p_canvas_2,width=9,height=1,text="Category", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel8'))
@@ -4746,10 +4894,10 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=22,height=1,text="Inventory asset account", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(35, 910, anchor="nw", window=label_1,tags=('iplabel12'))
 
-                        comb_inv_item_2 = ttk.Combobox(p_canvas_2, font=('arial 10'),foreground="white")
-                        comb_inv_item_2['values'] = ("Inventory Asset",)
-                        comb_inv_item_2.current(0)
-                        window_comb_inv_item_2 = p_canvas_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_item_2,tags=('ipcombo2'))
+                        comb_inv_item_i2 = ttk.Combobox(p_canvas_2, font=('arial 10'))
+                        comb_inv_item_i2['values'] = ("Inventory Asset",)
+                        comb_inv_item_i2.current(0)
+                        window_comb_inv_item_i2 = p_canvas_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_item_i2,tags=('ipcombo2'))
 
                         def inv_acc_create_1():
                             pro_frame_2.grid_forget()
@@ -4939,7 +5087,7 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel13'))
 
-                        entry_inv_item_7=Entry(p_canvas_2,width=200,justify=LEFT,background='#2f516f',foreground="white")
+                        entry_inv_item_7=scrolledtext.ScrolledText(p_canvas_2,width=145,background='#2f516f',foreground="white")
                         window_entry_entry_inv_item_7 = p_canvas_2.create_window(0, 0, anchor="nw", height=60,window=entry_inv_item_7,tags=('ipentry7'))
 
                         label_1 = Label(p_canvas_2,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
@@ -4956,18 +5104,18 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel15'))
 
-                        comb_inv_item_3 = ttk.Combobox(p_canvas_2, font=('arial 10'),foreground="white")
-                        comb_inv_item_3['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
-                        comb_inv_item_3.current(0)
-                        window_comb_inv_item_3 = p_canvas_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_item_3,tags=('ipcombo3'))
+                        comb_inv_item_t3 = ttk.Combobox(p_canvas_2, font=('arial 10'))
+                        comb_inv_item_t3['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                        comb_inv_item_t3.current(0)
+                        window_comb_inv_item_t3 = p_canvas_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_item_t3,tags=('ipcombo3'))
 
                         label_1 = Label(p_canvas_2,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel16'))
 
-                        comb_inv_item_4 = ttk.Combobox(p_canvas_2, font=('arial 10'),foreground="white")
-                        comb_inv_item_4['values'] = ("Choose...","Billable Expense Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales of Product Income","Uncategorised Income",)
-                        comb_inv_item_4.current(0)
-                        window_comb_inv_item_4 = p_canvas_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_item_4,tags=('ipcombo4'))
+                        comb_inv_item_in4 = ttk.Combobox(p_canvas_2, font=('arial 10'))
+                        comb_inv_item_in4['values'] = ("Choose...","Billable Expense Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales of Product Income","Uncategorised Income",)
+                        comb_inv_item_in4.current(0)
+                        window_comb_inv_item_in4 = p_canvas_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_item_in4,tags=('ipcombo4'))
 
                         def inv_inc_acc_1():
                             pro_frame_2.grid_forget()
@@ -5158,7 +5306,7 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=22,height=1,text="Purchasing information", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel17'))
 
-                        entry_inv_item_9=Entry(p_canvas_2,width=200,justify=LEFT,background='#2f516f',foreground="white")
+                        entry_inv_item_9=scrolledtext.ScrolledText(p_canvas_2,width=145,background='#2f516f',foreground="white")
                         window_entry_entry_inv_item_9 = p_canvas_2.create_window(0, 0, anchor="nw", height=60,window=entry_inv_item_9,tags=('ipentry9'))
 
                         label_1 = Label(p_canvas_2,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
@@ -5175,18 +5323,18 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(700, 1530, anchor="nw", window=label_1,tags=('iplabel19'))
 
-                        comb_inv_item_5 = ttk.Combobox(p_canvas_2, font=('arial 10'),foreground="white")
-                        comb_inv_item_5['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
-                        comb_inv_item_5.current(0)
-                        window_comb_inv_item_5 = p_canvas_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_item_5,tags=('ipcombo5'))
+                        comb_inv_item_pu5 = ttk.Combobox(p_canvas_2, font=('arial 10'))
+                        comb_inv_item_pu5['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                        comb_inv_item_pu5.current(0)
+                        window_comb_inv_item_pu5 = p_canvas_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_item_pu5,tags=('ipcombo5'))
 
                         label_1 = Label(p_canvas_2,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel20'))
 
-                        comb_inv_item_6 = ttk.Combobox(p_canvas_2, font=('arial 10'),foreground="white")
-                        comb_inv_item_6['values'] = ("Cost of sales",)
-                        comb_inv_item_6.current(0)
-                        window_comb_inv_item_6 = p_canvas_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_item_6,tags=('ipcombo6'))
+                        comb_inv_item_ex6 = ttk.Combobox(p_canvas_2, font=('arial 10'))
+                        comb_inv_item_ex6['values'] = ("Cost of sales",)
+                        comb_inv_item_ex6.current(0)
+                        window_comb_inv_item_ex6 = p_canvas_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_item_ex6,tags=('ipcombo6'))
 
                         def inv_exp_acc_1():
                             pro_frame_2.grid_forget()
@@ -5375,24 +5523,30 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=15,height=1,text="Reverse Charge %", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel21'))
 
-                        str_inv_item_2 = StringVar()
-                        entry_inv_item_11=Entry(p_canvas_2,width=90,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_inv_item_2)
-                        str_inv_item_2.set(' 0')
+                        def p_rc_1(event):
+                            if entry_inv_item_11.get()=="0":
+                                entry_inv_item_11.delete(0,END)
+                            else:
+                                pass
+
+                        entry_inv_item_11=Entry(p_canvas_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_entry_inv_item_11 = p_canvas_2.create_window(0, 0, anchor="nw", height=30,window=entry_inv_item_11,tags=('ipentry11'))
+                        entry_inv_item_11.insert(0,"0")
+                        entry_inv_item_11.bind("<Button-1>",p_rc_1)
 
                         label_1 = Label(p_canvas_2,width=15,height=1,text="Preferred Supplier", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel22'))
 
-                        comb_inv_item_7 = ttk.Combobox(p_canvas_2, font=('arial 10'),foreground="white")
-                        comb_inv_item_7['values'] = ("Select Supplier",)
-                        comb_inv_item_7.current(0)
-                        window_comb_inv_item_7 = p_canvas_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_item_7,tags=('ipcombo7'))
+                        comb_inv_item_pr7 = ttk.Combobox(p_canvas_2, font=('arial 10'))
+                        comb_inv_item_pr7['values'] = ("Select Supplier",)
+                        comb_inv_item_pr7.current(0)
+                        window_comb_inv_item_pr7 = p_canvas_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_item_pr7,tags=('ipcombo7'))
 
-                        inv_sub_btn1=Button(p_canvas_2,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                        inv_sub_btn1=Button(p_canvas_2,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_new_pro_inv)
                         window_inv_sub_btn1 = p_canvas_2.create_window(0, 0, anchor="nw", window=inv_sub_btn1,tags=('ipbutton5'))
 
-                        entry_inv_item_5=DateEntry(p_canvas_2,width=60,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_entry_inv_item_5 = p_canvas_2.create_window(0, 0, anchor="nw", height=30,window=entry_inv_item_5,tags=('ipdate1'))
+                        entry_inv_item_aod5=DateEntry(p_canvas_2,width=60,justify=LEFT,background='#2f516f',foreground="white")
+                        window_entry_inv_item_aod5 = p_canvas_2.create_window(0, 0, anchor="nw", height=30,window=entry_inv_item_aod5,tags=('ipdate1'))
 
 
                     p_btn_1=Button(p_canvas_1,text='Add Item', width=20,height=1,foreground="white",background="blue",font='arial 12',command=inv_add_item)
@@ -5581,6 +5735,44 @@ def main_sign_in():
                         p_canvas_3.config(yscrollcommand=vertibar.set)
                         p_canvas_3.grid(row=0,column=0,sticky='nsew')
 
+                        def add_new_pro_non():
+                            name = entry_non_item_1.get()
+                            sku = entry_non_iitem_2.get()
+                            hsn = entry_non_item_2.get()
+                            unit = comb_inv_item_1.get()
+                            category = entry_non_item_3.get()
+                            descr = entry_non_item_7.get('1.0', 'end-1c')
+                            saleprice = entry_non_item_8.get()
+                            income = comb_non_item_4.get()
+                            tax = comb_non_item_3.get()
+                            purchasedescr = entry_non_item_9.get('1.0', 'end-1c')
+                            cost = entry_non_item_10.get()
+                            expenseaccount = comb_non_item_6.get()
+                            purchasetax = comb_non_item_5.get()
+                            revcharge = entry_non_item_11.get()
+                            presupplier = comb_non_item_7.get()
+
+                            usrp1_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usrp1_val = (nm_ent.get(),)
+                            fbcursor.execute(usrp1_sql,usrp1_val)
+                            usrp1_data = fbcursor.fetchone()
+
+                            cmpp1_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmpp1_val = (usrp1_data[0],)
+                            fbcursor.execute(cmpp1_sql,cmpp1_val)
+                            cmpp1_data = fbcursor.fetchone()
+                            cid = cmpp1_data[0]
+
+                            n_p_sql = "INSERT INTO app1_noninventory(name,sku,hsn,unit,category,descr,saleprice,income,tax,purchasedescr,cost,expenseaccount,purchasetax,revcharge,presupplier,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                            n_p_val = (name,sku,hsn,unit,category,descr,saleprice,income,tax,purchasedescr,cost,expenseaccount,purchasetax,revcharge,presupplier,cid)
+                            fbcursor.execute(n_p_sql,n_p_val)
+                            finsysdb.commit()
+
+                            pro_frame_3.destroy()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
+                            
+
+
                         p_canvas_3.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('nppoly1'))
 
                         label_1 = Label(p_canvas_3,width=30,height=1,text="PRODUCT / SERVICE INFORMATION", font=('arial 20'),background="#1b3857",fg="white") 
@@ -5607,10 +5799,16 @@ def main_sign_in():
                         label_1 = Label(p_canvas_3,width=5,height=1,text="SKU", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1, tags=('nplabel4'))
 
-                        str_non_item_1 = StringVar()
-                        entry_non_iitem_2=Entry(p_canvas_3,width=90,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_non_item_1)
-                        str_non_item_1.set('  Eg: N41554')
+                        def ps_2(event):
+                            if entry_non_iitem_2.get()=="N41554":
+                                entry_non_iitem_2.delete(0,END)
+                            else:
+                                pass
+
+                        entry_non_iitem_2=Entry(p_canvas_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_non_iitem_2 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_iitem_2, tags=('npentry2'))
+                        entry_non_iitem_2.insert(0,"N41554")
+                        entry_non_iitem_2.bind("<Button-1>",ps_2)
 
                         label_1 = Label(p_canvas_3,width=9,height=1,text="HSN Code", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1, tags=('nplabel5'))
@@ -5618,13 +5816,20 @@ def main_sign_in():
                         entry_non_item_2=Entry(p_canvas_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_non_item_2 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_2, tags=('npentry3'))
 
-                        label_non_1 = Label(p_canvas_3,width=30,height=1,text="Not sure about HSN Code..? Click here", font=('arial 12'),background="#1b3857",fg="skyblue") 
-                        window_label_non_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_non_1, tags=('nplabel6'))
+                        #Define a callback function
+                        def callback_1(url):
+                            webbrowser.open_new_tab(url)
+
+                        link_2 = Label(p_canvas_3,width=30,height=1,text="Not sure about HSN Code..? Click here", font=('arial 12'),background="#1b3857",fg="skyblue") 
+                        window_link_2 = p_canvas_3.create_window(0, 0, anchor="nw", window=link_2, tags=('nplabel6'))
+                        link_2.bind("<Button-1>", lambda e:
+                        callback_1("https://gstcouncil.gov.in/sites/default/files/goods-rates-booklet-03July2017.pdf"))
+
 
                         label_1 = Label(p_canvas_3,width=5,height=1,text="Unit", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1, tags=('nplabel7'))
 
-                        comb_inv_item_1 = ttk.Combobox(p_canvas_3, font=('arial 10'),foreground="white")
+                        comb_inv_item_1 = ttk.Combobox(p_canvas_3, font=('arial 10'))
                         comb_inv_item_1['values'] = ("Choose Unit Quantity Code(UQC)...","BAG Bags","BAL Bale BOU","BDL Bundles","BKL Buckles","BOX Box","BTL Bottles","CAN Cans","CTN Cartons","CCM Cubic centimeters","CBM Cubic meters","CMS Centimeters","DRM Drums","DOZ Dozens","GGK Great gross GYD","GRS GrossGMS","KME Kilometre","KGS Kilograms","KLR Kilo litre","MTS Metric ton","MLT Mili litre","MTR Meters","NOS Numbers","PAC Packs","PCS Pieces","PRS Pairs","QTL Quintal","ROL Rolls","SQY Square Yards","SET Sets","SQF Square feet","SQM Square meters","TBS Tablets","TUB Tubes","TGM Ten Gross","THD Thousands","TON Tonnes","UNT Units","UGS US Gallons","YDS Yards","OTH Others",)
                         comb_inv_item_1.current(0)
                         window_comb_inv_item_1 = p_canvas_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_item_1, tags=('npcombo1'))
@@ -5640,42 +5845,60 @@ def main_sign_in():
                         label_1 = Label(p_canvas_3,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel12'))
 
-                        chk_str_non_item = StringVar()
-                        chkbtn_non_item = Checkbutton(p_canvas_3, text = "I sell this product/service to my customers.", variable = chk_str_non_item, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+
+                        def d_non_check():
+
+                            if chk_str_non_item.get() == True:
+                                p_canvas_3.itemconfig('nplabel13',state='normal')
+                                p_canvas_3.itemconfig('npentry7',state='normal')
+                                p_canvas_3.itemconfig('nplabel14',state='normal')
+                                p_canvas_3.itemconfig('npentry8',state='normal')
+                                p_canvas_3.itemconfig('npcbutton1',state='normal')
+                                p_canvas_3.itemconfig('nplabel15',state='normal')
+                                p_canvas_3.itemconfig('npcombo3',state='normal')
+                                p_canvas_3.itemconfig('nplabel16',state='normal')
+                                p_canvas_3.itemconfig('npcombo4',state='normal')
+                                p_canvas_3.itemconfig('npbutton3',state='normal')
+                            else:
+                                pass                     
+
+
+                        chk_str_non_item = BooleanVar()
+                        chkbtn_non_item = Checkbutton(p_canvas_3, text = "I sell this product/service to my customers.", variable = chk_str_non_item, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=d_non_check)
                         window_chkbtn_non_item = p_canvas_3.create_window(0, 0, anchor="nw", window=chkbtn_non_item,tags=('npbutton2'))
 
                         label_1 = Label(p_canvas_3,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel13'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel13'),state=HIDDEN)
 
-                        entry_non_item_7=Entry(p_canvas_3,width=200,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_non_item_7 = p_canvas_3.create_window(0, 0, anchor="nw", height=60,window=entry_non_item_7,tags=('npentry7'))
+                        entry_non_item_7=scrolledtext.ScrolledText(p_canvas_3,width=145,background='#2f516f',foreground="white")
+                        window_entry_non_item_7 = p_canvas_3.create_window(0, 0, anchor="nw", height=60,window=entry_non_item_7,tags=('npentry7'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_3,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel14'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel14'),state=HIDDEN)
                         
                         entry_non_item_8=Entry(p_canvas_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_non_item_8 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_8,tags=('npentry8'))
+                        window_entry_non_item_8 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_8,tags=('npentry8'),state=HIDDEN)
 
                         chk_str_non_item_1 = StringVar()
                         chkbtn_non_item_1 = Checkbutton(p_canvas_3, text = "Inclusive of tax", variable = chk_str_non_item_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
                         chkbtn_non_item_1.select()
-                        window_chkbtn_non_item_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=chkbtn_non_item_1,tags=('npcbutton1'))
+                        window_chkbtn_non_item_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=chkbtn_non_item_1,tags=('npcbutton1'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_3,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel15'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel15'),state=HIDDEN)
 
-                        comb_non_item_3 = ttk.Combobox(p_canvas_3, font=('arial 10'),foreground="white")
+                        comb_non_item_3 = ttk.Combobox(p_canvas_3, font=('arial 10'))
                         comb_non_item_3['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
-                        comb_non_item_3.current(0)
-                        window_comb_non_item_3 = p_canvas_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_item_3,tags=('npcombo3'))
+                        #comb_non_item_3.current(0)
+                        window_comb_non_item_3 = p_canvas_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_item_3,tags=('npcombo3'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_3,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel16'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel16'),state=HIDDEN)
 
-                        comb_non_item_4 = ttk.Combobox(p_canvas_3, font=('arial 10'),foreground="white")
+                        comb_non_item_4 = ttk.Combobox(p_canvas_3, font=('arial 10'))
                         comb_non_item_4['values'] = ("Billable Expense Income","Consulting Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales Discount","Sales of Product Income","Services","Unapplied Cash Payment Income","Uncategorised Income",)
-                        comb_non_item_4.current(0)
-                        window_comb_non_item_4 = p_canvas_3.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_non_item_4,tags=('npcombo4'))
+                        #comb_non_item_4.current(0)
+                        window_comb_non_item_4 = p_canvas_3.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_non_item_4,tags=('npcombo4'),state=HIDDEN)
 
                         def non_inc_acc_1():
                             pro_frame_3.grid_forget()
@@ -5834,7 +6057,7 @@ def main_sign_in():
                             chkbtn_non_2_1.select()
                             window_chkbtn_non_2_1 = p_canvas_3_1.create_window(0, 0, anchor="nw", window=chkbtn_non_2_1,tags=('nacheck1'))
 
-                            comb_non_2_3 = ttk.Combobox(p_canvas_3_1, font=('arial 10'),foreground="white")
+                            comb_non_2_3 = ttk.Combobox(p_canvas_3_1, font=('arial 10'))
                             comb_non_2_3['values'] = ("Deferred CGST","Deferred GST Input Credit","Deferred IGST","Deferred Krishi Kalyan Cess Input Credit","Deferred Service Tax Input Credit","Deferred SGST","Deferred VAT Input Credit","GST Refund","Inventory Asset","Paid Insurance","Service Tax Refund","TDS Receivable","Uncategorised Asset","Accumulated Depreciation","Building and Improvements","Furniture and Equipment","Land","Leasehold Improvements","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi Kalyan Cess","Input Krishi Kalyan Cess RCM","Input Service Tax","Input Service Tax RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Input VAT 5%","Krishi Kalyan Cess Payable","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output Service Tax","Output Sevice Tax RCM","Output SGST","Output SGST Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","Service Tax Payable","service Tax Suspense","SGST Payable","SGST Suspense","Swachh Barath Cess Payable" ,"Swachh Barath Cess Suspense" ,"TDS Payable" ,"VAT Payable","VAT Suspense","Opening Balance","Equity",)
                             comb_non_2_3.current(0)
                             window_comb_non_2_3 = p_canvas_3_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_2_3,tags=('nacombo3'))
@@ -5842,7 +6065,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_3_1,width=15,height=1,text="Default Tax Code", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_3_1.create_window(0, 0, anchor="nw", window=label_1,tags=('nalabel6'))
 
-                            comb_non_2_4 = ttk.Combobox(p_canvas_3_1, font=('arial 10'),foreground="white")
+                            comb_non_2_4 = ttk.Combobox(p_canvas_3_1, font=('arial 10'))
                             comb_non_2_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
                             comb_non_2_4.current(0)
                             window_comb_non_2_4 = p_canvas_3_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_2_4,tags=('nacombo4'))
@@ -5858,50 +6081,70 @@ def main_sign_in():
                             window_nbck_btn1 = p_canvas_3_1.create_window(0, 0, anchor="nw", window=nbck_btn1,tags=('nabutton3'))
 
                         account_non_btn=Button(p_canvas_3,text='+', width=5,height=1,foreground="white",background="#1b3857",font='arial 12',command=non_inc_acc_1)
-                        window_account_non_btn = p_canvas_3.create_window(0, 0, anchor="nw", window=account_non_btn,tags=('npbutton3'))
+                        window_account_non_btn = p_canvas_3.create_window(0, 0, anchor="nw", window=account_non_btn,tags=('npbutton3'),state=HIDDEN)
 
                         p_canvas_3.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('nphline1'))
 
                         label_1 = Label(p_canvas_3,width=25,height=1,text="Purchasing information", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_3.create_window(26, 1300, anchor="nw", window=label_1,tags=('nplabel17'))
 
-                        chk_str_non_pitem = StringVar()
-                        chkbtn_non_pitem = Checkbutton(p_canvas_3, text = "I Purchase this product/service from Supplier.", variable = chk_str_non_pitem, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        def p_non_check():
+                            
+                            if chk_str_non_pitem.get() == True:
+                                p_canvas_3.itemconfig('nplabel18',state='normal')
+                                p_canvas_3.itemconfig('npentry10',state='normal')
+                                p_canvas_3.itemconfig('nplabel9',state='normal')
+                                p_canvas_3.itemconfig('npcentry2',state='normal')
+                                p_canvas_3.itemconfig('npcbutton2',state='normal')
+                                p_canvas_3.itemconfig('nplabel10',state='normal')
+                                p_canvas_3.itemconfig('npcentry3',state='normal')
+                                p_canvas_3.itemconfig('nplabel20',state='normal')
+                                p_canvas_3.itemconfig('npcombo6',state='normal')
+                                p_canvas_3.itemconfig('npbutton4',state='normal')
+                                p_canvas_3.itemconfig('nplabel21',state='normal')
+                                p_canvas_3.itemconfig('npentry11',state='normal')
+                                p_canvas_3.itemconfig('nplabel22',state='normal')
+                                p_canvas_3.itemconfig('npcombo7',state='normal')
+                            else:
+                                pass
+
+                        chk_str_non_pitem = BooleanVar()
+                        chkbtn_non_pitem = Checkbutton(p_canvas_3, text = "I Purchase this product/service from Supplier.", variable = chk_str_non_pitem, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=p_non_check)
                         window_chkbtn_non_pitem = p_canvas_3.create_window(0, 0, anchor="nw", window=chkbtn_non_pitem,tags=('npentry9'))
 
 
                         label_1 = Label(p_canvas_3,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel18'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel18'),state=HIDDEN)
 
-                        entry_non_item_9=Entry(p_canvas_3,width=200,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_non_item_9 = p_canvas_3.create_window(0, 0, anchor="nw", height=60,window=entry_non_item_9,tags=('npentry10'))
+                        entry_non_item_9=scrolledtext.ScrolledText(p_canvas_3,width=145,background='#2f516f',foreground="white")
+                        window_entry_non_item_9 = p_canvas_3.create_window(0, 0, anchor="nw", height=60,window=entry_non_item_9,tags=('npentry10'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_3,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel9'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel9'),state=HIDDEN)
                         
                         entry_non_item_10=Entry(p_canvas_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_non_item_10 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_10,tags=('npcentry2'))
+                        window_entry_non_item_10 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_10,tags=('npcentry2'),state=HIDDEN)
 
                         chk_str_non_item_2 = StringVar()
                         chkbtn_non_item_2 = Checkbutton(p_canvas_3, text = "Inclusive of purchase tax", variable = chk_str_non_item_2, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
                         chkbtn_non_item_2.select()
-                        window_chkbtn_non_item_2 = p_canvas_3.create_window(0, 0, anchor="nw", window=chkbtn_non_item_2,tags=('npcbutton2'))
+                        window_chkbtn_non_item_2 = p_canvas_3.create_window(0, 0, anchor="nw", window=chkbtn_non_item_2,tags=('npcbutton2'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_3,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel10'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel10'),state=HIDDEN)
 
-                        comb_non_item_5 = ttk.Combobox(p_canvas_3, font=('arial 10'),foreground="white")
+                        comb_non_item_5 = ttk.Combobox(p_canvas_3, font=('arial 10'))
                         comb_non_item_5['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
-                        comb_non_item_5.current(0)
-                        window_comb_non_item_5 = p_canvas_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_item_5,tags=('npcentry3'))
+                        #comb_non_item_5.current(0)
+                        window_comb_non_item_5 = p_canvas_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_item_5,tags=('npcentry3'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_3,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel20'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel20'),state=HIDDEN)
 
-                        comb_non_item_6 = ttk.Combobox(p_canvas_3, font=('arial 10'),foreground="white")
+                        comb_non_item_6 = ttk.Combobox(p_canvas_3, font=('arial 10'))
                         comb_non_item_6['values'] = ("Choose","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Continuing Education","Depreciation Expense","Dues and Subscriptions","House Keeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Interest Expenses","Meals and Entertainment","Office Supplies","Postage and Delivery","Printing and Reproduction","Professional Fees","Purchases","Rent Expense","Repair and Maintanance","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities",)
-                        comb_non_item_6.current(0)
-                        window_comb_non_item_6 = p_canvas_3.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_non_item_6,tags=('npcombo6'))
+                        #comb_non_item_6.current(0)
+                        window_comb_non_item_6 = p_canvas_3.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_non_item_6,tags=('npcombo6'),state=HIDDEN)
 
                         def non_exp_acc_1():
                             pro_frame_3.grid_forget()
@@ -6026,7 +6269,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_3_2,width=10,height=1,text="Account Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=label_1,tags=('ealabel2'))
 
-                            comb_non_3_1 = ttk.Combobox(p_canvas_3_2, font=('arial 10'),foreground="white")
+                            comb_non_3_1 = ttk.Combobox(p_canvas_3_2, font=('arial 10'))
                             comb_non_3_1['values'] = ("Expense",)
                             comb_non_3_1.current(0)
                             window_comb_non_3_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_3_1,tags=('eacombo1'))
@@ -6034,13 +6277,13 @@ def main_sign_in():
                             label_1 = Label(p_canvas_3_2,width=5,height=1,text="*Name", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=label_1,tags=('ealabel3'))
 
-                            entry_non_3_2=Entry(p_canvas_3_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                            entry_non_3_2=Entry(p_canvas_3_2,width=90,justify=LEFT,background='#2f516f')
                             window_entry_non_3_2 = p_canvas_3_2.create_window(0, 0, anchor="nw", height=30,window=entry_non_3_2,tags=('eaentry1'))
 
                             label_1 = Label(p_canvas_3_2,width=10,height=1,text="*Detail Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=label_1,tags=('ealabel4'))
 
-                            comb_non_3_2 = ttk.Combobox(p_canvas_3_2, font=('arial 10'),foreground="white")
+                            comb_non_3_2 = ttk.Combobox(p_canvas_3_2, font=('arial 10'))
                             comb_non_3_2['values'] = ("Advertising/Promotional","Amortisation Expense","Auto","Bad Debts","Bank Charges","Borrowing Cost","Charitable Contributions","Commision and Fees","Cost of Labour","Dues and Subscriptions","Equipment Rental","Finance Costs","Income Tax Expense","Insurance","Interest Paid","Legal and Professional Fees","Loss on Discontinued Operations, Net of Tax","Management Compensation","Meals and Entertainment","Office/General Administrative Expenses","Other Miscellaneous Service Cost","Other Selling Expenses","Payroll Expenses","Rent or Lease of Building","Repair and Maintanance","Shipping and Delivery Expense","Shipping, Freight and Delivery","Supplies and Materials","Taxes Paid","Travel Expenses-Gereral and Admin Expenses","Travel Expenses-Selling Expense","Unapplied Cash Bill Payment Expense","Utilities",)
                             comb_non_3_2.current(0)
                             window_comb_non_3_2 = p_canvas_3_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_3_2,tags=('eacombo2'))
@@ -6060,7 +6303,7 @@ def main_sign_in():
                             chkbtn_non_3_1.select()
                             window_chkbtn_non_3_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=chkbtn_non_3_1,tags=('eacheck1'))
 
-                            comb_non_3_3 = ttk.Combobox(p_canvas_3_2, font=('arial 10'),foreground="white")
+                            comb_non_3_3 = ttk.Combobox(p_canvas_3_2, font=('arial 10'))
                             comb_non_3_3['values'] = ("Deferred CGST","Deferred GST Input Credit","Deferred IGST","Deferred Krishi Kalyan Cess Input Credit","Deferred Service Tax Input Credit","Deferred SGST","Deferred VAT Input Credit","GST Refund","Inventory Asset","Paid Insurance","Service Tax Refund","TDS Receivable","Uncategorised Asset","Accumulated Depreciation","Building and Improvements","Furniture and Equipment","Land","Leasehold Improvements","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi Kalyan Cess","Input Krishi Kalyan Cess RCM","Input Service Tax","Input Service Tax RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Input VAT 5%","Krishi Kalyan Cess Payable","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output Service Tax","Output Sevice Tax RCM","Output SGST","Output SGST Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","Service Tax Payable","service Tax Suspense","SGST Payable","SGST Suspense","Swachh Barath Cess Payable" ,"Swachh Barath Cess Suspense" ,"TDS Payable" ,"VAT Payable","VAT Suspense","Opening Balance","Equity",)
                             comb_non_3_3.current(0)
                             window_comb_non_3_3 = p_canvas_3_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_3_3,tags=('eacombo3'))
@@ -6068,7 +6311,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_3_2,width=15,height=1,text="Default Tax Code", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=label_1,tags=('ealabel6'))
 
-                            comb_non_3_4 = ttk.Combobox(p_canvas_3_2, font=('arial 10'),foreground="white")
+                            comb_non_3_4 = ttk.Combobox(p_canvas_3_2, font=('arial 10'))
                             comb_non_3_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
                             comb_non_3_4.current(0)
                             window_comb_non_3_4 = p_canvas_3_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_3_4,tags=('eacombo4'))
@@ -6084,25 +6327,32 @@ def main_sign_in():
                             window_ebck_btn1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=ebck_btn1,tags=('eabutton3'))
 
                         expense_non_btn=Button(p_canvas_3,text='+', width=5,height=1,foreground="white",background="#1b3857",font='arial 12',command=non_exp_acc_1)
-                        window_expense_non_btn = p_canvas_3.create_window(0, 0, anchor="nw", window=expense_non_btn,tags=('npbutton4'))
+                        window_expense_non_btn = p_canvas_3.create_window(0, 0, anchor="nw", window=expense_non_btn,tags=('npbutton4'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_3,width=15,height=1,text="Reverse Charge %", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel21'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel21'),state=HIDDEN)
 
-                        str_non_item_2 = StringVar()
-                        entry_non_item_11=Entry(p_canvas_3,width=50,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_non_item_2)
-                        str_non_item_2.set(' 0')
-                        window_entry_non_item_11 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_11,tags=('npentry11'))
+                        def pr_2(event):
+                            if entry_non_item_11.get()=="0":
+                                entry_non_item_11.delete(0,END)
+                            else:
+                                pass
+
+                        entry_non_item_11=Entry(p_canvas_3,width=50,justify=LEFT,background='#2f516f',foreground="white")
+                        window_entry_non_item_11 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_11,tags=('npentry11'),state=HIDDEN)
+                        entry_non_item_11.insert(0,"0")
+                        entry_non_item_11.bind("<Button-1>",pr_2)
+
 
                         label_1 = Label(p_canvas_3,width=15,height=1,text="Preferred Supplier", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel22'))
+                        window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel22'),state=HIDDEN)
 
-                        comb_non_item_7 = ttk.Combobox(p_canvas_3, font=('arial 10'),foreground="white")
+                        comb_non_item_7 = ttk.Combobox(p_canvas_3, font=('arial 10'))
                         comb_non_item_7['values'] = ("Select Supplier",)
-                        comb_non_item_7.current(0)
-                        window_comb_non_item_7 = p_canvas_3.create_window(0, 0, anchor="nw", width=345, height=30,window=comb_non_item_7,tags=('npcombo7'))
+                        #comb_non_item_7.current(0)
+                        window_comb_non_item_7 = p_canvas_3.create_window(0, 0, anchor="nw", width=345, height=30,window=comb_non_item_7,tags=('npcombo7'),state=HIDDEN)
 
-                        non_sub_btn1=Button(p_canvas_3,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                        non_sub_btn1=Button(p_canvas_3,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_new_pro_non)
                         window_non_sub_btn1 = p_canvas_3.create_window(0, 0, anchor="nw", window=non_sub_btn1,tags=('npbutton5'))
 
                     p_btn_2=Button(p_canvas_1,text='Add Item', width=20,height=1,foreground="white",background="blue",font='arial 12',command=non_add_item)
@@ -6298,6 +6548,44 @@ def main_sign_in():
                         p_canvas_4.config(yscrollcommand=vertibar.set)
                         p_canvas_4.grid(row=0,column=0,sticky='nsew')
 
+                        def add_new_pro_ser():
+                            name = entry_ser_item_1.get()
+                            sku = entry_ser_iitem_2.get()
+                            sac = entry_ser_item_2.get()
+                            unit = comb_ser_item_1.get()
+                            categ = entry_ser_item_3.get()
+                            descr = entry_ser_item_7.get('1.0', 'end-1c')
+                            saleprice = entry_ser_item_s8.get()
+                            income = comb_ser_item_6.get()
+                            tax = comb_ser_item_3.get()
+                            abatement = entry_ser_iitem_11.get()
+                            sertype = comb_ser_iitem_7.get()
+                            purchasedescr = entry_ser_item_9.get('1.0', 'end-1c')
+                            cost = entry_ser_item_10.get()
+                            expenseaccount = comb_ser_item_e6.get()
+                            purchasetax = comb_ser_item_5.get()
+                            revcharge = entry_sser_item_11.get()
+                            presupplier = comb_ser_item_ps7.get()
+
+                            usrp2_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usrp2_val = (nm_ent.get(),)
+                            fbcursor.execute(usrp2_sql,usrp2_val)
+                            usrp2_data = fbcursor.fetchone()
+
+                            cmpp2_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmpp2_val = (usrp2_data[0],)
+                            fbcursor.execute(cmpp2_sql,cmpp2_val)
+                            cmpp2_data = fbcursor.fetchone()
+                            cid = cmpp2_data[0]
+
+                            s_p_sql = "INSERT INTO app1_service(name,sku,sac,unit,categ,descr,saleprice,income,tax,abatement,sertype,purchasedescr,cost,expenseaccount,purchasetax,revcharge,presupplier,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                            s_p_val = (name,sku,sac,unit,categ,descr,saleprice,income,tax,abatement,sertype,purchasedescr,cost,expenseaccount,purchasetax,revcharge,presupplier,cid)
+                            fbcursor.execute(s_p_sql,s_p_val)
+                            finsysdb.commit()
+
+                            pro_frame_4.destroy()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
+
 
                         p_canvas_4.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('sppoly1'))
 
@@ -6325,24 +6613,35 @@ def main_sign_in():
                         label_1 = Label(p_canvas_4,width=5,height=1,text="SKU", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1, tags=('splabel4'))
 
-                        str_ser_item_1 = StringVar()
-                        entry_ser_iitem_2=Entry(p_canvas_4,width=90,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_ser_item_1)
-                        str_ser_item_1.set('  Eg: N41554')
+                        def ps_3(event):
+                            if entry_ser_iitem_2.get()=="N41554":
+                                entry_ser_iitem_2.delete(0,END)
+                            else:
+                                pass
+
+                        entry_ser_iitem_2=Entry(p_canvas_4,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_ser_iitem_2 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_ser_iitem_2, tags=('spentry2'))
+                        entry_ser_iitem_2.insert(0,"N41554")
+                        entry_ser_iitem_2.bind("<Button-1>",ps_3)
 
                         label_1 = Label(p_canvas_4,width=9,height=1,text="SAC Code", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1, tags=('splabel5'))
 
-                        str_ser_iitem_1 = StringVar()
-                        entry_ser_item_2=Entry(p_canvas_4,width=90,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_ser_iitem_1)
-                        str_ser_iitem_1.set(' Eg: 998841-Coke and refined petroleum product manufacturing services')
+                        def p_sac_1(event):
+                            if entry_ser_item_2.get()=="Eg: 998841-Coke and refined petroleum product manufacturing services":
+                                entry_ser_item_2.delete(0,END)
+                            else:
+                                pass
+                        entry_ser_item_2=Entry(p_canvas_4,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_ser_item_2 = p_canvas_4.create_window(710, 630, anchor="nw", height=30,window=entry_ser_item_2, tags=('spentry3'))
+                        entry_ser_item_2.insert(0,"Eg: 998841-Coke and refined petroleum product manufacturing services")
+                        entry_ser_item_2.bind("<Button-1>",p_sac_1)
 
 
                         label_1 = Label(p_canvas_4,width=5,height=1,text="Unit", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1, tags=('splabel7'))
 
-                        comb_ser_item_1 = ttk.Combobox(p_canvas_4, font=('arial 10'),foreground="white")
+                        comb_ser_item_1 = ttk.Combobox(p_canvas_4, font=('arial 10'))
                         comb_ser_item_1['values'] = ("Choose Unit Quantity Code(UQC)...","BAG-BAGS","BAL-BALE","BDL-BUNDLES","BKL-BUCKLES","BOX-BOX","BOU-BILLIONS OF UNITS","BTL-BOTTLES","BUN-BUNCHES","CAN-CANS","CBM-CUBIC METER","CMS-CENTIMETER","CCM-CUBIC CENTIMETER","CTN-CARTONS","DOZ-DOZEN","DRM-DRUM","GGR-GREAT GROSS","GMS-GRAMS","GRS-GROSS","GYD-GRODD YARDS","KGS-KILOGRAMS","KLR-KILOLITER","KME-KILOMETRE","MTS-METRIC TON","MLT-MILLILITRE","MTR-METERS","NOS-NUMBER","PAC-PACKS","PCS-PIECES","PRS-PAIRS","QTL-QUINTAL","ROL-ROLLS","SQF-SQUARE FEET","SET-SETS","SQM-SQUARE METERS","SQY-SQUARE YARDS","TBS-TABLETS","TGM-TEN GROSS","THD-THOUSAND","TON-TONNES","TUB-TUBES","UGS-US GALLONS","UNT-UNITS","YDS-YARDS","OTH-OTHERS",)
                         comb_ser_item_1.current(0)
                         window_comb_ser_item_1 = p_canvas_4.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_item_1, tags=('spcombo1'))
@@ -6359,43 +6658,64 @@ def main_sign_in():
                         label_1 = Label(p_canvas_4,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel12'))
 
-                        chk_str_ser_item = StringVar()
-                        chkbtn_ser_item = Checkbutton(p_canvas_4, text = "I sell this product/service to my customers.", variable = chk_str_ser_item, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        def d_ser_check():
+
+                            if chk_str_ser_item.get() == True:
+                                p_canvas_4.itemconfig('splabel13',state='normal')
+                                p_canvas_4.itemconfig('spentry7',state='normal')
+                                p_canvas_4.itemconfig('splabel14',state='normal')
+                                p_canvas_4.itemconfig('spentry8',state='normal')
+                                p_canvas_4.itemconfig('spcbutton1',state='normal')
+                                p_canvas_4.itemconfig('splabel15',state='normal')
+                                p_canvas_4.itemconfig('spcombo3',state='normal')
+                                p_canvas_4.itemconfig('splabel16',state='normal')
+                                p_canvas_4.itemconfig('spcombo4',state='normal')
+                                p_canvas_4.itemconfig('spbutton3',state='normal')
+                                p_canvas_4.itemconfig('splabel23',state='normal')
+                                p_canvas_4.itemconfig('spentry12',state='normal')
+                                p_canvas_4.itemconfig('splabel24',state='normal')
+                                p_canvas_4.itemconfig('spcombo8',state='normal')
+                            else:
+                                pass
+
+                        chk_str_ser_item = BooleanVar()
+                        chkbtn_ser_item = Checkbutton(p_canvas_4, text = "I sell this product/service to my customers.", variable = chk_str_ser_item, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=d_ser_check)
                         window_chkbtn_ser_item = p_canvas_4.create_window(0, 0, anchor="nw", window=chkbtn_ser_item,tags=('spbutton2'))
 
-                        label_1 = Label(p_canvas_4,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel13'))
+                        label_d1 = Label(p_canvas_4,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_d1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_d1,tags=('splabel13'),state=HIDDEN)
 
-                        entry_ser_item_7=Entry(p_canvas_4,width=200,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ser_item_7 = p_canvas_4.create_window(0, 0, anchor="nw", height=60,window=entry_ser_item_7,tags=('spentry7'))
+                        entry_ser_item_7=scrolledtext.ScrolledText(p_canvas_4,width=145,background='#2f516f',foreground="white")
+                        window_entry_ser_item_7 = p_canvas_4.create_window(0, 0, anchor="nw", height=60,window=entry_ser_item_7,tags=('spentry7'),state=HIDDEN)
+
 
                         label_1 = Label(p_canvas_4,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel14'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel14'),state=HIDDEN)
                         
-                        entry_non_item_8=Entry(p_canvas_4,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_non_item_8 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_8,tags=('spentry8'))
+                        entry_ser_item_s8=Entry(p_canvas_4,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_entry_ser_item_s8 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_ser_item_s8,tags=('spentry8'),state=HIDDEN)
 
-                        chk_str_ser_item_1 = StringVar()
+                        chk_str_ser_item_1 = IntVar()
                         chkbtn_ser_item_1 = Checkbutton(p_canvas_4, text = "Inclusive of tax", variable = chk_str_ser_item_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
                         chkbtn_ser_item_1.select()
-                        window_chkbtn_ser_item_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=chkbtn_ser_item_1,tags=('spcbutton1'))
+                        window_chkbtn_ser_item_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=chkbtn_ser_item_1,tags=('spcbutton1'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_4,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel15'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel15'),state=HIDDEN)
 
-                        comb_ser_item_3 = ttk.Combobox(p_canvas_4, font=('arial 10'),foreground="white")
+                        comb_ser_item_3 = ttk.Combobox(p_canvas_4, font=('arial 10'))
                         comb_ser_item_3['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
                         comb_ser_item_3.current(0)
-                        window_comb_ser_item_3 = p_canvas_4.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_item_3,tags=('spcombo3'))
+                        window_comb_ser_item_3 = p_canvas_4.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_item_3,tags=('spcombo3'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_4,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel16'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel16'),state=HIDDEN)
 
                         
-                        comb_ser_item_6 = ttk.Combobox(p_canvas_4, font=('arial 10'),foreground="white")
+                        comb_ser_item_6 = ttk.Combobox(p_canvas_4, font=('arial 10'))
                         comb_ser_item_6['values'] = ("Choose...","Billable Expense income","Product Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales Discounts","Sales of Product Income","Cost of sales","Equipment Rental for Jobs","Uncategorised Income","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Depreciation Expense","Dues and Subscriptions","Housekeeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Internet Expenses","Meals and Enetrtainments","Office Suppliers","Postage and Delivery","Printing and Reprooduction","Professional Fees","Purchases","Rent Expense","Repair and Maintananace","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities","Finance charge Income","Insurance Proceeds Received","Interest Income","Proceeds From Sale os Assets","Shipping and delivery Income","Ask My Accountant","CGST Write-off","GST Write-off","IGST Write-off","Miscellaneous Expense","Political Contributions","Reconcilation Discrepancies","SGST Write-off","Vehicles","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi kalyan Cess","Input Krishi kalyan Cess RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Krishi Kalyan Cess Payable","Input VAT 5%","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output SGST Tax RCM","Output Service Tax","Output Service Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","SGST Payable","Service Tax Payable","Srvice Tax Suspense","Swachh Barath Cess Payable","TDS Payable","VAT Payable","VAT Suspense","Deferred CGST","Deferred GST Input credit","Deferred IGST","Deferred SGST","Deferred Service Tax Input Credit","Deferred VAT Input Credit","GST Refund","Inventory Asset","Krishi Kalyan Cess Refund","Prepaid Insurance","Sevice Tax Refund","TDS Receivable","Uncategorised Asset","Undeposited Fund","Billable Expense Income","Consulting Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and maintanance","Sales Discount","Sales of Product Income","Uncategorised Income","accumulated Depreciation","Building and Improvements","Furniture and Equipments","Land","Leasehold Improvements","Vehicles","Retained Earnings","Cost of Sales","Equipment Rental for Jobs","Freight and Shipping Costs","Merchant Account Fees","Purchases-Hardware for Resales","Purchases-Software for Resales","Subcontracted Services","Tools and Craft Suppliers",)
                         comb_ser_item_6.current(0)
-                        window_comb_ser_item_6 = p_canvas_4.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_ser_item_6,tags=('spcombo4'))
+                        window_comb_ser_item_6 = p_canvas_4.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_ser_item_6,tags=('spcombo4'),state=HIDDEN)
 
                         def ser_inc_acc_1():
                             pro_frame_4.grid_forget()
@@ -6578,66 +6898,92 @@ def main_sign_in():
                             window_bck_btn1 = p_canvas_4_1.create_window(0, 0, anchor="nw", window=bck_btn1,tags=('sabutton3'))
 
                         income_ser_btn=Button(p_canvas_4,text='+', width=5,height=1,foreground="white",background="#1b3857",font='arial 12',command=ser_inc_acc_1)
-                        window_income_ser_btn = p_canvas_4.create_window(0, 0, anchor="nw", window=income_ser_btn,tags=('spbutton3'))
+                        window_income_ser_btn = p_canvas_4.create_window(0, 0, anchor="nw", window=income_ser_btn,tags=('spbutton3'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_4,width=10,height=1,text="Abatement %", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel23'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel23'),state=HIDDEN)
 
-                        str_ser_iitem_2 = StringVar()
-                        entry_ser_iitem_11=Entry(p_canvas_4,width=50,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_ser_iitem_2)
-                        str_ser_iitem_2.set(' 0')
-                        window_entry_ser_iitem_11 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_ser_iitem_11,tags=('spentry12'))
+                        def pa_1(event):
+                            if entry_ser_iitem_11.get()=="0":
+                                entry_ser_iitem_11.delete(0,END)
+                            else:
+                                pass
+
+                        entry_ser_iitem_11=Entry(p_canvas_4,width=50,justify=LEFT,background='#2f516f',foreground="white")
+                        window_entry_ser_iitem_11 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_ser_iitem_11,tags=('spentry12'),state=HIDDEN)
+                        entry_ser_iitem_11.insert(0,"0")
+                        entry_ser_iitem_11.bind("<Button-1>",pa_1)
 
                         label_1 = Label(p_canvas_4,width=14,height=1,text="Service Type", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel24'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel24'),state=HIDDEN)
 
-                        comb_ser_iitem_7 = ttk.Combobox(p_canvas_4, font=('arial 10'),foreground="white")
+                        comb_ser_iitem_7 = ttk.Combobox(p_canvas_4, font=('arial 10'))
                         comb_ser_iitem_7['values'] = ("Choose...","Stock Broking","Genral Insurance","Courier","Advertsing Agency","Consulting Engineer","Custom House Agent","Steamer Agent","Clearing and Forwarding","Man power Recruiting","Air Travel Agent","Tour operator","Rent a Cab","Architect","Interior Director","Management Consultment","Chartered Accountant","Cost Accountant","Company Scretary","Real Estate Agent","Security Agency","Credit Rating Agency","Market Research Agency","Underwriter","Beauty Parlor","Cargo Handling","Cable Operators","Dry Cleaning","Event Management","Fashion Designer","Life Insurance","Scientific and Technical Consultancy","Photography","Convention Services","Video Tape Production","Sound Recording","Broadcating","Insurance Auxilary Service","banking and Other Financial","Port Services","Authorised Service Station","Health Club and Fitness Centres","Rail Travel Agent","Storage and Warehousing","Business Auxilary","Commercial Coaching","Erection or Installation","Franchise Service","Internet Cafe","Maintanance or Repair","Technical Testing","Technical Inspection","Foreign Exchange Broking","Port","Airport Services","Air Transport","Business Exhibition","Goods Transport","Construction of Commerce Complex","Intellectual Property Service","Opinion Poll Service","Outdoor Catering","Television and Radio Program Production","Survey and Exploration of Minerals","Pandal and Shamiana","Travel Agent","Forward Contract Brokerage","Transport Through Pipeline","Site Preparation","Dredging","Survey and Map Making","Cleaning Service","Clubs and Association Service","Packaging Service","Mailing List Compilation","Residential Complex Construction","Share Transfer Agent","ATM Maintanance","Recovery Agent","Sale of Space for Advertisement","Sponsorship","International Air Travel","Containerised Rail Transport","Business Support Service","Action Service","Public Relation Management","Ship Management","Internet Telephony","Cruise Ship Tour","Credit Card","Telecommunication Service","Mining of Minerals, Oil or Gas","Recting Immovable Property","Works Contract","Development of Consent","Asset Management","Design Services","Information Technology Services","ULIP Management","Stock Exchange Service","Service for Transaction in Goods","Clearing House Services","Supply of Tangiable","Online Inforamtion Retrieval","Mandap keeper",)
                         comb_ser_iitem_7.current(0)
-                        window_comb_ser_iitem_7 = p_canvas_4.create_window(0, 0, anchor="nw", width=345, height=30,window=comb_ser_iitem_7,tags=('spcombo8'))
+                        window_comb_ser_iitem_7 = p_canvas_4.create_window(0, 0, anchor="nw", width=345, height=30,window=comb_ser_iitem_7,tags=('spcombo8'),state=HIDDEN)
 
                         p_canvas_4.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('sphline1'))
 
                         label_1 = Label(p_canvas_4,width=25,height=1,text="Purchasing information", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel17'))
 
-                        chk_str_ser_pitem = StringVar()
-                        chkbtn_ser_pitem = Checkbutton(p_canvas_4, text = "I Purchase this product/service from Supplier.", variable = chk_str_ser_pitem, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        def p_ser_check():
+
+                            if chk_str_ser_pitem.get() == True:
+                                p_canvas_4.itemconfig('splabel18',state='normal')
+                                p_canvas_4.itemconfig('spentry10',state='normal')
+                                p_canvas_4.itemconfig('splabel9',state='normal')
+                                p_canvas_4.itemconfig('spcentry2',state='normal')
+                                p_canvas_4.itemconfig('spcbutton2',state='normal')
+                                p_canvas_4.itemconfig('splabel10',state='normal')
+                                p_canvas_4.itemconfig('spcentry3',state='normal')
+                                p_canvas_4.itemconfig('splabel20',state='normal')
+                                p_canvas_4.itemconfig('spcombo6',state='normal')
+                                p_canvas_4.itemconfig('spbutton4',state='normal')
+                                p_canvas_4.itemconfig('splabel21',state='normal')
+                                p_canvas_4.itemconfig('spentry11',state='normal')
+                                p_canvas_4.itemconfig('splabel22',state='normal')
+                                p_canvas_4.itemconfig('spcombo7',state='normal')
+                            else:
+                                pass
+
+                        chk_str_ser_pitem = BooleanVar()
+                        chkbtn_ser_pitem = Checkbutton(p_canvas_4, text = "I Purchase this product/service from Supplier.", variable = chk_str_ser_pitem, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=p_ser_check)
                         window_chkbtn_ser_pitem = p_canvas_4.create_window(0, 0, anchor="nw", window=chkbtn_ser_pitem,tags=('spentry9'))
 
 
                         label_1 = Label(p_canvas_4,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel18'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel18'),state=HIDDEN)
 
-                        entry_ser_item_9=Entry(p_canvas_4,width=200,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ser_item_9 = p_canvas_4.create_window(0, 0, anchor="nw", height=60,window=entry_ser_item_9,tags=('spentry10'))
+                        entry_ser_item_9=scrolledtext.ScrolledText(p_canvas_4,width=145,background='#2f516f',foreground="white")
+                        window_entry_ser_item_9 = p_canvas_4.create_window(0, 0, anchor="nw", height=60,window=entry_ser_item_9,tags=('spentry10'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_4,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel9'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel9'),state=HIDDEN)
                         
                         entry_ser_item_10=Entry(p_canvas_4,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ser_item_10 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_ser_item_10,tags=('spcentry2'))
+                        window_entry_ser_item_10 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_ser_item_10,tags=('spcentry2'),state=HIDDEN)
 
                         chk_str_sser_item_2 = StringVar()
                         chkbtn_sser_item_2 = Checkbutton(p_canvas_4, text = "Inclusive of Tax", variable = chk_str_sser_item_2, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
                         chkbtn_sser_item_2.select()
-                        window_chkbtn_sser_item_2 = p_canvas_4.create_window(0, 0, anchor="nw", window=chkbtn_sser_item_2,tags=('spcbutton2'))
+                        window_chkbtn_sser_item_2 = p_canvas_4.create_window(0, 0, anchor="nw", window=chkbtn_sser_item_2,tags=('spcbutton2'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_4,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel10'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel10'),state=HIDDEN)
 
-                        comb_ser_item_5 = ttk.Combobox(p_canvas_4, font=('arial 10'),foreground="white")
+                        comb_ser_item_5 = ttk.Combobox(p_canvas_4, font=('arial 10'))
                         comb_ser_item_5['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
                         comb_ser_item_5.current(0)
-                        window_comb_ser_item_5 = p_canvas_4.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_item_5,tags=('spcentry3'))
+                        window_comb_ser_item_5 = p_canvas_4.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_item_5,tags=('spcentry3'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_4,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel20'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel20'),state=HIDDEN)
 
-                        comb_ser_item_6 = ttk.Combobox(p_canvas_4, font=('arial 10'),foreground="white")
-                        comb_ser_item_6['values'] = ("Choose","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Continuing Education","Depreciation Expense","Dues and Subscriptions","House Keeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Interest Expenses","Meals and Entertainment","Office Supplies","Postage and Delivery","Printing and Reproduction","Professional Fees","Purchases","Rent Expense","Repair and Maintanance","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities",)
-                        comb_ser_item_6.current(0)
-                        window_comb_ser_item_6 = p_canvas_4.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_ser_item_6,tags=('spcombo6'))
+                        comb_ser_item_e6 = ttk.Combobox(p_canvas_4, font=('arial 10'))
+                        comb_ser_item_e6['values'] = ("Choose","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Continuing Education","Depreciation Expense","Dues and Subscriptions","House Keeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Interest Expenses","Meals and Entertainment","Office Supplies","Postage and Delivery","Printing and Reproduction","Professional Fees","Purchases","Rent Expense","Repair and Maintanance","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities",)
+                        comb_ser_item_e6.current(0)
+                        window_comb_ser_item_e6 = p_canvas_4.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_ser_item_e6,tags=('spcombo6'),state=HIDDEN)
 
                         def ser_exp_acc_1():
                             pro_frame_4.grid_forget()
@@ -6820,25 +7166,31 @@ def main_sign_in():
                             window_sbck_btn2 = p_canvas_4_2.create_window(0, 0, anchor="nw", window=sbck_btn2,tags=('xabutton3'))
 
                         expense_ser_btn=Button(p_canvas_4,text='+', width=5,height=1,foreground="white",background="#1b3857",font='arial 12',command=ser_exp_acc_1)
-                        window_expense_ser_btn = p_canvas_4.create_window(0, 0, anchor="nw", window=expense_ser_btn,tags=('spbutton4'))
+                        window_expense_ser_btn = p_canvas_4.create_window(0, 0, anchor="nw", window=expense_ser_btn,tags=('spbutton4'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_4,width=15,height=1,text="Reverse Charge %", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel21'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel21'),state=HIDDEN)
 
-                        str_sser_iitem_2 = StringVar()
-                        entry_sser_item_11=Entry(p_canvas_4,width=50,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_sser_iitem_2)
-                        str_sser_iitem_2.set(' 0')
-                        window_entry_sser_item_11 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_sser_item_11,tags=('spentry11'))
+                        def pr_3(event):
+                            if entry_sser_item_11.get()=="0":
+                                entry_sser_item_11.delete(0,END)
+                            else:
+                                pass
+
+                        entry_sser_item_11=Entry(p_canvas_4,width=50,justify=LEFT,background='#2f516f',foreground="white")
+                        window_entry_sser_item_11 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_sser_item_11,tags=('spentry11'),state=HIDDEN)
+                        entry_sser_item_11.insert(0,"0")
+                        entry_sser_item_11.bind("<Button-1>",pr_3)
 
                         label_1 = Label(p_canvas_4,width=15,height=1,text="Preferred Supplier", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel22'))
+                        window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel22'),state=HIDDEN)
 
-                        comb_ser_item_7 = ttk.Combobox(p_canvas_4, font=('arial 10'),foreground="white")
-                        comb_ser_item_7['values'] = ("Select Supplier",)
-                        comb_ser_item_7.current(0)
-                        window_comb_ser_item_7 = p_canvas_4.create_window(0, 0, anchor="nw", width=345, height=30,window=comb_ser_item_7,tags=('spcombo7'))
+                        comb_ser_item_ps7 = ttk.Combobox(p_canvas_4, font=('arial 10'))
+                        comb_ser_item_ps7['values'] = ("Select Supplier",)
+                        comb_ser_item_ps7.current(0)
+                        window_comb_ser_item_ps7 = p_canvas_4.create_window(0, 0, anchor="nw", width=345, height=30,window=comb_ser_item_ps7,tags=('spcombo7'),state=HIDDEN)
 
-                        ser_sub_btn1=Button(p_canvas_4,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                        ser_sub_btn1=Button(p_canvas_4,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_new_pro_ser)
                         window_ser_sub_btn1 = p_canvas_4.create_window(0, 0, anchor="nw", window=ser_sub_btn1,tags=('spbutton5'))
 
                     p_btn_3=Button(p_canvas_1,text='Add Item', width=20,height=1,foreground="white",background="blue",font='arial 12',command=ser_add_item)
@@ -6900,7 +7252,7 @@ def main_sign_in():
                             x11 = dwidth/63
                             x21 = dwidth/1.021
                             y11 = dheight/2.8
-                            y21 = dheight/0.29
+                            y21 = dheight/0.45
 
 
                             dcanvas.coords("bppoly2",x11 + r2,y11,
@@ -6990,6 +7342,52 @@ def main_sign_in():
                             dcanvas.coords("bpline13",dwidth/1.366,dheight/0.77,dwidth/1.366,dheight/0.535)
                             dcanvas.coords("bpline14",dwidth/1.21,dheight/0.77,dwidth/1.21,dheight/0.535)
 
+                            dcanvas.coords("bplabel7",dwidth/13,dheight/0.754)
+                            dcanvas.coords("bplabel8",dwidth/3.85,dheight/0.754)
+                            dcanvas.coords("bplabel9",dwidth/2.35,dheight/0.754)
+                            dcanvas.coords("bplabel10",dwidth/1.75,dheight/0.754)
+                            dcanvas.coords("bplabel11",dwidth/1.515,dheight/0.754)
+                            dcanvas.coords("bplabel12",dwidth/1.325,dheight/0.754)
+                            dcanvas.coords("bplabel13",dwidth/1.17,dheight/0.754)
+
+                            dcanvas.coords("bpcombo1",dwidth/17,dheight/0.709)
+                            dcanvas.coords("bpcombo2",dwidth/17,dheight/0.651)
+                            dcanvas.coords("bpcombo3",dwidth/17,dheight/0.604)
+                            dcanvas.coords("bpcombo4",dwidth/17,dheight/0.56)
+
+                            dcanvas.coords("bpentry4",dwidth/4.6,dheight/0.709)
+                            dcanvas.coords("bpentry5",dwidth/4.6,dheight/0.651)
+                            dcanvas.coords("bpentry6",dwidth/4.6,dheight/0.604)
+                            dcanvas.coords("bpentry7",dwidth/4.6,dheight/0.56)
+
+                            dcanvas.coords("bpentry8",dwidth/2.6,dheight/0.709)
+                            dcanvas.coords("bpentry9",dwidth/2.6,dheight/0.651)
+                            dcanvas.coords("bpentry10",dwidth/2.6,dheight/0.604)
+                            dcanvas.coords("bpentry11",dwidth/2.6,dheight/0.56)
+
+                            dcanvas.coords("bpspin1",dwidth/1.81,dheight/0.709)
+                            dcanvas.coords("bpspin2",dwidth/1.81,dheight/0.651)
+                            dcanvas.coords("bpspin3",dwidth/1.81,dheight/0.604)
+                            dcanvas.coords("bpspin4",dwidth/1.81,dheight/0.56)
+
+                            dcanvas.coords("bpspin5",dwidth/1.56,dheight/0.709)
+                            dcanvas.coords("bpspin6",dwidth/1.56,dheight/0.651)
+                            dcanvas.coords("bpspin7",dwidth/1.56,dheight/0.604)
+                            dcanvas.coords("bpspin8",dwidth/1.56,dheight/0.56)
+
+                            dcanvas.coords("bpspin9",dwidth/1.351,dheight/0.709)
+                            dcanvas.coords("bpspin10",dwidth/1.351,dheight/0.651)
+                            dcanvas.coords("bpspin11",dwidth/1.351,dheight/0.604)
+                            dcanvas.coords("bpspin12",dwidth/1.351,dheight/0.56)
+
+                            dcanvas.coords("bpspin13",dwidth/1.195,dheight/0.709)
+                            dcanvas.coords("bpspin14",dwidth/1.195,dheight/0.651)
+                            dcanvas.coords("bpspin15",dwidth/1.195,dheight/0.604)
+                            dcanvas.coords("bpspin16",dwidth/1.195,dheight/0.56)
+
+                            dcanvas.coords("bpbutton2",dwidth/2.3,dheight/0.52)
+
+
 
 
                         p_canvas_5=Canvas(pro_frame_5, bg='#2f516f', width=953, height=600, scrollregion=(0,0,700,2050))
@@ -7004,6 +7402,60 @@ def main_sign_in():
                         p_canvas_5.bind("<Configure>", pro_responsive_widgets_5)
                         p_canvas_5.config(yscrollcommand=vertibar.set)
                         p_canvas_5.grid(row=0,column=0,sticky='nsew')
+
+                        def add_new_pro_bun():
+
+                            name = entry_bun_item_1.get()
+                            sku = entry_bun_iitem_2.get()
+                            description = entry_bun_item_7.get('1.0', 'end-1c')
+                            product1 = bun_comb_1.get()
+                            product2 = bun_comb_2.get()
+                            product3 = bun_comb_3.get()
+                            product4 = bun_comb_4.get()
+                            hsn1 = bun_entry_1.get()
+                            hsn2 = bun_entry_2.get()
+                            hsn3 = bun_entry_3.get()
+                            hsn4 = bun_entry_4.get()
+                            description1 = bun_entry_5.get()
+                            description2 = bun_entry_6.get()
+                            description3 = bun_entry_7.get()
+                            description4 = bun_entry_8.get()
+                            qty1 = bun_entry_9.get()
+                            qty2 = bun_entry_10.get()
+                            qty3 = bun_entry_11.get()
+                            qty4 = bun_entry_12.get()
+                            price1 = bun_entry_13.get()
+                            price2 = bun_entry_14.get()
+                            price3 = bun_entry_15.get()
+                            price4 = bun_entry_16.get()
+                            total1 = bun_entry_17.get()
+                            total2 = bun_entry_18.get()
+                            total3 = bun_entry_19.get()
+                            total4 = bun_entry_20.get()
+                            tax1 = bun_entry_21.get()
+                            tax2 = bun_entry_22.get()
+                            tax3 = bun_entry_23.get()
+                            tax4 = bun_entry_24.get()
+
+
+                            usrp3_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usrp3_val = (nm_ent.get(),)
+                            fbcursor.execute(usrp3_sql,usrp3_val)
+                            usrp3_data = fbcursor.fetchone()
+
+                            cmpp3_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmpp3_val = (usrp3_data[0],)
+                            fbcursor.execute(cmpp3_sql,cmpp3_val)
+                            cmpp3_data = fbcursor.fetchone()
+                            cid = cmpp3_data[0]
+
+                            b_p_sql = "INSERT INTO app1_noninventory(name,sku,description,product1,product2,product3,product4,hsn1,hsn2,hsn3,hsn4,description1,description2,description3,description4,qty1,qty2,qty3,qty4,price1,price2,price3,price4,total1,total2,total3,total4,tax1,tax2,tax3,tax4,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                            b_p_val = (name,sku,description,product1,product2,product3,product4,hsn1,hsn2,hsn3,hsn4,description1,description2,description3,description4,qty1,qty2,qty3,qty4,price1,price2,price3,price4,total1,total2,total3,total4,tax1,tax2,tax3,tax4,cid)
+                            fbcursor.execute(b_p_sql,b_p_val)
+                            finsysdb.commit()
+
+                            pro_frame_5.destroy()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
 
 
                         p_canvas_5.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('bppoly1'))
@@ -7032,15 +7484,22 @@ def main_sign_in():
                         label_1 = Label(p_canvas_5,width=5,height=1,text="SKU", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_1, tags=('bplabel4'))
 
-                        str_bun_item_1 = StringVar()
-                        entry_bun_iitem_2=Entry(p_canvas_5,width=90,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_item_1)
-                        str_bun_item_1.set('  Eg: N41554')
+                        def ps_4(event):
+                            if entry_bun_iitem_2.get()=="N41554":
+                                entry_bun_iitem_2.delete(0,END)
+                            else:
+                                pass
+
+                        entry_bun_iitem_2=Entry(p_canvas_5,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_bun_iitem_2 = p_canvas_5.create_window(0, 0, anchor="nw", height=30,window=entry_bun_iitem_2, tags=('bpentry2'))
+                        entry_bun_iitem_2.insert(0,"N41554")
+                        entry_bun_iitem_2.bind("<Button-1>",ps_4)
+
 
                         label_1 = Label(p_canvas_5,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_1, tags=('bplabel5'))
 
-                        entry_bun_item_7=Entry(p_canvas_5,width=200,justify=LEFT,background='#2f516f',foreground="white")
+                        entry_bun_item_7=scrolledtext.ScrolledText(p_canvas_5,width=145,background='#2f516f',foreground="white")
                         window_entry_bun_item_7 = p_canvas_5.create_window(0, 0, anchor="nw", height=60,window=entry_bun_item_7, tags=('bpentry3'))
 
                         label_1 = Label(p_canvas_5,width=30,height=1,text="Products/services included in the bundle", font=('arial 12'),background="#1b3857",fg="white") 
@@ -7063,153 +7522,187 @@ def main_sign_in():
                         
 
                         label_3 = Label(p_canvas_5,width=15,height=1,text="PRODUCT/SERVICE", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_3 = p_canvas_5.create_window(105, 815, anchor="nw", window=label_3)
+                        window_label_3 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_3,tags=('bplabel7'))
 
                         label_4 = Label(p_canvas_5,width=10,height=1,text="HSN", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = p_canvas_5.create_window(340, 815, anchor="nw", window=label_4)
+                        window_label_4 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_4,tags=('bplabel8'))
 
                         label_4 = Label(p_canvas_5,width=11,height=1,text="DESCRIPTION", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = p_canvas_5.create_window(570, 815, anchor="nw", window=label_4)
+                        window_label_4 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_4,tags=('bplabel9'))
 
                         label_4 = Label(p_canvas_5,width=5,height=1,text="QTY", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = p_canvas_5.create_window(770, 815, anchor="nw", window=label_4)
+                        window_label_4 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_4,tags=('bplabel10'))
 
                         label_4 = Label(p_canvas_5,width=8,height=1,text="PRICE", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = p_canvas_5.create_window(880, 815, anchor="nw", window=label_4)
+                        window_label_4 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_4,tags=('bplabel11'))
 
                         label_4 = Label(p_canvas_5,width=8,height=1,text="TOTAL", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = p_canvas_5.create_window(1005, 815, anchor="nw", window=label_4)
+                        window_label_4 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_4,tags=('bplabel12'))
 
                         label_4 = Label(p_canvas_5,width=8,height=1,text="TAX", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = p_canvas_5.create_window(1150, 815, anchor="nw", window=label_4)
+                        window_label_4 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_4,tags=('bplabel13'))
 
-                        bun_comb_1 = ttk.Combobox(p_canvas_5, font=('arial 10'),foreground="white")
-                        bun_comb_1['values'] = ("Choose",)
-                        bun_comb_1.current(0)
-                        window_bun_comb_1 = p_canvas_5.create_window(80, 870, anchor="nw", width=180, height=30,window=bun_comb_1)
+                        bi_sql = "SELECT name FROM app1_inventory"
+                        fbcursor.execute(bi_sql,)
+                        bi_data = fbcursor.fetchall()
+                       
+                        bii_sql = "SELECT name FROM app1_noninventory"
+                        fbcursor.execute(bii_sql,)
+                        bii_data = fbcursor.fetchall()
 
-                        bun_comb_2 = ttk.Combobox(p_canvas_5, font=('arial 10'),foreground="white")
-                        bun_comb_2['values'] = ("Choose",)
-                        bun_comb_2.current(0)
-                        window_bun_comb_2 = p_canvas_5.create_window(80, 945, anchor="nw", width=180, height=30,window=bun_comb_2)
+                        b_data = []   
+                        
+                        for i in bi_data:
+                            b_data.append(i[0])
+                        for i in bii_data:
+                            b_data.append(i[0])
+                            
 
-                        bun_comb_3 = ttk.Combobox(p_canvas_5, font=('arial 10'),foreground="white")
-                        bun_comb_3['values'] = ("Choose",)
-                        bun_comb_3.current(0)
-                        window_bun_comb_3 = p_canvas_5.create_window(80, 1020, anchor="nw", width=180, height=30,window=bun_comb_3)
 
-                        bun_comb_4 = ttk.Combobox(p_canvas_5, font=('arial 10'),foreground="white")
-                        bun_comb_4['values'] = ("Choose",)
-                        bun_comb_4.current(0)
-                        window_bun_comb_4 = p_canvas_5.create_window(80, 1095, anchor="nw", width=180, height=30,window=bun_comb_4)
+                        bun_comb_1 = ttk.Combobox(p_canvas_5, font=('arial 10'),values=b_data)
+                        # bun_comb_1['values'] = ("Choose",b_data,)
+                        bun_comb_1.bind("<<ComboboxSelected>>")
+                        window_bun_comb_1 = p_canvas_5.create_window(0, 0, anchor="nw", width=180, height=30,window=bun_comb_1,tags=('bpcombo1'))
+
+                        bun_comb_2 = ttk.Combobox(p_canvas_5, font=('arial 10'),values=b_data)
+                        # bun_comb_2['values'] = ("Choose",b_data,)
+                        bun_comb_2.bind("<<ComboboxSelected>>")
+                        window_bun_comb_2 = p_canvas_5.create_window(0, 0, anchor="nw", width=180, height=30,window=bun_comb_2,tags=('bpcombo2'))
+
+                        bun_comb_3 = ttk.Combobox(p_canvas_5, font=('arial 10'),values=b_data)
+                        # bun_comb_3['values'] = ("Choose",b_data,)
+                        bun_comb_3.bind("<<ComboboxSelected>>")
+                        window_bun_comb_3 = p_canvas_5.create_window(0, 0, anchor="nw", width=180, height=30,window=bun_comb_3,tags=('bpcombo3'))
+
+                        bun_comb_4 = ttk.Combobox(p_canvas_5, font=('arial 10'),values=b_data)
+                        # bun_comb_4['values'] = ("Choose",b_data,)
+                        bun_comb_4.bind("<<ComboboxSelected>>")
+                        window_bun_comb_4 = p_canvas_5.create_window(0, 0, anchor="nw", width=180, height=30,window=bun_comb_4,tags=('bpcombo4'))
+
+                        i_sql_1 = "SELECT * FROM app1_inventory"
+                        fbcursor.execute(i_sql_1)
+                        i_record = fbcursor.fetchone()
 
                         bun_entry_1=Entry(p_canvas_5,width=30,justify=LEFT,background='#2f516f',foreground="white")
-                        window_bun_entry_1 = p_canvas_5.create_window(295, 870, anchor="nw", height=30, window=bun_entry_1)
+                        window_bun_entry_1 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_1,tags=('bpentry4'))
+                        # bun_entry_1.delete(0,'end')
+                        # bun_entry_1.insert(0, i_record[4])
 
                         bun_entry_2=Entry(p_canvas_5,width=30,justify=LEFT,background='#2f516f',foreground="white")
-                        window_bun_entry_2 = p_canvas_5.create_window(295, 945, anchor="nw", height=30, window=bun_entry_2)
+                        window_bun_entry_2 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_2,tags=('bpentry5'))
+                        # bun_entry_2.delete(0,'end')
+                        # bun_entry_2.insert(0, i_record[4])
 
                         bun_entry_3=Entry(p_canvas_5,width=30,justify=LEFT,background='#2f516f',foreground="white")
-                        window_bun_entry_3 = p_canvas_5.create_window(295, 1020, anchor="nw", height=30, window=bun_entry_3)
+                        window_bun_entry_3 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_3,tags=('bpentry6'))
+                        # bun_entry_3.delete(0,'end')
+                        # bun_entry_3.insert(0, i_record[4])
 
                         bun_entry_4=Entry(p_canvas_5,width=30,justify=LEFT,background='#2f516f',foreground="white")
-                        window_bun_entry_4 = p_canvas_5.create_window(295, 1095, anchor="nw", height=30, window=bun_entry_4)
+                        window_bun_entry_4 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_4,tags=('bpentry7'))
+                        # bun_entry_4.delete(0,'end')
+                        # bun_entry_4.insert(0, i_record[4])
+
+
 
                         bun_entry_5=Entry(p_canvas_5,width=32,justify=LEFT,background='#2f516f',foreground="white")
-                        window_bun_entry_5 = p_canvas_5.create_window(520, 870, anchor="nw", height=30, window=bun_entry_5)
+                        window_bun_entry_5 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_5,tags=('bpentry8'))
 
                         bun_entry_6=Entry(p_canvas_5,width=32,justify=LEFT,background='#2f516f',foreground="white")
-                        window_bun_entry_6 = p_canvas_5.create_window(520, 945, anchor="nw", height=30, window=bun_entry_6)
+                        window_bun_entry_6 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_6,tags=('bpentry9'))
 
                         bun_entry_7=Entry(p_canvas_5,width=32,justify=LEFT,background='#2f516f',foreground="white")
-                        window_bun_entry_7 = p_canvas_5.create_window(520, 1020, anchor="nw", height=30, window=bun_entry_7)
+                        window_bun_entry_7 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_7,tags=('bpentry10'))
 
                         bun_entry_8=Entry(p_canvas_5,width=32,justify=LEFT,background='#2f516f',foreground="white")
-                        window_bun_entry_8 = p_canvas_5.create_window(520, 1095, anchor="nw", height=30, window=bun_entry_8)
-
-                        str_bun_entry_9 = StringVar()
-                        bun_entry_9=Entry(p_canvas_5,width=15,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_9)
-                        str_bun_entry_9.set(' 0')
-                        window_bun_entry_9 = p_canvas_5.create_window(745, 870, anchor="nw", height=30, window=bun_entry_9)
-
-                        str_bun_entry_10 = StringVar()
-                        bun_entry_10=Entry(p_canvas_5,width=15,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_10)
-                        str_bun_entry_10.set(' 0')
-                        window_bun_entry_10 = p_canvas_5.create_window(745, 945, anchor="nw", height=30, window=bun_entry_10)
-
-                        str_bun_entry_11 = StringVar()
-                        bun_entry_11=Entry(p_canvas_5,width=15,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_11)
-                        str_bun_entry_11.set(' 0')
-                        window_bun_entry_11 = p_canvas_5.create_window(745, 1020, anchor="nw", height=30, window=bun_entry_11)
-
-                        str_bun_entry_12 = StringVar()
-                        bun_entry_12=Entry(p_canvas_5,width=15,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_12)
-                        str_bun_entry_12.set(' 0')
-                        window_bun_entry_12 = p_canvas_5.create_window(745, 1095, anchor="nw", height=30, window=bun_entry_12)
-
-                        str_bun_entry_13 = StringVar()
-                        bun_entry_13=Entry(p_canvas_5,width=18,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_13)
-                        str_bun_entry_13.set(' 0.0')
-                        window_bun_entry_13 = p_canvas_5.create_window(860, 870, anchor="nw", height=30, window=bun_entry_13)
-
-                        str_bun_entry_14 = StringVar()
-                        bun_entry_14=Entry(p_canvas_5,width=18,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_14)
-                        str_bun_entry_14.set(' 0.0')
-                        window_bun_entry_14 = p_canvas_5.create_window(860, 945, anchor="nw", height=30, window=bun_entry_14)
-
-                        str_bun_entry_15 = StringVar()
-                        bun_entry_15=Entry(p_canvas_5,width=18,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_15)
-                        str_bun_entry_15.set(' 0.0')
-                        window_bun_entry_15 = p_canvas_5.create_window(860, 1020, anchor="nw", height=30, window=bun_entry_15)
-
-                        str_bun_entry_16 = StringVar()
-                        bun_entry_16=Entry(p_canvas_5,width=18,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_16)
-                        str_bun_entry_16.set(' 0.0')
-                        window_bun_entry_16 = p_canvas_5.create_window(860, 1095, anchor="nw", height=30, window=bun_entry_16)
-
-                        str_bun_entry_17 = StringVar()
-                        bun_entry_17=Entry(p_canvas_5,width=18,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_17)
-                        str_bun_entry_17.set(' 0.0')
-                        window_bun_entry_17 = p_canvas_5.create_window(990, 870, anchor="nw", height=30, window=bun_entry_17)
-
-                        str_bun_entry_18 = StringVar()
-                        bun_entry_18=Entry(p_canvas_5,width=18,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_18)
-                        str_bun_entry_18.set(' 0.0')
-                        window_bun_entry_18 = p_canvas_5.create_window(990, 945, anchor="nw", height=30, window=bun_entry_18)
-
-                        str_bun_entry_19 = StringVar()
-                        bun_entry_19=Entry(p_canvas_5,width=18,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_19)
-                        str_bun_entry_19.set(' 0.0')
-                        window_bun_entry_19 = p_canvas_5.create_window(990, 1020, anchor="nw", height=30, window=bun_entry_19)
-
-                        str_bun_entry_20 = StringVar()
-                        bun_entry_20=Entry(p_canvas_5,width=18,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_20)
-                        str_bun_entry_20.set(' 0.0')
-                        window_bun_entry_20 = p_canvas_5.create_window(990, 1095, anchor="nw", height=30, window=bun_entry_20)
-
-                        str_bun_entry_21 = StringVar()
-                        bun_entry_21=Entry(p_canvas_5,width=19,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_21)
-                        str_bun_entry_21.set(' 0.0')
-                        window_bun_entry_21 = p_canvas_5.create_window(1120, 870, anchor="nw", height=30, window=bun_entry_21)
-
-                        str_bun_entry_22 = StringVar()
-                        bun_entry_22=Entry(p_canvas_5,width=19,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_22)
-                        str_bun_entry_22.set(' 0.0')
-                        window_bun_entry_22 = p_canvas_5.create_window(1120, 945, anchor="nw", height=30, window=bun_entry_22)
-
-                        str_bun_entry_23 = StringVar()
-                        bun_entry_23=Entry(p_canvas_5,width=19,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_23)
-                        str_bun_entry_23.set(' 0.0')
-                        window_bun_entry_23 = p_canvas_5.create_window(1120, 1020, anchor="nw", height=30, window=bun_entry_23)
-
-                        str_bun_entry_24 = StringVar()
-                        bun_entry_24=Entry(p_canvas_5,width=19,justify=LEFT,background='#2f516f',foreground="white",textvariable=str_bun_entry_24)
-                        str_bun_entry_24.set(' 0.0')
-                        window_bun_entry_24 = p_canvas_5.create_window(1120, 1095, anchor="nw", height=30, window=bun_entry_24)
+                        window_bun_entry_8 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_8,tags=('bpentry11'))
 
 
-                        bun_sub_btn1=Button(p_canvas_5,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
-                        window_bun_sub_btn1 = p_canvas_5.create_window(575, 1200, anchor="nw", window=bun_sub_btn1)
+                        bun_entry_9=Spinbox(p_canvas_5,width=14,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_9 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_9,tags=('bpspin1'))
+                        bun_entry_9.delete(0, END)
+                        bun_entry_9.insert(0, '0')
+
+                        bun_entry_10=Spinbox(p_canvas_5,width=14,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_10 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_10,tags=('bpspin2'))
+                        bun_entry_10.delete(0, END)
+                        bun_entry_10.insert(0, '0')
+
+                        bun_entry_11=Spinbox(p_canvas_5,width=14,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_11 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_11,tags=('bpspin3'))
+                        bun_entry_11.delete(0, END)
+                        bun_entry_11.insert(0, '0')
+
+                        bun_entry_12=Spinbox(p_canvas_5,width=14,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_12 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_12,tags=('bpspin4'))
+                        bun_entry_12.delete(0, END)
+                        bun_entry_12.insert(0, '0')
+
+                        
+                        bun_entry_13=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_13 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_13,tags=('bpspin5'))
+                        bun_entry_13.delete(0, END)
+                        bun_entry_13.insert(0, '0.0')
+                        
+                        bun_entry_14=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_14 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_14,tags=('bpspin6'))
+                        bun_entry_14.delete(0, END)
+                        bun_entry_14.insert(0, '0.0')
+
+                        bun_entry_15=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_15 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_15,tags=('bpspin7'))
+                        bun_entry_15.delete(0, END)
+                        bun_entry_15.insert(0, '0.0')
+
+                        bun_entry_16=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_16 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_16,tags=('bpspin8'))
+                        bun_entry_16.delete(0, END)
+                        bun_entry_16.insert(0, '0.0')
+
+                        
+                        bun_entry_17=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_17 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_17,tags=('bpspin9'))
+                        bun_entry_17.delete(0, END)
+                        bun_entry_17.insert(0, '0.0')
+    
+                        bun_entry_18=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_18 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_18,tags=('bpspin10'))
+                        bun_entry_18.delete(0, END)
+                        bun_entry_18.insert(0, '0.0')
+                        
+                        bun_entry_19=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_19 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_19,tags=('bpspin11'))
+                        bun_entry_19.delete(0, END)
+                        bun_entry_19.insert(0, '0.0')
+                       
+                        bun_entry_20=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_20 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_20,tags=('bpspin12'))
+                        bun_entry_20.delete(0, END)
+                        bun_entry_20.insert(0, '0.0')
+
+                        
+                        bun_entry_21=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_21 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_21,tags=('bpspin13'))
+                        bun_entry_21.delete(0, END)
+                        bun_entry_21.insert(0, '0.0')
+
+                        bun_entry_22=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_22 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_22,tags=('bpspin14'))
+                        bun_entry_22.delete(0, END)
+                        bun_entry_22.insert(0, '0.0')
+
+                        bun_entry_23=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_23 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_23,tags=('bpspin15'))
+                        bun_entry_23.delete(0, END)
+                        bun_entry_23.insert(0, '0.0')
+
+                        bun_entry_24=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_24 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_24,tags=('bpspin16'))
+                        bun_entry_24.delete(0, END)
+                        bun_entry_24.insert(0, '0.0')
+
+                        bun_sub_btn1=Button(p_canvas_5,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_new_pro_bun)
+                        window_bun_sub_btn1 = p_canvas_5.create_window(0, 0, anchor="nw", window=bun_sub_btn1,tags=('bpbutton2'))
 
 
                     p_btn_4=Button(p_canvas_1,text='Add Item', width=20,height=1,foreground="white",background="blue",font='arial 12',command=bun_add_item)
@@ -7225,6 +7718,12 @@ def main_sign_in():
 
                 pbtn1=Button(pro_canvas,text='Add Products', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_product)
                 window_pbtn1 = pro_canvas.create_window(0, 0, anchor="nw", window=pbtn1,tags=('pbutton1'))
+
+                pebtn1=Button(pro_canvas,text='Edit', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                window_pebtn1 = pro_canvas.create_window(0, 0, anchor="nw", window=pebtn1,tags=('pbutton2'))
+
+                pdbtn1=Button(pro_canvas,text='Delete', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                window_pdbtn1 = pro_canvas.create_window(0, 0, anchor="nw", window=pdbtn1,tags=('pbutton3'))
 
 
                 #3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333{Expenses Tab}
