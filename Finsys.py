@@ -105,6 +105,11 @@ sign_up=ImageTk.PhotoImage(resized_sign_up)
 
 lowstock = PhotoImage(file="images/lowstock.png")
 outofstock = PhotoImage(file="images/outofstock.png")
+inventory = PhotoImage(file="images/inventory.png")
+noninventory = PhotoImage(file="images/noninventory.png")
+service = PhotoImage(file="images/service.png")
+bundle = PhotoImage(file="images/bundle.png")
+
 
 
 #------------------------------------------------------------------------------------------------------------Login Button Function
@@ -207,7 +212,17 @@ def main_sign_in():
                 tp_lb_npr.grid_rowconfigure(0,weight=1)
                 tp_lb_npr.grid_columnconfigure(0,weight=1)
 
-                label = Label(tp_lb_npr, text="Errors",bg="#213b52", fg="white", anchor="center",width=10,font=('Calibri 16 bold'),border=0)
+                us_sql = "SELECT * FROM auth_user WHERE username=%s"
+                us_val = (nm_ent.get(),)
+                fbcursor.execute(us_sql,us_val)
+                us_data = fbcursor.fetchone()
+
+                cm_sql = "SELECT * FROM app1_company WHERE id_id=%s"
+                cm_val = (us_data[0],)
+                fbcursor.execute(cm_sql,cm_val)
+                cm_data = fbcursor.fetchone()
+
+                label = Label(tp_lb_npr, text=cm_data[1],bg="#213b52", fg="white", anchor="center",width=10,font=('Calibri 16 bold'),border=0)
                 label.grid(row=1,column=1,sticky='nsew')
                 label = Label(tp_lb_npr, text="Online",bg="#213b52", fg="white",width=15,font=('Calibri 12 bold'),border=0)
                 label.grid(row=2,column=1,sticky='nsew')
@@ -723,7 +738,7 @@ def main_sign_in():
 
                         cmp_nm_ent=Entry(pr_canvas,width=55,font=('Calibri 14 bold'))
                         cmp_nm_ent.delete(0,END)
-                        cmp_nm_ent.insert(0,pro_cmp_dtl[2])
+                        cmp_nm_ent.insert(0,pro_cmp_dtl[1])
                         win_info1 = pr_canvas.create_window(0, 0, anchor="nw", window=cmp_nm_ent,tag=("cmp_nm_ent"))
 
                         cmp_cty_lb=Label(pr_canvas, text="City",bg="#213b52", fg="White", anchor="center",font=('Calibri 14 bold'))
@@ -1427,7 +1442,7 @@ def main_sign_in():
                     x11 = dwidth/63
                     x21 = dwidth/1.021
                     y11 = dheight/2.8
-                    y21 = dheight/1.168
+                    y21 = dheight/0.8
 
 
                     dcanvas.coords("ipoly2",x11 + r2,y11,
@@ -1455,31 +1470,14 @@ def main_sign_in():
                     x11,y11,
                     )
 
-                    dcanvas.coords("iline1", dwidth/22.00, dheight/1.8, dwidth/1.060, dheight/1.8)
-                    dcanvas.coords("iline2", dwidth/22.00, dheight/1.8, dwidth/22.00, dheight/1.35)
-                    dcanvas.coords("iline3", dwidth/22.00, dheight/1.35, dwidth/1.060, dheight/1.35)
-                    dcanvas.coords("iline4", dwidth/1.060, dheight/1.8, dwidth/1.060, dheight/1.35)
-                    dcanvas.coords("iline5", dwidth/22.00, dheight/1.575, dwidth/1.060, dheight/1.575)
-                    dcanvas.coords("iline6", dwidth/6.20, dheight/1.8, dwidth/6.20, dheight/1.35)
-                    dcanvas.coords("iline7", dwidth/4.00, dheight/1.8, dwidth/4.00, dheight/1.35)
-                    dcanvas.coords("iline8", dwidth/2.7, dheight/1.8, dwidth/2.7, dheight/1.35)
-                    dcanvas.coords("iline9", dwidth/1.95, dheight/1.8, dwidth/1.95, dheight/1.35)
-                    dcanvas.coords("iline10", dwidth/1.65, dheight/1.8, dwidth/1.65, dheight/1.35)
-                    dcanvas.coords("iline11", dwidth/1.38, dheight/1.8, dwidth/1.38, dheight/1.35)
-                    dcanvas.coords("iline12", dwidth/1.20, dheight/1.8, dwidth/1.20, dheight/1.35)
 
+                   
+                    dcanvas.coords("itree1",dwidth/12,dheight/1.8)
 
-                    dcanvas.coords("ilabel2",dwidth/13.5,dheight/1.74)
-                    dcanvas.coords("ilabel3",dwidth/5.78,dheight/1.74)
-                    dcanvas.coords("ilabel4",dwidth/3.6,dheight/1.74)
-                    dcanvas.coords("ilabel5",dwidth/2.45,dheight/1.74)
-                    dcanvas.coords("ilabel6",dwidth/1.9,dheight/1.74)
-                    dcanvas.coords("ilabel7",dwidth/1.59,dheight/1.74)
-                    dcanvas.coords("ilabel8",dwidth/1.345,dheight/1.74)
-                    dcanvas.coords("ilabel9",dwidth/1.17,dheight/1.74)
-
-                    dcanvas.coords("ibutton1",dwidth/1.28,dheight/2.4)
-                    dcanvas.coords("icombo1",dwidth/1.179,dheight/1.52)
+                    dcanvas.coords("ibutton1",dwidth/3.09,dheight/2.4)
+                    dcanvas.coords("ibutton2",dwidth/2.1,dheight/2.4)
+                    dcanvas.coords("ibutton3",dwidth/1.59,dheight/2.4)
+                    dcanvas.coords("ibutton4",dwidth/1.28,dheight/2.4)
 
 
 
@@ -1506,48 +1504,28 @@ def main_sign_in():
 
                 inv_canvas.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("ipoly2"))
 
+                fgthdi = ttk.Style()
+                fgthdi.configure('mystyle105.Treeview.Heading', background='#2f516f',State='DISABLE')
 
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline1"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline2"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline3"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline4"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline5"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline6"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline7"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline8"))
-                inv_canvas.create_line(0, 0, 0, 0, 
-                fill='gray',width=1,tags=("iline9"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline10"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline11"))
-                inv_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("iline12"))
+                inv_tree = ttk.Treeview(inv_canvas, columns = (1,2,3,4,5,6,7), height = 10, show = "headings",style='mystyle105.Treeview')
+                inv_tree.pack(side = 'top')
+                inv_tree.heading(1, text="INVOICE NO")
+                inv_tree.heading(2, text="INVOICE DATE")
+                inv_tree.heading(3, text="CUSTOMER")
+                inv_tree.heading(4, text="EMAIL ID")
+                inv_tree.heading(5, text="DUE DATE")
+                inv_tree.heading(6, text="GRAND TOTAL")
+                inv_tree.heading(7, text="BALANCE DUE")
                 
-                
+                inv_tree.column(1, width = 130)
+                inv_tree.column(2, width = 130)
+                inv_tree.column(3, width = 220)
+                inv_tree.column(4, width = 210)
+                inv_tree.column(5, width = 150)
+                inv_tree.column(6, width = 130)
+                inv_tree.column(7, width = 150)
 
-                label_2 = Label(inv_canvas,width=10,height=1,text="INVOICE NO", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_2 = inv_canvas.create_window(0, 0, anchor="nw", window=label_2,tags=('ilabel2'))
-
-                label_3 = Label(inv_canvas,width=11,height=1,text="INVOICE DATE", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_3 = inv_canvas.create_window(0, 0, anchor="nw", window=label_3,tags=('ilabel3'))
-
-                label_4 = Label(inv_canvas,width=11,height=1,text="CUSTOMER", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = inv_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('ilabel4'))
-
-                label_4 = Label(inv_canvas,width=11,height=1,text="EMAIL ID", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = inv_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('ilabel5'))
-
-                label_4 = Label(inv_canvas,width=11,height=1,text="DUE DATE", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = inv_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('ilabel6'))
-
-                label_4 = Label(inv_canvas,width=11,height=1,text="GRAND TOTAL", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = inv_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('ilabel7'))
-
-                label_4 = Label(inv_canvas,width=11,height=1,text="BALANCE DUE", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = inv_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('ilabel8'))
-
-                label_4 = Label(inv_canvas,width=11,height=1,text="ACTION", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = inv_canvas.create_window(0, 0, anchor="nw", window=label_4,tags=('ilabel9'))
-
-
+                window_label_4 = inv_canvas.create_window(0, 0, anchor="nw", window=inv_tree,tags=('itree1'))
 
 
                 def add_invoice():
@@ -1765,25 +1743,55 @@ def main_sign_in():
                     label_1 = Label(inv_canvas_1,width=10,height=1,text="Fin sYs", font=('arial 20'),background="#1b3857",fg="white") 
                     window_label_1 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_1, tags=("ailabel2"))
 
-                    label_2 = Label(inv_canvas_1,width=15,height=1,text="Company name", font=('arial 16'),background="#1b3857",fg="skyblue") 
+                    usr_sql = "SELECT * FROM auth_user WHERE username=%s"
+                    usr_val = (nm_ent.get(),)
+                    fbcursor.execute(usr_sql,usr_val)
+                    usr_data = fbcursor.fetchone()
+
+                    cmp_sql = "SELECT * FROM app1_company WHERE id_id=%s"
+                    cmp_val = (usr_data[0],)
+                    fbcursor.execute(cmp_sql,cmp_val)
+                    cmp_data = fbcursor.fetchone()
+
+                    label_2 = Label(inv_canvas_1,width=15,height=1,text=cmp_data[1], font=('arial 16'),background="#1b3857",fg="skyblue") 
                     window_label_2 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel3"))
 
-                    label_2 = Label(inv_canvas_1,width=15,height=1,text="Company email-id", font=('arial 16'),background="#1b3857",fg="skyblue") 
+                    label_2 = Label(inv_canvas_1,width=15,height=1,text=cmp_data[6], font=('arial 16'),background="#1b3857",fg="skyblue") 
                     window_label_2 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel4"))
 
                     label_2 = Label(inv_canvas_1,width=15,height=1,text="Select Customer", font=('arial 12'),background="#1b3857",fg="white") 
                     window_label_2 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel5"))
 
-                    ic_sql = "SELECT firstname FROM app1_customer"
-                    fbcursor.execute(ic_sql,)
-                    ic_data = fbcursor.fetchall()
-                    icdata = []
-                    for i in ic_data:
-                        icdata.append(i[0])
+                    sql_pr="select * from auth_user where username=%s"
+                    sql_pr_val=(nm_ent.get(),)
+                    fbcursor.execute(sql_pr,sql_pr_val,)
+                    pr_dtl=fbcursor.fetchone()
 
-                    aicomb_1 = ttk.Combobox(inv_canvas_1, font=('arial 10'),value=icdata)
-                    # aicomb_1['values'] = ("Select Customer",)
-                    # aicomb_1.current(0)
+                    sql = "select * from app1_company where id_id=%s"
+                    val = (pr_dtl[0],)
+                    fbcursor.execute(sql, val,)
+                    cmp_dtl=fbcursor.fetchone()
+                    print(cmp_dtl)
+
+                    sql_pr_cmp="select firstname from app1_customer where cid_id=%s"
+                    sql_pr_cmp_val=(cmp_dtl[0],)
+                    fbcursor.execute(sql_pr_cmp,sql_pr_cmp_val,)
+                    pr_cmp_dtl=fbcursor.fetchall()
+                    p_i1 = []
+
+                    for i in pr_cmp_dtl:
+                        p_i1.append(i[0])
+
+                    # sql_pr_cmp_1="select lastname from app1_customer where cid_id=%s"
+                    # sql_pr_cmp_val_1=(cmp_dtl[0],)
+                    # fbcursor.execute(sql_pr_cmp_1,sql_pr_cmp_val_1,)
+                    # pr_cmp_dtl_1=fbcursor.fetchall()
+                    # p_i2 = []
+
+                    # for i in pr_cmp_dtl_1:
+                    #     p_i2.append(i[0])
+
+                    aicomb_1 = ttk.Combobox(inv_canvas_1, font=('arial 10'),values=p_i1)
                     aicomb_1.bind("<<ComboboxSelected>>")
                     window_aicomb_1 = inv_canvas_1.create_window(0, 0, anchor="nw", width=200, height=30,window=aicomb_1, tags=("aicombo1"))
                     
@@ -1969,13 +1977,46 @@ def main_sign_in():
                             cmpi_data = fbcursor.fetchone()
                             cid = cmpi_data[0]
 
-                            cus_sql = "INSERT INTO app1_customer (title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                            cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid)
-                            fbcursor.execute(cus_sql,cus_val)
-                            finsysdb.commit()
+                            if ic_chk_str_1.get() == True:
 
-                            inv_frame_2.destroy()
-                            inv_frame_1.grid(row=0,column=0,sticky='nsew')
+                                cus_sql = "INSERT INTO app1_customer (title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid)
+                                fbcursor.execute(cus_sql,cus_val)
+                                finsysdb.commit()
+
+                                #----------Refresh Insert Tree--------#
+
+                                for record in cus_tree.get_children():
+                                        cus_tree.delete(record)
+
+                                sql_pr="select * from auth_user where username=%s"
+                                sql_pr_val=(nm_ent.get(),)
+                                fbcursor.execute(sql_pr,sql_pr_val,)
+                                pr_dtl=fbcursor.fetchone()
+
+                                sql = "select * from app1_company where id_id=%s"
+                                val = (pr_dtl[0],)
+                                fbcursor.execute(sql, val,)
+                                cmp_dtl=fbcursor.fetchone()
+
+                                c_sql_1 = "SELECT * FROM app1_customer where cid_id=%s"
+                                c_val_1 = (cmp_dtl[0],)
+                                fbcursor.execute(c_sql_1,c_val_1,)
+                                c_data_1 = fbcursor.fetchall()
+
+                                count0 = 0
+                                for i in c_data_1:
+                                    if True:
+                                        cus_tree.insert(parent='',index='end',iid=i,text='',values=('',i[2]+" "+i[3],i[6],i[7],i[8],i[9],i[11])) 
+                                    else:
+                                        pass
+                                count0 += 1
+
+                                inv_frame_2.destroy()
+                                inv_frame_1.grid(row=0,column=0,sticky='nsew')
+                            
+                            else:
+                                pass
                         
 
                         inv_canvas_2.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("acpoly1"))
@@ -2162,8 +2203,8 @@ def main_sign_in():
                         ic_entry_cus_c15=Entry(inv_canvas_2,width=40,justify=LEFT,background='#2f516f',foreground="white")
                         window_ic_entry_cus_c15 = inv_canvas_2.create_window(0, 0, anchor="nw", height=30,window=ic_entry_cus_c15, tags=("acentry19"))
 
-                        ic_chk_str_1 = StringVar()
-                        ic_chkbtn2 = Checkbutton(inv_canvas_2, text = "Agree to terms and conditions", variable = ic_chk_str_1, onvalue = 1, offvalue = 0, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        ic_chk_str_1 = BooleanVar()
+                        ic_chkbtn2 = Checkbutton(inv_canvas_2, text = "Agree to terms and conditions", variable = ic_chk_str_1, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
                         ic_chkbtn2.select()
                         window_ic_chkbtn_2 = inv_canvas_2.create_window(0, 0, anchor="nw", window=ic_chkbtn2,tags=("accheck2"))
 
@@ -2197,13 +2238,11 @@ def main_sign_in():
                     comb_t_2.current(0)
                     window_comb_t_2 = inv_canvas_1.create_window(0, 0, anchor="nw", width=251, height=30,window=comb_t_2,tags=('aicombo2'))
 
-
                     label_2 = Label(inv_canvas_1,width=6,height=1,text="Bill To:", font=('arial 12'),background="#1b3857",fg="white") 
                     window_label_2 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel9'))
 
-                    # text_1=Text(inv_canvas_1,width=31)
-                    # window_text_1 = inv_canvas_1.create_window(81, 675, anchor="nw", height=150, window=text_1)
-                    ai_b_entry_1=Entry(inv_canvas_1,width=42,justify=LEFT,background='#2f516f',foreground="white")
+
+                    ai_b_entry_1=scrolledtext.ScrolledText(inv_canvas_1,width=30,background='#2f516f',foreground="white")
                     window_ai_b_entry_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=150, window=ai_b_entry_1,tags=('aientry2'))
 
                     label_2 = Label(inv_canvas_1,width=12,height=1,text="Place of supply", font=('arial 12'),background="#1b3857",fg="white") 
@@ -2267,13 +2306,13 @@ def main_sign_in():
                     ai_entry_p_1=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_p_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1,tags=('aientry3'))
 
-                    ai_entry_p_1_2=Entry(inv_canvas_1,width=31,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_p_1_2=scrolledtext.ScrolledText(inv_canvas_1,width=21,background='#2f516f',foreground="white")
                     window_ai_entry_p_1_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1_2,tags=('aientry4'))
 
-                    ai_entry_p_1_3=Entry(inv_canvas_1,width=15,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_p_1_3=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_p_1_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1_3,tags=('aientry5'))
 
-                    ai_entry_p_1_4=Entry(inv_canvas_1,width=18,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_p_1_4=Spinbox(inv_canvas_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_p_1_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1_4,tags=('aientry6'))
 
                     ai_entry_p_1_5=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
@@ -2296,13 +2335,13 @@ def main_sign_in():
                     ai_entry_p_2=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_p_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_2,tags=('aientry8'))
 
-                    ai_entry_p_2_1=Entry(inv_canvas_1,width=31,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_p_2_1=scrolledtext.ScrolledText(inv_canvas_1,width=21,background='#2f516f',foreground="white")
                     window_ai_entry_p_2_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_2_1,tags=('aientry11'))
 
-                    ai_entry_2_2=Entry(inv_canvas_1,width=15,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_2_2=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_2_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_2_2,tags=('aientry14'))
 
-                    ai_entry_2_3=Entry(inv_canvas_1,width=18,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_2_3=Spinbox(inv_canvas_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_2_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_2_3,tags=('aientry17'))
 
                     ai_entry_2_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
@@ -2325,13 +2364,13 @@ def main_sign_in():
                     ai_entry_3=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3,tags=('aientry9'))
 
-                    ai_entry_3_1=Entry(inv_canvas_1,width=31,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_3_1=scrolledtext.ScrolledText(inv_canvas_1,width=21,background='#2f516f',foreground="white")
                     window_ai_entry_3_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3_1,tags=('aientry12'))
 
-                    ai_entry_3_2=Entry(inv_canvas_1,width=15,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_3_2=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_3_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3_2,tags=('aientry15'))
 
-                    ai_entry_3_3=Entry(inv_canvas_1,width=18,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_3_3=Spinbox(inv_canvas_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_3_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3_3,tags=('aientry18'))
 
                     ai_entry_3_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
@@ -2353,13 +2392,13 @@ def main_sign_in():
                     ai_entry_4=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4,tags=('aientry10'))
 
-                    ai_entry_4_1=Entry(inv_canvas_1,width=31,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_4_1=scrolledtext.ScrolledText(inv_canvas_1,width=21,background='#2f516f',foreground="white")
                     window_ai_entry_4_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4_1,tags=('aientry13'))
 
-                    ai_entry_4_2=Entry(inv_canvas_1,width=15,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_4_2=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_4_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4_2,tags=('aientry16'))
 
-                    ai_entry_4_3=Entry(inv_canvas_1,width=18,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_4_3=Spinbox(inv_canvas_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_4_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4_3,tags=('aientry19'))
 
                     ai_entry_4_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
@@ -2434,8 +2473,9 @@ def main_sign_in():
                     aid_entry_2=DateEntry(inv_canvas_1,width=40,justify=LEFT,foreground='white')
                     window_aid_entry_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=aid_entry_2,tags=('aidate2'))
 
+                #-------------------------------Edit Section-----------------------------------#
 
-                def edit_invoice(event):
+                def edit_invoice():
                     inv_frame.grid_forget()
                     inv_frame_edit_1 = Frame(tab3_2)
                     inv_frame_edit_1.grid(row=0,column=0,sticky='nsew')
@@ -2616,73 +2656,6 @@ def main_sign_in():
                             dcanvas.coords("ailine23",dwidth/1.58,dheight/0.41,dwidth/1.084,dheight/0.41)
                             dcanvas.coords("ailine24",dwidth/1.58,dheight/0.396,dwidth/1.084,dheight/0.396)
 
-                            #-------------------------------View Section-----------------------------------#
-                            dcanvas.coords("aivbutton1",dwidth/1.45,dheight/8.24)
-                            dcanvas.coords("aivbutton2",dwidth/1.20,dheight/8.24)
-                            
-                            r2 = 5
-                            x11 = dwidth/12
-                            x21 = dwidth/1.1
-                            y11 = dheight/2.5
-                            y21 = dheight/0.38
-
-
-                            dcanvas.coords("aivpoly1",x11 + r2,y11,
-                            x11 + r2,y11,
-                            x21 - r2,y11,
-                            x21 - r2,y11,     
-                            x21,y11,     
-                            #--------------------
-                            x21,y11 + r2,     
-                            x21,y11 + r2,     
-                            x21,y21 - r2,     
-                            x21,y21 - r2,     
-                            x21,y21,
-                            #--------------------
-                            x21 - r2,y21,     
-                            x21 - r2,y21,     
-                            x11 + r2,y21,
-                            x11 + r2,y21,
-                            x11,y21,
-                            #--------------------
-                            x11,y21 - r2,
-                            x11,y21 - r2,
-                            x11,y11 + r2,
-                            x11,y11 + r2,
-                            x11,y11,
-                            )
-
-                            dcanvas.coords("aivlabel1",dwidth/9.40,dheight/1.85)
-                            dcanvas.coords("aivlabel2",dwidth/9,dheight/1.70)
-                            dcanvas.coords("aivlabel3",dwidth/9,dheight/1.55)
-                            dcanvas.coords("aivlabel4",dwidth/9.45,dheight/1.42)
-                            dcanvas.coords("aivlabel5",dwidth/9.50,dheight/1.32)
-                            dcanvas.coords("aivlabel6",dwidth/9.35,dheight/1.22)
-                            dcanvas.coords("aivlabel7",dwidth/9.70,dheight/1.14)
-                            dcanvas.coords("aivlabel8",dwidth/9.50,dheight/1.0)
-                            dcanvas.coords("aivlabel9",dwidth/1.45,dheight/1.0)
-                            dcanvas.coords("aivlabel10",dwidth/1.44,dheight/0.95)
-                            dcanvas.coords("aivlabel11",dwidth/1.46,dheight/0.90)
-                            dcanvas.coords("aivlabel12",dwidth/1.48,dheight/0.85)
-
-                            dcanvas.coords("aivtree1",dwidth/7.5,dheight/0.75)
-
-                            dcanvas.coords("aivline16",dwidth/1.56,dheight/0.6,dwidth/1.56,dheight/0.52)
-                            dcanvas.coords("aivline17",dwidth/1.346,dheight/0.6,dwidth/1.346,dheight/0.52)
-                            dcanvas.coords("aivline18",dwidth/1.182,dheight/0.6,dwidth/1.182,dheight/0.52)
-                            dcanvas.coords("aivline19",dwidth/1.56,dheight/0.6,dwidth/1.182,dheight/0.6)
-                            dcanvas.coords("aivline20",dwidth/1.56,dheight/0.52,dwidth/1.182,dheight/0.52)
-                            dcanvas.coords("aivline21",dwidth/1.56,dheight/0.572,dwidth/1.182,dheight/0.572)
-                            dcanvas.coords("aivline22",dwidth/1.56,dheight/0.545,dwidth/1.182,dheight/0.545)
-
-                            dcanvas.coords("aivlabel13",dwidth/1.54,dheight/0.59)
-                            dcanvas.coords("aivlabel14",dwidth/1.54,dheight/0.565)
-                            dcanvas.coords("aivlabel15",dwidth/1.5,dheight/0.54)
-
-                            dcanvas.coords("aivline23",dwidth/10,dheight/0.4,dwidth/1.12,dheight/0.4)
-
-                            dcanvas.coords("aivlabel16",dwidth/4,dheight/0.395)
-
                         except:
                             pass
 
@@ -2691,6 +2664,7 @@ def main_sign_in():
                             dcanvas.coords("aidate2",dwidth/1.65,dheight/1.074)
                         except:
                             pass
+
 
 
                     inv_canvas_edit_1=Canvas(inv_frame_edit_1, bg='#2f516f', width=953, height=600, scrollregion=(0,0,700,1800))
@@ -2706,416 +2680,569 @@ def main_sign_in():
                     inv_canvas_edit_1.config(yscrollcommand=vertibar.set)
                     inv_canvas_edit_1.grid(row=0,column=0,sticky='nsew')
 
-                    if inv_comb_1.get() == 'Edit':
-
-                        inv_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("aipoly1"))
-
-                        
-                        label_1 = Label(inv_canvas_edit_1,width=10,height=1,text="INVOICE", font=('arial 20'),background="#1b3857",fg="white") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("ailabel1"))
-
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=("aihline"))
-
-                        inv_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("aipoly2"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=10,height=1,text="Fin sYs", font=('arial 20'),background="#1b3857",fg="white") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("ailabel2"))
-
-                        label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Company name", font=('arial 16'),background="#1b3857",fg="skyblue") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel3"))
-
-                        label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Company email-id", font=('arial 16'),background="#1b3857",fg="skyblue") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel4"))
-
-                        label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Select Customer", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel5"))
-
-
-                        eientry_1=Entry(inv_canvas_edit_1,width=42,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eientry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=eientry_1,tags=('aientry28'))
-
-
-                        label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Email", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel6'))
-
-                        eaientry_1=Entry(inv_canvas_edit_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eaientry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=eaientry_1,tags=('aientry1'))
-
-
-                        label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Terms", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel8'))
-
-                        ecomb_t_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        ecomb_t_2['values'] = ("Due on Receipt","NET 15","NET 30","NET 60","Add New Term",)
-                        ecomb_t_2.current(0)
-                        window_ecomb_t_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=251, height=30,window=ecomb_t_2,tags=('aicombo2'))
-
-
-                        label_2 = Label(inv_canvas_edit_1,width=6,height=1,text="Bill To:", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel9'))
-
-                        
-                        eai_b_entry_1=Entry(inv_canvas_edit_1,width=42,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_b_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=150, window=eai_b_entry_1,tags=('aientry2'))
-
-                        label_2 = Label(inv_canvas_edit_1,width=10,height=1,text="Invoice No:", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel29'))
-
-                        ein_b_entry_1=Entry(inv_canvas_edit_1,width=42,justify=LEFT,background='#2f516f',foreground="white")
-                        window_ein_b_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=ein_b_entry_1,tags=('aientry29'))
-
-                        label_2 = Label(inv_canvas_edit_1,width=12,height=1,text="Place of supply", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel10'))
-
-                        eai_p_comb_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        eai_p_comb_2['values'] = ("Kerala","Andaman and Nicobar Islands","Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chandigarh","Chhattisgarh","Dadra and Nagar Haveli","Daman and Diu","Delhi","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir","Jharkhand","Karnataka","Ladakh","Lakshadweep","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Puducherry","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Other Territory",)
-                        eai_p_comb_2.current(0)
-                        window_eai_p_comb_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=251, height=30,window=eai_p_comb_2,tags=('aicombo3'))
-
-
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine1'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine2'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine3'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine4'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine5'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine6'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine7'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine8'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine9'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine10'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine11'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine12'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine13'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine14'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine15'))
-
-
-                        label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="#", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel11'))
-
-                        label_3 = Label(inv_canvas_edit_1,width=15,height=1,text="PRODUCT/SERVICE", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_3,tags=('ailabel12'))
-
-                        label_4 = Label(inv_canvas_edit_1,width=4,height=1,text="HSN", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel13'))
-
-                        label_4 = Label(inv_canvas_edit_1,width=11,height=1,text="DESCRIPTION", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel14'))
-
-                        label_4 = Label(inv_canvas_edit_1,width=4,height=1,text="QTY", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel15'))
-
-                        label_4 = Label(inv_canvas_edit_1,width=8,height=1,text="PRICE", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel16'))
-
-                        label_4 = Label(inv_canvas_edit_1,width=6,height=1,text="TOTAL", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel17'))
-
-                        label_4 = Label(inv_canvas_edit_1,width=7,height=1,text="TAX (%)", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel18'))
-
-                        label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="1", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(90, 1020, anchor="nw", window=label_2,tags=('ailabel19'))
-
-                        eai_comb_p_1 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        eai_comb_p_1['values'] = ("Select Product",)
-                        eai_comb_p_1.current(0)
-                        window_eai_comb_p_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=180, height=30,window=eai_comb_p_1,tags=('aicombo4'))
-
-                        eai_entry_p_1=Entry(inv_canvas_edit_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_p_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1,tags=('aientry3'))
-
-                        eai_entry_p_1_2=Entry(inv_canvas_edit_1,width=31,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_p_1_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_2,tags=('aientry4'))
-
-                        eai_entry_p_1_3=Entry(inv_canvas_edit_1,width=15,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_p_1_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_3,tags=('aientry5'))
-
-                        eai_entry_p_1_4=Entry(inv_canvas_edit_1,width=18,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_p_1_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_4,tags=('aientry6'))
-
-                        eai_entry_p_1_5=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_p_1_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_5,tags=('aientry7'))
-
-                        eai_comb_p_1_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        eai_comb_p_1_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
-                        eai_comb_p_1_2.current(0)
-                        window_eai_comb_p_1_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=150, height=30,window=eai_comb_p_1_2,tags=('aicombo5'))
-
-
-                        label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="2", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel20'))
-
-                        eai_comb_P_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        eai_comb_P_2['values'] = ("Select Product",)
-                        eai_comb_P_2.current(0)
-                        window_eai_comb_P_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=180, height=30,window=eai_comb_P_2,tags=('aicombo6'))
-
-                        eai_entry_p_2=Entry(inv_canvas_edit_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_p_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_2,tags=('aientry8'))
-
-                        eai_entry_p_2_1=Entry(inv_canvas_edit_1,width=31,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_p_2_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_2_1,tags=('aientry11'))
-
-                        eai_entry_2_2=Entry(inv_canvas_edit_1,width=15,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_2_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_2,tags=('aientry14'))
-
-                        eai_entry_2_3=Entry(inv_canvas_edit_1,width=18,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_2_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_3,tags=('aientry17'))
-
-                        eai_entry_2_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_2_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_4,tags=('aientry20'))
-
-                        eai_comb_P_2_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        eai_comb_P_2_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
-                        eai_comb_P_2_2.current(0)
-                        window_eai_comb_P_2_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=150, height=30,window=eai_comb_P_2_2,tags=('aicombo9'))
-
-
-                        label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="3", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel21'))
-
-                        eai_comb_p_3 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        eai_comb_p_3['values'] = ("Select Product",)
-                        eai_comb_p_3.current(0)
-                        window_eai_comb_p_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=180, height=30,window=eai_comb_p_3,tags=('aicombo7'))
-
-                        eai_entry_3=Entry(inv_canvas_edit_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3,tags=('aientry9'))
-
-                        eai_entry_3_1=Entry(inv_canvas_edit_1,width=31,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_3_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_1,tags=('aientry12'))
-
-                        eai_entry_3_2=Entry(inv_canvas_edit_1,width=15,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_3_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_2,tags=('aientry15'))
-
-                        eai_entry_3_3=Entry(inv_canvas_edit_1,width=18,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_3_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_3,tags=('aientry18'))
-
-                        eai_entry_3_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_3_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_4,tags=('aientry21'))
-
-                        eai_comb_P_3_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        eai_comb_P_3_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
-                        eai_comb_P_3_2.current(0)
-                        window_eai_comb_P_3_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=150, height=30,window=eai_comb_P_3_2,tags=('aicombo10'))
-
-                        label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="4", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel22'))
-
-                        eai_comb_p_4 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        eai_comb_p_4['values'] = ("Select Product",)
-                        eai_comb_p_4.current(0)
-                        window_eai_comb_p_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=180, height=30,window=eai_comb_p_4,tags=('aicombo8'))
-
-                        eai_entry_4=Entry(inv_canvas_edit_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4,tags=('aientry10'))
-
-                        eai_entry_4_1=Entry(inv_canvas_edit_1,width=31,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_4_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_1,tags=('aientry13'))
-
-                        eai_entry_4_2=Entry(inv_canvas_edit_1,width=15,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_4_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_2,tags=('aientry16'))
-
-                        eai_entry_4_3=Entry(inv_canvas_edit_1,width=18,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_4_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_3,tags=('aientry19'))
-
-                        eai_entry_4_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eai_entry_4_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_4,tags=('aientry22'))
-
-                        eai_comb_P_4_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
-                        eai_comb_P_4_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
-                        eai_comb_P_4_2.current(0)
-                        window_eai_comb_P_4_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=150, height=30,window=eai_comb_P_4_2,tags=('aicombo11'))
-
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine16'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine17'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine18'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine19'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine20'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine21'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine22'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine23'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine24'))
-                        
-
-                        label_5 = Label(inv_canvas_edit_1,width=10,height=1,text="Sub Total", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel23'))
-
-                        label_5 = Label(inv_canvas_edit_1,width=12,height=1,text="Tax Amount", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel24'))
-
-                        label_5 = Label(inv_canvas_edit_1,width=12,height=1,text="Grand Total", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel25'))
-
-                        label_5 = Label(inv_canvas_edit_1,width=12,height=1,text="Amount Received", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel26'))
-
-                        label_5 = Label(inv_canvas_edit_1,width=12,height=1,text="Balance Due", font=('arial 10'),background="#1b3857",fg="white") 
-                        window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel27'))
-
-                        esub_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
-                        window_esub_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=esub_entry_1,tags=('aientry23'))
-
-                        etax_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
-                        window_etax_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=etax_entry_1,tags=('aientry24'))
-
-                        egrand_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
-                        window_egrand_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=egrand_entry_1,tags=('aientry25'))
-
-                        eamount_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
-                        window_eamount_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eamount_entry_1,tags=('aientry26'))
-
-                        ebal_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
-                        window_ebal_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=ebal_entry_1,tags=('aientry27'))
-                        
-
-                        eai_save_btn1=Button(inv_canvas_edit_1,text='Save', width=15,height=2,foreground="white",background="#1b3857",font='arial 12')
-                        window_eai_save_btn1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=eai_save_btn1,tags=('aibutton2'))
-
-                        def einv_back_1_():
-                            inv_frame_edit_1.grid_forget()
-                            inv_frame.grid(row=0,column=0,sticky='nsew')
-
-                        eibck_btn1=Button(inv_canvas_edit_1,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=einv_back_1_)
-                        window_eibck_btn1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=eibck_btn1,tags=('aibutton3'))
-
-                        label_2 = Label(inv_canvas_edit_1,width=14,height=1,text="Invoice Date:", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel7'))
-
-                        label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Due Date:", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel28'))
-
-                        eaid_entry_1=DateEntry(inv_canvas_edit_1,width=40,justify=LEFT,foreground='white')
-                        window_eaid_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eaid_entry_1,tags=('aidate1'))
-
-                        eaid_entry_2=DateEntry(inv_canvas_edit_1,width=40,justify=LEFT,foreground='white')
-                        window_eaid_entry_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eaid_entry_2,tags=('aidate2'))
-
-                    elif inv_comb_1.get() == 'View':
-
-                        inv_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("aipoly1"))
-
-                        
-                        label_1 = Label(inv_canvas_edit_1,width=10,height=1,text="INVOICE", font=('arial 20'),background="#1b3857",fg="white") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("ailabel1"))
-
-                        eai_dwnl_btn1=Button(inv_canvas_edit_1,text='Download Pdf', width=15,height=2,foreground="skyblue",background="#1b3857",font='arial 12')
-                        window_eai_dwnl_btn1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=eai_dwnl_btn1,tags=('aivbutton1'))
-
-                        eai_prnt_btn1=Button(inv_canvas_edit_1,text='Print', width=15,height=2,foreground="skyblue",background="#1b3857",font='arial 12')
-                        window_eai_prnt_btn1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=eai_prnt_btn1,tags=('aivbutton2'))
-
-                        inv_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("aipoly2"))
-
-                        inv_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="white",tags=("aivpoly1"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Unknown", font=('arial 12 bold'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel1"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=13,height=1,text="Addressline 1", font=('arial 12 '),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel2"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=13,height=1,text="Addressline 2", font=('arial 12 '),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel3"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Pincode", font=('arial 12'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel4"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Email ID", font=('arial 12'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel5"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=15,height=1,text="Phone Number", font=('arial 12'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel6"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=13,height=1,text="TAX INVOICE", font=('arial 20 bold'),background="white",fg="skyblue") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel7"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Bill To", font=('arial 14 bold'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel8"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Invoice No", font=('arial 12 bold'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel9"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Invoice Date", font=('arial 12 bold'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel10"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Due Date", font=('arial 12 bold'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel11"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Terms", font=('arial 12 bold'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel12"))
-
-                        style=ttk.Style()
-                        style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('arial 12')) # Modify the font of the body
-                        style.configure("mystyle.Treeview.Heading", font=('arial 12'), background='white') # Modify the font of the headings
-                        style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})]) # Remove the borders
-
-                        # Add a Treeview widge                    
-                        cus_prv_tree=ttk.Treeview(inv_canvas_edit_1, column=("c1", "c2","c3", "c4", "c5", "c6"), show='headings', height=40, style='mystyle.Treeview')
-                        cus_prv_tree.column("# 1", anchor=E, stretch=NO, width=250)
-                        cus_prv_tree.heading("# 1", text="PRODUCT/SERVICES")
-                        cus_prv_tree.column("# 2", anchor=E, stretch=NO, width=150)
-                        cus_prv_tree.heading("# 2", text="HSN")
-                        cus_prv_tree.column("# 3", anchor=E, stretch=NO, width=100)
-                        cus_prv_tree.heading("# 3", text="QTY")
-                        cus_prv_tree.column("# 4", anchor=E, stretch=NO, width=150)
-                        cus_prv_tree.heading("# 4", text="PRICE")
-                        cus_prv_tree.column("# 5", anchor=E, stretch=NO, width=150)
-                        cus_prv_tree.heading("# 5", text="TOTAL")
-                        cus_prv_tree.column("# 6", anchor=E, stretch=NO, width=160)
-                        cus_prv_tree.heading("# 6", text="TAX(%)")
-
-                        window = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=25, window=cus_prv_tree,tags=('aivtree1'))
-
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline16'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline17'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline18'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline19'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline20'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline21'))
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline22'))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Subtotal", font=('arial 12 bold'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel13"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=11,height=1,text="Tax Amount", font=('arial 12 bold'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel14"))
-
-                        label_1 = Label(inv_canvas_edit_1,width=5,height=1,text="Total", font=('arial 12 bold'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel15"))
-
-                        inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='grey',width=1, tags=('aivline23'))
-
-                        label_1 = Label(inv_canvas_edit_1,width=75,height=0,text="Invoice was created on a computer and is valid without the signature and seal.", font=('arial 12'),background="white",fg="black") 
-                        window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel16"))
-
-                        def einv_back_1_():
-                            inv_frame_edit_1.grid_forget()
-                            inv_frame.grid(row=0,column=0,sticky='nsew')
-
-                        eibck_btn1=Button(inv_canvas_edit_1,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=einv_back_1_)
-                        window_eibck_btn1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=eibck_btn1,tags=('aibutton3'))
-
-
-                    else:
-                        pass
-                        
                     
-                # Define the style for combobox widget
-                # styl= ttk.Style()
-                # styl.theme_use('clam')
-                # styl.configure("TCombobox", fieldbackground= "#2f516f", background= "#2f516f")
 
-                inv_comb_1 = ttk.Combobox(inv_canvas,)
-                inv_comb_1['values'] = ("Actions","Edit","View","Delete")
-                inv_comb_1.current(0)
-                inv_comb_1.bind('<<ComboboxSelected>>',edit_invoice)
-                window_inv_comb_1 = inv_canvas.create_window(0, 0, anchor="nw", width=110,height=30,window=inv_comb_1,tags=('icombo1'))
+                    inv_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("aipoly1"))
+
                     
+                    label_1 = Label(inv_canvas_edit_1,width=10,height=1,text="INVOICE", font=('arial 20'),background="#1b3857",fg="white") 
+                    window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("ailabel1"))
+
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=("aihline"))
+
+                    inv_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("aipoly2"))
+
+                    label_1 = Label(inv_canvas_edit_1,width=10,height=1,text="Fin sYs", font=('arial 20'),background="#1b3857",fg="white") 
+                    window_label_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=("ailabel2"))
+
+                    label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Company name", font=('arial 16'),background="#1b3857",fg="skyblue") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel3"))
+
+                    label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Company email-id", font=('arial 16'),background="#1b3857",fg="skyblue") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel4"))
+
+                    label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Select Customer", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel5"))
+
+
+                    eientry_1=Entry(inv_canvas_edit_1,width=42,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eientry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=eientry_1,tags=('aientry28'))
+
+
+                    label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Email", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel6'))
+
+                    eaientry_1=Entry(inv_canvas_edit_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eaientry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=eaientry_1,tags=('aientry1'))
+
+
+                    label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Terms", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel8'))
+
+                    ecomb_t_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    ecomb_t_2['values'] = ("Due on Receipt","NET 15","NET 30","NET 60","Add New Term",)
+                    ecomb_t_2.current(0)
+                    window_ecomb_t_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=251, height=30,window=ecomb_t_2,tags=('aicombo2'))
+
+
+                    label_2 = Label(inv_canvas_edit_1,width=6,height=1,text="Bill To:", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel9'))
+
+                    
+                    eai_b_entry_1=scrolledtext.ScrolledText(inv_canvas_edit_1,width=30,background='#2f516f',foreground="white")
+                    window_eai_b_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=150, window=eai_b_entry_1,tags=('aientry2'))
+
+                    label_2 = Label(inv_canvas_edit_1,width=10,height=1,text="Invoice No:", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel29'))
+
+                    ein_b_entry_1=Entry(inv_canvas_edit_1,width=42,justify=LEFT,background='#2f516f',foreground="white")
+                    window_ein_b_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=ein_b_entry_1,tags=('aientry29'))
+
+                    label_2 = Label(inv_canvas_edit_1,width=12,height=1,text="Place of supply", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel10'))
+
+                    eai_p_comb_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    eai_p_comb_2['values'] = ("Kerala","Andaman and Nicobar Islands","Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chandigarh","Chhattisgarh","Dadra and Nagar Haveli","Daman and Diu","Delhi","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu and Kashmir","Jharkhand","Karnataka","Ladakh","Lakshadweep","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Puducherry","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Other Territory",)
+                    eai_p_comb_2.current(0)
+                    window_eai_p_comb_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=251, height=30,window=eai_p_comb_2,tags=('aicombo3'))
+
+
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine1'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine2'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine3'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine4'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine5'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine6'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine7'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine8'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine9'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine10'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine11'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine12'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine13'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine14'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine15'))
+
+
+                    label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="#", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel11'))
+
+                    label_3 = Label(inv_canvas_edit_1,width=15,height=1,text="PRODUCT/SERVICE", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_3,tags=('ailabel12'))
+
+                    label_4 = Label(inv_canvas_edit_1,width=4,height=1,text="HSN", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel13'))
+
+                    label_4 = Label(inv_canvas_edit_1,width=11,height=1,text="DESCRIPTION", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel14'))
+
+                    label_4 = Label(inv_canvas_edit_1,width=4,height=1,text="QTY", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel15'))
+
+                    label_4 = Label(inv_canvas_edit_1,width=8,height=1,text="PRICE", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel16'))
+
+                    label_4 = Label(inv_canvas_edit_1,width=6,height=1,text="TOTAL", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel17'))
+
+                    label_4 = Label(inv_canvas_edit_1,width=7,height=1,text="TAX (%)", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel18'))
+
+                    label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="1", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(90, 1020, anchor="nw", window=label_2,tags=('ailabel19'))
+
+                    eai_comb_p_1 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    eai_comb_p_1['values'] = ("Select Product",)
+                    eai_comb_p_1.current(0)
+                    window_eai_comb_p_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=180, height=30,window=eai_comb_p_1,tags=('aicombo4'))
+
+                    eai_entry_p_1=Entry(inv_canvas_edit_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eai_entry_p_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1,tags=('aientry3'))
+
+                    eai_entry_p_1_2=scrolledtext.ScrolledText(inv_canvas_edit_1,width=21,background='#2f516f',foreground="white")
+                    window_eai_entry_p_1_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_2,tags=('aientry4'))
+
+                    eai_entry_p_1_3=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_eai_entry_p_1_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_3,tags=('aientry5'))
+
+                    eai_entry_p_1_4=Spinbox(inv_canvas_edit_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_eai_entry_p_1_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_4,tags=('aientry6'))
+
+                    eai_entry_p_1_5=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eai_entry_p_1_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_5,tags=('aientry7'))
+
+                    eai_comb_p_1_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    eai_comb_p_1_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
+                    eai_comb_p_1_2.current(0)
+                    window_eai_comb_p_1_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=150, height=30,window=eai_comb_p_1_2,tags=('aicombo5'))
+
+
+                    label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="2", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel20'))
+
+                    eai_comb_P_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    eai_comb_P_2['values'] = ("Select Product",)
+                    eai_comb_P_2.current(0)
+                    window_eai_comb_P_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=180, height=30,window=eai_comb_P_2,tags=('aicombo6'))
+
+                    eai_entry_p_2=Entry(inv_canvas_edit_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eai_entry_p_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_2,tags=('aientry8'))
+
+                    eai_entry_p_2_1=scrolledtext.ScrolledText(inv_canvas_edit_1,width=21,background='#2f516f',foreground="white")
+                    window_eai_entry_p_2_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_2_1,tags=('aientry11'))
+
+                    eai_entry_2_2=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_eai_entry_2_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_2,tags=('aientry14'))
+
+                    eai_entry_2_3=Spinbox(inv_canvas_edit_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_eai_entry_2_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_3,tags=('aientry17'))
+
+                    eai_entry_2_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eai_entry_2_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_4,tags=('aientry20'))
+
+                    eai_comb_P_2_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    eai_comb_P_2_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
+                    eai_comb_P_2_2.current(0)
+                    window_eai_comb_P_2_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=150, height=30,window=eai_comb_P_2_2,tags=('aicombo9'))
+
+
+                    label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="3", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel21'))
+
+                    eai_comb_p_3 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    eai_comb_p_3['values'] = ("Select Product",)
+                    eai_comb_p_3.current(0)
+                    window_eai_comb_p_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=180, height=30,window=eai_comb_p_3,tags=('aicombo7'))
+
+                    eai_entry_3=Entry(inv_canvas_edit_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eai_entry_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3,tags=('aientry9'))
+
+                    eai_entry_3_1=scrolledtext.ScrolledText(inv_canvas_edit_1,width=21,background='#2f516f',foreground="white")
+                    window_eai_entry_3_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_1,tags=('aientry12'))
+
+                    eai_entry_3_2=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_eai_entry_3_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_2,tags=('aientry15'))
+
+                    eai_entry_3_3=Spinbox(inv_canvas_edit_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_eai_entry_3_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_3,tags=('aientry18'))
+
+                    eai_entry_3_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eai_entry_3_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_4,tags=('aientry21'))
+
+                    eai_comb_P_3_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    eai_comb_P_3_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
+                    eai_comb_P_3_2.current(0)
+                    window_eai_comb_P_3_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=150, height=30,window=eai_comb_P_3_2,tags=('aicombo10'))
+
+                    label_2 = Label(inv_canvas_edit_1,width=2,height=1,text="4", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel22'))
+
+                    eai_comb_p_4 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    eai_comb_p_4['values'] = ("Select Product",)
+                    eai_comb_p_4.current(0)
+                    window_eai_comb_p_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=180, height=30,window=eai_comb_p_4,tags=('aicombo8'))
+
+                    eai_entry_4=Entry(inv_canvas_edit_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eai_entry_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4,tags=('aientry10'))
+
+                    eai_entry_4_1=scrolledtext.ScrolledText(inv_canvas_edit_1,width=21,background='#2f516f',foreground="white")
+                    window_eai_entry_4_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_1,tags=('aientry13'))
+
+                    eai_entry_4_2=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_eai_entry_4_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_2,tags=('aientry16'))
+
+                    eai_entry_4_3=Spinbox(inv_canvas_edit_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_eai_entry_4_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_3,tags=('aientry19'))
+
+                    eai_entry_4_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eai_entry_4_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_4,tags=('aientry22'))
+
+                    eai_comb_P_4_2 = ttk.Combobox(inv_canvas_edit_1, font=('arial 10'),foreground="white")
+                    eai_comb_P_4_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
+                    eai_comb_P_4_2.current(0)
+                    window_eai_comb_P_4_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", width=150, height=30,window=eai_comb_P_4_2,tags=('aicombo11'))
+
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine16'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine17'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine18'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine19'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine20'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine21'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine22'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine23'))
+                    inv_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('ailine24'))
+                    
+
+                    label_5 = Label(inv_canvas_edit_1,width=10,height=1,text="Sub Total", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel23'))
+
+                    label_5 = Label(inv_canvas_edit_1,width=12,height=1,text="Tax Amount", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel24'))
+
+                    label_5 = Label(inv_canvas_edit_1,width=12,height=1,text="Grand Total", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel25'))
+
+                    label_5 = Label(inv_canvas_edit_1,width=12,height=1,text="Amount Received", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel26'))
+
+                    label_5 = Label(inv_canvas_edit_1,width=12,height=1,text="Balance Due", font=('arial 10'),background="#1b3857",fg="white") 
+                    window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel27'))
+
+                    esub_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
+                    window_esub_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=esub_entry_1,tags=('aientry23'))
+
+                    etax_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
+                    window_etax_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=etax_entry_1,tags=('aientry24'))
+
+                    egrand_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
+                    window_egrand_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=egrand_entry_1,tags=('aientry25'))
+
+                    eamount_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
+                    window_eamount_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eamount_entry_1,tags=('aientry26'))
+
+                    ebal_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
+                    window_ebal_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=ebal_entry_1,tags=('aientry27'))
+                    
+
+                    eai_save_btn1=Button(inv_canvas_edit_1,text='Save', width=15,height=2,foreground="white",background="#1b3857",font='arial 12')
+                    window_eai_save_btn1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=eai_save_btn1,tags=('aibutton2'))
+
+                    def einv_back_1_():
+                        inv_frame_edit_1.grid_forget()
+                        inv_frame.grid(row=0,column=0,sticky='nsew')
+
+                    eibck_btn1=Button(inv_canvas_edit_1,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=einv_back_1_)
+                    window_eibck_btn1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=eibck_btn1,tags=('aibutton3'))
+
+                    label_2 = Label(inv_canvas_edit_1,width=14,height=1,text="Invoice Date:", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel7'))
+
+                    label_2 = Label(inv_canvas_edit_1,width=15,height=1,text="Due Date:", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel28'))
+
+                    eaid_entry_1=DateEntry(inv_canvas_edit_1,width=40,justify=LEFT,foreground='white')
+                    window_eaid_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eaid_entry_1,tags=('aidate1'))
+
+                    eaid_entry_2=DateEntry(inv_canvas_edit_1,width=40,justify=LEFT,foreground='white')
+                    window_eaid_entry_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eaid_entry_2,tags=('aidate2'))
+
+                #-------------------------------View Section-----------------------------------#
+
+                def view_invoice():
+                    inv_frame.grid_forget()
+                    inv_frame_view_1 = Frame(tab3_2)
+                    inv_frame_view_1.grid(row=0,column=0,sticky='nsew')
+
+                    def inv_eresponsive_widgets3(event):
+                        
+                        dwidth = event.width
+                        dheight = event.height
+                        dcanvas = event.widget
+                            
+                        dcanvas.coords("aivbutton1",dwidth/1.45,dheight/8.24)
+                        dcanvas.coords("aivbutton2",dwidth/1.20,dheight/8.24)
+
+                        r1 = 25
+                        x1 = dwidth/63
+                        x2 = dwidth/1.021
+                        y1 = dheight/14 
+                        y2 = dheight/3.505
+
+                        dcanvas.coords("aiipoly1",x1 + r1,y1,
+                        x1 + r1,y1,
+                        x2 - r1,y1,
+                        x2 - r1,y1,     
+                        x2,y1,     
+                        #--------------------
+                        x2,y1 + r1,     
+                        x2,y1 + r1,     
+                        x2,y2 - r1,     
+                        x2,y2 - r1,     
+                        x2,y2,
+                        #--------------------
+                        x2 - r1,y2,     
+                        x2 - r1,y2,     
+                        x1 + r1,y2,
+                        x1 + r1,y2,
+                        x1,y2,
+                        #--------------------
+                        x1,y2 - r1,
+                        x1,y2 - r1,
+                        x1,y1 + r1,
+                        x1,y1 + r1,
+                        x1,y1,
+                        )
+
+                        dcanvas.coords("aiilabel1",dwidth/2.45,dheight/8.24)
+
+                        r2 = 25
+                        x11 = dwidth/63
+                        x21 = dwidth/1.021
+                        y11 = dheight/2.8
+                        y21 = dheight/0.36
+
+
+                        dcanvas.coords("aiipoly2",x11 + r2,y11,
+                        x11 + r2,y11,
+                        x21 - r2,y11,
+                        x21 - r2,y11,     
+                        x21,y11,     
+                        #--------------------
+                        x21,y11 + r2,     
+                        x21,y11 + r2,     
+                        x21,y21 - r2,     
+                        x21,y21 - r2,     
+                        x21,y21,
+                        #--------------------
+                        x21 - r2,y21,     
+                        x21 - r2,y21,     
+                        x11 + r2,y21,
+                        x11 + r2,y21,
+                        x11,y21,
+                        #--------------------
+                        x11,y21 - r2,
+                        x11,y21 - r2,
+                        x11,y11 + r2,
+                        x11,y11 + r2,
+                        x11,y11,
+                        )
+
+                    
+                        r2 = 5
+                        x11 = dwidth/12
+                        x21 = dwidth/1.1
+                        y11 = dheight/2.5
+                        y21 = dheight/0.38
+
+
+                        dcanvas.coords("aivpoly1",x11 + r2,y11,
+                        x11 + r2,y11,
+                        x21 - r2,y11,
+                        x21 - r2,y11,     
+                        x21,y11,     
+                        #--------------------
+                        x21,y11 + r2,     
+                        x21,y11 + r2,     
+                        x21,y21 - r2,     
+                        x21,y21 - r2,     
+                        x21,y21,
+                        #--------------------
+                        x21 - r2,y21,     
+                        x21 - r2,y21,     
+                        x11 + r2,y21,
+                        x11 + r2,y21,
+                        x11,y21,
+                        #--------------------
+                        x11,y21 - r2,
+                        x11,y21 - r2,
+                        x11,y11 + r2,
+                        x11,y11 + r2,
+                        x11,y11,
+                        )
+
+                        dcanvas.coords("aivlabel1",dwidth/9.40,dheight/1.85)
+                        dcanvas.coords("aivlabel2",dwidth/9,dheight/1.70)
+                        dcanvas.coords("aivlabel3",dwidth/9,dheight/1.55)
+                        dcanvas.coords("aivlabel4",dwidth/9.45,dheight/1.42)
+                        dcanvas.coords("aivlabel5",dwidth/9.50,dheight/1.32)
+                        dcanvas.coords("aivlabel6",dwidth/9.35,dheight/1.22)
+                        dcanvas.coords("aivlabel7",dwidth/9.70,dheight/1.14)
+                        dcanvas.coords("aivlabel8",dwidth/9.50,dheight/1.0)
+                        dcanvas.coords("aivlabel9",dwidth/1.45,dheight/1.0)
+                        dcanvas.coords("aivlabel10",dwidth/1.44,dheight/0.95)
+                        dcanvas.coords("aivlabel11",dwidth/1.46,dheight/0.90)
+                        dcanvas.coords("aivlabel12",dwidth/1.48,dheight/0.85)
+
+                        dcanvas.coords("aivtree1",dwidth/7.5,dheight/0.75)
+
+                        dcanvas.coords("aivline16",dwidth/1.56,dheight/0.6,dwidth/1.56,dheight/0.52)
+                        dcanvas.coords("aivline17",dwidth/1.346,dheight/0.6,dwidth/1.346,dheight/0.52)
+                        dcanvas.coords("aivline18",dwidth/1.182,dheight/0.6,dwidth/1.182,dheight/0.52)
+                        dcanvas.coords("aivline19",dwidth/1.56,dheight/0.6,dwidth/1.182,dheight/0.6)
+                        dcanvas.coords("aivline20",dwidth/1.56,dheight/0.52,dwidth/1.182,dheight/0.52)
+                        dcanvas.coords("aivline21",dwidth/1.56,dheight/0.572,dwidth/1.182,dheight/0.572)
+                        dcanvas.coords("aivline22",dwidth/1.56,dheight/0.545,dwidth/1.182,dheight/0.545)
+
+                        dcanvas.coords("aivlabel13",dwidth/1.54,dheight/0.59)
+                        dcanvas.coords("aivlabel14",dwidth/1.54,dheight/0.565)
+                        dcanvas.coords("aivlabel15",dwidth/1.5,dheight/0.54)
+
+                        dcanvas.coords("aivline23",dwidth/10,dheight/0.4,dwidth/1.12,dheight/0.4)
+
+                        dcanvas.coords("aivlabel16",dwidth/4,dheight/0.395)
+
+                        dcanvas.coords("aivbutton3",dwidth/23,dheight/3.415)
+
+                    inv_canvas_view_1=Canvas(inv_frame_view_1, bg='#2f516f', width=953, height=600, scrollregion=(0,0,700,1800))
+
+                    inv_frame_view_1.grid_columnconfigure(0,weight=1)
+                    inv_frame_view_1.grid_rowconfigure(0,weight=1)
+                    
+                    vertibar=Scrollbar(inv_frame_view_1, orient=VERTICAL)
+                    vertibar.grid(row=0,column=1,sticky='ns')
+                    vertibar.config(command=inv_canvas_view_1.yview)
+
+                    inv_canvas_view_1.bind("<Configure>", inv_eresponsive_widgets3)
+                    inv_canvas_view_1.config(yscrollcommand=vertibar.set)
+                    inv_canvas_view_1.grid(row=0,column=0,sticky='nsew')
+
+                    inv_canvas_view_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("aiipoly1"))
+
+                    
+                    label_1 = Label(inv_canvas_view_1,width=10,height=1,text="INVOICE", font=('arial 20'),background="#1b3857",fg="white") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aiilabel1"))
+
+                    eai_dwnl_btn1=Button(inv_canvas_view_1,text='Download Pdf', width=15,height=2,foreground="skyblue",background="#1b3857",font='arial 12')
+                    window_eai_dwnl_btn1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=eai_dwnl_btn1,tags=('aivbutton1'))
+
+                    eai_prnt_btn1=Button(inv_canvas_view_1,text='Print', width=15,height=2,foreground="skyblue",background="#1b3857",font='arial 12')
+                    window_eai_prnt_btn1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=eai_prnt_btn1,tags=('aivbutton2'))
+
+                    inv_canvas_view_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("aiipoly2"))
+
+                    inv_canvas_view_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="white",tags=("aivpoly1"))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Unknown", font=('arial 12 bold'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel1"))
+
+                    label_1 = Label(inv_canvas_view_1,width=13,height=1,text="Addressline 1", font=('arial 12 '),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel2"))
+
+                    label_1 = Label(inv_canvas_view_1,width=13,height=1,text="Addressline 2", font=('arial 12 '),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel3"))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Pincode", font=('arial 12'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel4"))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Email ID", font=('arial 12'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel5"))
+
+                    label_1 = Label(inv_canvas_view_1,width=15,height=1,text="Phone Number", font=('arial 12'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel6"))
+
+                    label_1 = Label(inv_canvas_view_1,width=13,height=1,text="TAX INVOICE", font=('arial 20 bold'),background="white",fg="skyblue") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel7"))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Bill To", font=('arial 14 bold'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel8"))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Invoice No", font=('arial 12 bold'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel9"))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Invoice Date", font=('arial 12 bold'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel10"))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Due Date", font=('arial 12 bold'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel11"))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Terms", font=('arial 12 bold'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel12"))
+
+                    fgthvi = ttk.Style()
+                    fgthvi.configure('mystyle1.Treeview.Heading', background='skyblue',State='DISABLE')
+
+                    iview_tree = ttk.Treeview(inv_canvas_view_1, columns = (1,2,3,4,5,6,7), height = 10, show = "headings",style='mystyle1.Treeview')
+                    iview_tree.pack(side = 'top')
+                    iview_tree.heading(1)
+                    iview_tree.heading(2, text="PRODUCT/SERVICES")
+                    iview_tree.heading(3, text="HSN")
+                    iview_tree.heading(4, text="QTY")
+                    iview_tree.heading(5, text="PRICE")
+                    iview_tree.heading(6, text="TOTAL")
+                    iview_tree.heading(7, text="TAX(%)")
+                    
+                    iview_tree.column(1, width = 20)
+                    iview_tree.column(2, width = 200)
+                    iview_tree.column(3, width = 200)
+                    iview_tree.column(4, width = 100)
+                    iview_tree.column(5, width = 150)
+                    iview_tree.column(6, width = 150)
+                    iview_tree.column(7, width = 150)
+
+                    window = inv_canvas_view_1.create_window(0, 0, anchor="nw", height=25, window=iview_tree,tags=('aivtree1'))
+
+                    inv_canvas_view_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline16'))
+                    inv_canvas_view_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline17'))
+                    inv_canvas_view_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline18'))
+                    inv_canvas_view_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline19'))
+                    inv_canvas_view_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline20'))
+                    inv_canvas_view_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline21'))
+                    inv_canvas_view_1.create_line(0, 0, 0, 0, fill='black',width=1, tags=('aivline22'))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Subtotal", font=('arial 12 bold'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel13"))
+
+                    label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Tax Amount", font=('arial 12 bold'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel14"))
+
+                    label_1 = Label(inv_canvas_view_1,width=5,height=1,text="Total", font=('arial 12 bold'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel15"))
+
+                    inv_canvas_view_1.create_line(0, 0, 0, 0, fill='grey',width=1, tags=('aivline23'))
+
+                    label_1 = Label(inv_canvas_view_1,width=75,height=0,text="Invoice was created on a computer and is valid without the signature and seal.", font=('arial 12'),background="white",fg="black") 
+                    window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel16"))
+
+                    def vinv_back_1_():
+                        inv_frame_view_1.grid_forget()
+                        inv_frame.grid(row=0,column=0,sticky='nsew')
+
+                    vibck_btn1=Button(inv_canvas_view_1,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=vinv_back_1_)
+                    window_vibck_btn1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=vibck_btn1,tags=('aivbutton3'))
+
+         
 
                 btn1=Button(inv_canvas,text='Add Invoices', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_invoice)
                 window_btn1 = inv_canvas.create_window(0, 0, anchor="nw", window=btn1,tags=('ibutton1'))
+
+                eibtn1=Button(inv_canvas,text='Edit', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=lambda:edit_invoice())
+                window_eibtn1 = inv_canvas.create_window(0, 0, anchor="nw", window=eibtn1, tags=("ibutton2"))
+
+                vibtn1=Button(inv_canvas,text='View', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=lambda:view_invoice())
+                window_vibtn1 = inv_canvas.create_window(0, 0, anchor="nw", window=vibtn1, tags=("ibutton3"))
+
+                dibtn1=Button(inv_canvas,text='Delete', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                window_dibtn1 = inv_canvas.create_window(0, 0, anchor="nw", window=dibtn1, tags=("ibutton4"))
 
                 #-------------------------------Customers-----------------------------#
                 tab3_3.grid_columnconfigure(0,weight=1)
@@ -3128,17 +3255,8 @@ def main_sign_in():
                     dwidth = event.width
                     dheight = event.height
                     dcanvas = event.widget
-                    dcanvas.coords("cline1", dwidth/22.00, dheight/1.8, dwidth/1.060, dheight/1.8)
-                    dcanvas.coords("cline2", dwidth/22.00, dheight/1.8, dwidth/22.00, dheight/1.35)
-                    dcanvas.coords("cline3", dwidth/22.00, dheight/1.35, dwidth/1.060, dheight/1.35)
-                    dcanvas.coords("cline4", dwidth/1.060, dheight/1.8, dwidth/1.060, dheight/1.35)
-                    dcanvas.coords("cline5", dwidth/22.00, dheight/1.575, dwidth/1.060, dheight/1.575)
-                    dcanvas.coords("cline6", dwidth/5.00, dheight/1.8, dwidth/5.00, dheight/1.35)
-                    dcanvas.coords("cline7", dwidth/2.9, dheight/1.8, dwidth/2.9, dheight/1.35)
-                    dcanvas.coords("cline8", dwidth/2.2, dheight/1.8, dwidth/2.2, dheight/1.35)
-                    dcanvas.coords("cline9", dwidth/1.75, dheight/1.8, dwidth/1.75, dheight/1.35)
-                    dcanvas.coords("cline10", dwidth/1.37, dheight/1.8, dwidth/1.37, dheight/1.35)
-                    dcanvas.coords("cline11", dwidth/1.20, dheight/1.8, dwidth/1.20, dheight/1.35)
+
+                    dcanvas.coords("ctree1",dwidth/12,dheight/1.8)
                     
 
                     r1 = 25
@@ -3179,7 +3297,7 @@ def main_sign_in():
                     x11 = dwidth/63
                     x21 = dwidth/1.021
                     y11 = dheight/2.8
-                    y21 = dheight/1.168
+                    y21 = dheight/0.8
 
 
                     dcanvas.coords("cpoly2",x11 + r2,y11,
@@ -3207,22 +3325,11 @@ def main_sign_in():
                     x11,y11,
                     )
 
-                    dcanvas.coords("clabel2",dwidth/11.5,dheight/1.74)
-                    dcanvas.coords("clabel3",dwidth/4.2,dheight/1.74)
-                    dcanvas.coords("clabel4",dwidth/2.75,dheight/1.74)
-                    dcanvas.coords("clabel5",dwidth/2.05,dheight/1.74)
-                    dcanvas.coords("clabel6",dwidth/1.60,dheight/1.74)
-                    dcanvas.coords("clabel7",dwidth/1.34,dheight/1.74)
-                    dcanvas.coords("clabel8",dwidth/1.17,dheight/1.74)
-                    dcanvas.coords("cbutton1",dwidth/1.28,dheight/2.4)
+                    dcanvas.coords("cbutton1",dwidth/2.1,dheight/2.4)
+                    dcanvas.coords("cbutton2",dwidth/1.59,dheight/2.4)
+                    dcanvas.coords("cbutton3",dwidth/1.28,dheight/2.4)
                     dcanvas.coords("ccombo1",dwidth/1.179,dheight/1.52)
 
-                    dcanvas.coords("cclabel1",dwidth/12.9,dheight/1.52)
-                    dcanvas.coords("cclabel2",dwidth/4.8,dheight/1.52)
-                    dcanvas.coords("cclabel3",dwidth/2.85,dheight/1.52)
-                    dcanvas.coords("cclabel4",dwidth/2.1,dheight/1.52)
-                    dcanvas.coords("cclabel5",dwidth/1.64,dheight/1.52)
-                    dcanvas.coords("cclabel6",dwidth/1.34,dheight/1.52)
 
                 cus_canvas=Canvas(cus_frame, bg='#2f516f', width=1325, height=600, scrollregion=(0,0,700,1000))
 
@@ -3247,40 +3354,51 @@ def main_sign_in():
                 cus_canvas.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("cpoly2"))
 
 
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline1"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline2"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline3"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline4"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline5"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline6"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline7"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline8"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline9"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline10"))
-                cus_canvas.create_line(0, 0, 0, 0, fill='gray',width=1,tags=("cline11"))
+
+                fgthi = ttk.Style()
+                fgthi.configure('mystyle105.Treeview.Heading', background='#2f516f',State='DISABLE')
+
+                cus_tree = ttk.Treeview(cus_canvas, columns = (1,2,3,4,5,6,7), height = 10, show = "headings",style='mystyle105.Treeview')
+                cus_tree.pack(side = 'top')
+                cus_tree.heading(1)
+                cus_tree.heading(2, text="CUSTOMER")
+                cus_tree.heading(3, text="GST TYPE")
+                cus_tree.heading(4, text="GSTIN")
+                cus_tree.heading(5, text="PAN NO")
+                cus_tree.heading(6, text="EMAIL ID")
+                cus_tree.heading(7, text="MOBILE NO")
                 
-                
+                cus_tree.column(1, width = 50)
+                cus_tree.column(2, width = 200)
+                cus_tree.column(3, width = 220)
+                cus_tree.column(4, width = 150)
+                cus_tree.column(5, width = 150)
+                cus_tree.column(6, width = 200)
+                cus_tree.column(7, width = 150)
+                window_label_4 = cus_canvas.create_window(0, 0, anchor="nw", window=cus_tree,tags=('ctree1'))
 
-                label_2 = Label(cus_canvas,width=10,height=1,text="CUSTOMER", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_2 = cus_canvas.create_window(0, 0, anchor="nw", window=label_2, tags=("clabel2"))
+                sql_pr="select * from auth_user where username=%s"
+                sql_pr_val=(nm_ent.get(),)
+                fbcursor.execute(sql_pr,sql_pr_val,)
+                pr_dtl=fbcursor.fetchone()
 
-                label_3 = Label(cus_canvas,width=11,height=1,text="GST TYPE", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_3 = cus_canvas.create_window(0, 0, anchor="nw", window=label_3, tags=("clabel3"))
+                sql = "select * from app1_company where id_id=%s"
+                val = (pr_dtl[0],)
+                fbcursor.execute(sql, val,)
+                cmp_dtl=fbcursor.fetchone()
 
-                label_4 = Label(cus_canvas,width=11,height=1,text="GSTIN", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = cus_canvas.create_window(0, 0, anchor="nw", window=label_4, tags=("clabel4"))
+                c_sql_1 = "SELECT * FROM app1_customer where cid_id=%s"
+                c_val_1 = (cmp_dtl[0],)
+                fbcursor.execute(c_sql_1,c_val_1,)
+                c_data_1 = fbcursor.fetchall()
 
-                label_4 = Label(cus_canvas,width=8,height=1,text="PAN NO", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = cus_canvas.create_window(0, 0, anchor="nw", window=label_4, tags=("clabel5"))
-
-                label_4 = Label(cus_canvas,width=8,height=1,text="EMAIL ID", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = cus_canvas.create_window(0, 0, anchor="nw", window=label_4, tags=("clabel6"))
-
-                label_4 = Label(cus_canvas,width=11,height=1,text="MOBILE NO", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = cus_canvas.create_window(0, 0, anchor="nw", window=label_4, tags=("clabel7"))
-
-                label_4 = Label(cus_canvas,width=11,height=1,text="ACTION", font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_4 = cus_canvas.create_window(0, 0, anchor="nw", window=label_4, tags=("clabel8"))
+                count0 = 0
+                for i in c_data_1:
+                    if True:
+                       cus_tree.insert(parent='',index='end',iid=i,text='',values=('',i[2]+" "+i[3],i[6],i[7],i[8],i[9],i[11])) 
+                    else:
+                        pass
+                count0 += 1
 
 
                 def add_customer():
@@ -3463,13 +3581,48 @@ def main_sign_in():
                         cmp_data = fbcursor.fetchone()
                         cid = cmp_data[0]
 
-                        cus_sql = "INSERT INTO app1_customer (title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                        cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid)
-                        fbcursor.execute(cus_sql,cus_val)
-                        finsysdb.commit()
+                        if chk_str_1.get() == True:
 
-                        cus_frame_1.destroy()
-                        cus_frame.grid(row=0,column=0,sticky='nsew')
+                            cus_sql = "INSERT INTO app1_customer (title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                            cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid)
+                            fbcursor.execute(cus_sql,cus_val)
+                            finsysdb.commit()
+
+                            #----------Refresh Insert Tree--------#
+
+                            for record in cus_tree.get_children():
+                                    cus_tree.delete(record)
+
+                            sql_pr="select * from auth_user where username=%s"
+                            sql_pr_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_pr,sql_pr_val,)
+                            pr_dtl=fbcursor.fetchone()
+
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dtl[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dtl=fbcursor.fetchone()
+
+                            c_sql_1 = "SELECT * FROM app1_customer where cid_id=%s"
+                            c_val_1 = (cmp_dtl[0],)
+                            fbcursor.execute(c_sql_1,c_val_1,)
+                            c_data_1 = fbcursor.fetchall()
+
+                            count0 = 0
+                            for i in c_data_1:
+                                if True:
+                                    cus_tree.insert(parent='',index='end',iid=i,text='',values=('',i[2]+" "+i[3],i[6],i[7],i[8],i[9],i[11])) 
+                                else:
+                                    pass
+                            count0 += 1
+
+                            
+                            cus_frame_1.destroy()
+                            cus_frame.grid(row=0,column=0,sticky='nsew')
+
+                        else:
+                            pass
+                       
 
                     cus_canvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("acpoly1"))
 
@@ -3655,8 +3808,8 @@ def main_sign_in():
                     chkbtn1.select()
                     window_chkbtn_1 = cus_canvas_1.create_window(0, 0, anchor="nw", window=chkbtn1, tags=("accheck1"))
 
-                    chk_str_1 = StringVar()
-                    chkbtn2 = Checkbutton(cus_canvas_1, text = "Agree to terms and conditions", variable = chk_str_1, onvalue = 1, offvalue = 0, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                    chk_str_1 = BooleanVar()
+                    chkbtn2 = Checkbutton(cus_canvas_1, text = "Agree to terms and conditions", variable = chk_str_1, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
                     chkbtn2.select()
                     window_chkbtn_2 = cus_canvas_1.create_window(0, 0, anchor="nw", window=chkbtn2,tags=("accheck2"))
 
@@ -3673,7 +3826,7 @@ def main_sign_in():
                 btn1=Button(cus_canvas,text='Add Customer', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_customer)
                 window_btn1 = cus_canvas.create_window(0, 0, anchor="nw", window=btn1, tags=("cbutton1"))
 
-                def edit_customer(event):
+                def edit_customer():
                     cus_frame.grid_forget()
                     cus_eframe_1 = Frame(tab3_3)
                     cus_eframe_1.grid(row=0,column=0,sticky='nsew')
@@ -3819,311 +3972,335 @@ def main_sign_in():
                     cus_ecanvas_1.config(yscrollcommand=vertibar.set)
                     cus_ecanvas_1.grid(row=0,column=0,sticky='nsew')
 
-                    
-                    if ecus_comb_1.get() == 'Edit':
+                    c_editid = cus_tree.item(cus_tree.focus())["values"][4]
+                    print(c_editid)
+                    c_editid_1 = cus_tree.item(cus_tree.focus())["values"][5]
+                    print(c_editid_1)
 
-                        def sales_edit_new_cus():
-                            title = comb_ecus_1.get()
-                            firstname = entry_ecus_1.get()
-                            lastname = entry_ecus_2.get()
-                            company = entry_ecus_3.get()
-                            location = ecus_4.get()
-                            gsttype = comb_ecus_2.get()
-                            gstin = entry_ecus_5.get()
-                            panno = entry_ecus_6.get()
-                            email = entry_ecus_7.get()
-                            website = entry_ecus_8.get()
-                            mobile = entry_ecus_9.get()
-                            street = entry_ecus_10.get()
-                            city = entry_ecus_12.get()
-                            state = entry_ecus_13.get()
-                            pincode = entry_ecus_p12.get()
-                            country = entry_ecus_c13.get()
-                            shipstreet = entry_ecus_11.get()
-                            shipcity = entry_ecus_14.get()
-                            shipstate = entry_ecus_15.get()
-                            shippincode = entry_ecus_pin14.get()
-                            shipcountry = entry_ecus_co15.get()
+                    sql = "select * from app1_company where id_id=%s"
+                    val = (pr_dtl[0],)
+                    fbcursor.execute(sql, val,)
+                    cmp_dtl=fbcursor.fetchone()
+                    print(cmp_dtl)
 
-                            usre_sql = "SELECT id FROM auth_user WHERE username=%s"
-                            usre_val = (nm_ent.get(),)
-                            fbcursor.execute(usre_sql,usre_val)
-                            usre_data = fbcursor.fetchone()
+                    sql = 'select * from app1_customer where panno = %s and email = %s and cid_id = %s'
+                    val =  (c_editid,c_editid_1,cmp_dtl[0],)
+                    fbcursor.execute(sql,val)
+                    edit_cus = fbcursor.fetchone()
+ 
 
-                            cmpne_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
-                            cmpne_val = (usre_data[0],)
-                            fbcursor.execute(cmpne_sql,cmpne_val)
-                            cmpne_data = fbcursor.fetchone()
-                            cid = cmpne_data[0]
+                    def sales_edit_new_cus():
+                        title = comb_ecus_1.get()
+                        firstname = entry_ecus_1.get()
+                        lastname = entry_ecus_2.get()
+                        company = entry_ecus_3.get()
+                        location = ecus_4.get()
+                        gsttype = comb_ecus_2.get()
+                        gstin = entry_ecus_5.get()
+                        panno = entry_ecus_6.get()
+                        email = entry_ecus_7.get()
+                        website = entry_ecus_8.get()
+                        mobile = entry_ecus_9.get()
+                        street = entry_ecus_10.get()
+                        city = entry_ecus_12.get()
+                        state = entry_ecus_13.get()
+                        pincode = entry_ecus_p12.get()
+                        country = entry_ecus_c13.get()
+                        shipstreet = entry_ecus_11.get()
+                        shipcity = entry_ecus_14.get()
+                        shipstate = entry_ecus_15.get()
+                        shippincode = entry_ecus_pin14.get()
+                        shipcountry = entry_ecus_co15.get()
 
-                            cus_sql = "UPDATE app1_customer set title=%s,firstname=%s,lastname=%s,company=%s,location=%s,gsttype=%s,gstin=%s,panno=%s,email=%s,website=%s,mobile=%s,street=%s,city=%s,state=%s,pincode=%s,country=%s,shipstreet=%s,shipcity=%s,shipstate=%s,shippincode=%s,shipcountry=%s where cid_id=%s"
-                            cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid)
+                        usre_sql = "SELECT id FROM auth_user WHERE username=%s"
+                        usre_val = (nm_ent.get(),)
+                        fbcursor.execute(usre_sql,usre_val)
+                        usre_data = fbcursor.fetchone()
+
+                        cmpne_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                        cmpne_val = (usre_data[0],)
+                        fbcursor.execute(cmpne_sql,cmpne_val)
+                        cmpne_data = fbcursor.fetchone()
+                        cid = cmpne_data[0]
+
+                        if echk_str_1.get() == True:
+
+                            cus_sql = "UPDATE app1_customer set title=%s,firstname=%s,lastname=%s,company=%s,location=%s,gsttype=%s,gstin=%s,panno=%s,email=%s,website=%s,mobile=%s,street=%s,city=%s,state=%s,pincode=%s,country=%s,shipstreet=%s,shipcity=%s,shipstate=%s,shippincode=%s,shipcountry=%s,cid_id=%s where panno=%s and email = %s"
+                            cus_val=(title,firstname,lastname,company,location,gsttype,gstin,panno,email,website,mobile,street,city,state,pincode,country,shipstreet,shipcity,shipstate,shippincode,shipcountry,cid,c_editid,c_editid_1)
                             fbcursor.execute(cus_sql,cus_val)
                             finsysdb.commit()
+
+                            #----------Refresh Insert Tree--------#
+
+                            for record in cus_tree.get_children():
+                                    cus_tree.delete(record)
+
+                            sql_pr_1="select * from auth_user where username=%s"
+                            sql_pr1_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_pr_1,sql_pr1_val,)
+                            pr_dtl_1=fbcursor.fetchone()
+
+                            sql_2 = "select * from app1_company where id_id=%s"
+                            val_2 = (pr_dtl_1[0],)
+                            fbcursor.execute(sql_2, val_2,)
+                            cmp_dtl_2=fbcursor.fetchone()
+
+                            c_sql_2 = "SELECT * FROM app1_customer where cid_id=%s"
+                            c_val_2 = (cmp_dtl_2[0],)
+                            fbcursor.execute(c_sql_2,c_val_2,)
+                            c_data_2 = fbcursor.fetchall()
+
+                            count1 = 0
+                            for i in c_data_2:
+                                if True:
+                                    cus_tree.insert(parent='',index='end',iid=i,text='',values=('',i[2]+" "+i[3],i[6],i[7],i[8],i[9],i[11])) 
+                                else:
+                                    pass
+                            count1 += 1
 
                             cus_eframe_1.destroy()
                             cus_frame.grid(row=0,column=0,sticky='nsew')
 
-                        cus_sql_2 = "SELECT * FROM app1_customer"
-                        fbcursor.execute(cus_sql_2)
-                        ecus_records = fbcursor.fetchone()
-
-                        cus_ecanvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("acpoly1"))
-
-                        label_1 = Label(cus_ecanvas_1,width=15,height=1,text="EDIT CUSTOMER", font=('arial 20'),background="#1b3857",fg="white") 
-                        window_label_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aclabel1"))
-
-                        cus_ecanvas_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=("achline"))
-
-                        cus_ecanvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("acpoly2"))
-
-                        label_1 = Label(cus_ecanvas_1,width=20,height=1,text="Customer Information", font=('arial 20'),background="#1b3857",fg="white") 
-                        window_label_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aclabel2"))
-
-                        cus_ecanvas_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=("achline1"))
-
-                        label_2 = Label(cus_ecanvas_1,width=5,height=1,text="Title", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel3"))
-
-                        comb_ecus_1 = ttk.Combobox(cus_ecanvas_1, font=('arial 10'))
-                        comb_ecus_1['values'] = ("Mr","Mrs","Miss","Ms",)
-                        comb_ecus_1.current(0)
-                        window_comb_ecus_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", width=245, height=30,window=comb_ecus_1, tags=("accombo1"))
-                        comb_ecus_1.delete(0,'end')
-                        comb_ecus_1.insert(0, ecus_records[1])
-
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="First name", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel4"))
-
-                        entry_ecus_1=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_1, tags=("acentry1"))
-                        entry_ecus_1.delete(0,'end')
-                        entry_ecus_1.insert(0, ecus_records[2])
-
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Last name", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel5"))
-
-                        entry_ecus_2=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_2, tags=("acentry2"))
-                        entry_ecus_2.delete(0,'end')
-                        entry_ecus_2.insert(0, ecus_records[3])
-
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Company", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel6"))
-
-                        entry_ecus_3=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_3 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_3, tags=("acentry3"))
-                        entry_ecus_3.delete(0,'end')
-                        entry_ecus_3.insert(0, ecus_records[4])
+                        else:
+                            pass
 
 
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Location", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel7"))
+                    cus_ecanvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("acpoly1"))
 
-                        ecus_4=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_ecus_4 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=ecus_4, tags=("acentry4"))
-                        ecus_4.delete(0,'end')
-                        ecus_4.insert(0, ecus_records[5])
+                    label_1 = Label(cus_ecanvas_1,width=15,height=1,text="EDIT CUSTOMER", font=('arial 20'),background="#1b3857",fg="white") 
+                    window_label_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aclabel1"))
 
+                    cus_ecanvas_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=("achline"))
 
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="GST type", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel8"))
+                    cus_ecanvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("acpoly2"))
 
-                        comb_ecus_2 = ttk.Combobox(cus_ecanvas_1, font=('arial 10'))
-                        comb_ecus_2['values'] = ("Choose...","GST registered Regular","GST registered-Composition","GST unregistered","Consumer","Overseas","SEZ","Deemed exports-EOU's STP's EHTP's etc",)
-                        comb_ecus_2.current(0)
-                        window_comb_ecus_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", width=245, height=30,window=comb_ecus_2, tags=("accombo2"))
-                        comb_ecus_2.delete(0,'end')
-                        comb_ecus_2.insert(0, ecus_records[6])
+                    label_1 = Label(cus_ecanvas_1,width=20,height=1,text="Customer Information", font=('arial 20'),background="#1b3857",fg="white") 
+                    window_label_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aclabel2"))
 
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="GSTIN", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel9"))
-                        
+                    cus_ecanvas_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=("achline1"))
 
-                        entry_ecus_5=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
-                        window_entry_ecus_5 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_5, tags=("acentry5"))
-                        entry_ecus_5.delete(0,'end')
-                        entry_ecus_5.insert(0, ecus_records[7])
+                    label_2 = Label(cus_ecanvas_1,width=5,height=1,text="Title", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel3"))
 
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="PAN NO", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel10"))
+                    comb_ecus_1 = ttk.Combobox(cus_ecanvas_1, font=('arial 10'))
+                    comb_ecus_1['values'] = ("Mr","Mrs","Miss","Ms",)
+                    comb_ecus_1.current(0)
+                    window_comb_ecus_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", width=245, height=30,window=comb_ecus_1, tags=("accombo1"))
+                    comb_ecus_1.delete(0,'end')
+                    comb_ecus_1.insert(0, edit_cus[1])
 
-                        entry_ecus_6=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
-                        window_entry_ecus_6 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_6, tags=("acentry6"))
-                        entry_ecus_6.delete(0,'end')
-                        entry_ecus_6.insert(0, ecus_records[8])
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="First name", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel4"))
 
-                        label_2 = Label(cus_ecanvas_1,width=5,height=1,text="Email", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel11"))
+                    entry_ecus_1=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_1, tags=("acentry1"))
+                    entry_ecus_1.delete(0,'end')
+                    entry_ecus_1.insert(0, edit_cus[2])
 
-                        entry_ecus_7=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_7 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_7, tags=("acentry7"))
-                        entry_ecus_7.delete(0,'end')
-                        entry_ecus_7.insert(0, ecus_records[9])
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Last name", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel5"))
 
+                    entry_ecus_2=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_2, tags=("acentry2"))
+                    entry_ecus_2.delete(0,'end')
+                    entry_ecus_2.insert(0, edit_cus[3])
 
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Website", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel12"))
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Company", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel6"))
 
-                        entry_ecus_8=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_8 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_8, tags=("acentry8"))
-                        entry_ecus_8.delete(0,'end')
-                        entry_ecus_8.insert(0, ecus_records[10])
-
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Mobile", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel13"))
-                        
-
-                        entry_ecus_9=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_9 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_9, tags=("acentry9"))
-                        entry_ecus_9.delete(0,'end')
-                        entry_ecus_9.insert(0, ecus_records[11])
-
-                        label_1 = Label(cus_ecanvas_1,width=20,height=1,text="Billing Address", font=('arial 16'),background="#1b3857",fg="white") 
-                        window_label_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aclabel14"))
-
-                        label_2 = Label(cus_ecanvas_1,width=5,height=1,text="Street", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel16"))
-
-                        entry_ecus_10=Entry(cus_ecanvas_1,width=95,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_10 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=60,window=entry_ecus_10, tags=("acentry10"))
-                        entry_ecus_10.delete(0,'end')
-                        entry_ecus_10.insert(0, ecus_records[12])
+                    entry_ecus_3=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_3 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_3, tags=("acentry3"))
+                    entry_ecus_3.delete(0,'end')
+                    entry_ecus_3.insert(0, edit_cus[4])
 
 
-                        label_1 = Label(cus_ecanvas_1,width=20,height=1,text="Shipping Address", font=('arial 16'),background="#1b3857",fg="white") 
-                        window_label_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aclabel15"))
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Location", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel7"))
 
-                        echk_str = StringVar()
-                        echkbtn1 = Checkbutton(cus_ecanvas_1, text = "Same As Billing Address", variable = echk_str, onvalue = 1, offvalue = 0, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                        echkbtn1.select()
-                        window_echkbtn_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=echkbtn1, tags=("accheck1"))
+                    ecus_4=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_ecus_4 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=ecus_4, tags=("acentry4"))
+                    ecus_4.delete(0,'end')
+                    ecus_4.insert(0, edit_cus[5])
 
-                        label_2 = Label(cus_ecanvas_1,width=5,height=1,text="Street", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel17"))
 
-                        entry_ecus_11=Entry(cus_ecanvas_1,width=95,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_11 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=60,window=entry_ecus_11, tags=("acentry11"))
-                        entry_ecus_11.delete(0,'end')
-                        entry_ecus_11.insert(0, ecus_records[17])
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="GST type", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel8"))
 
-                        label_2 = Label(cus_ecanvas_1,width=5,height=1,text="City", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel18"))
+                    comb_ecus_2 = ttk.Combobox(cus_ecanvas_1, font=('arial 10'))
+                    comb_ecus_2['values'] = ("Choose...","GST registered Regular","GST registered-Composition","GST unregistered","Consumer","Overseas","SEZ","Deemed exports-EOU's STP's EHTP's etc",)
+                    comb_ecus_2.current(0)
+                    window_comb_ecus_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", width=245, height=30,window=comb_ecus_2, tags=("accombo2"))
+                    comb_ecus_2.delete(0,'end')
+                    comb_ecus_2.insert(0, edit_cus[6])
 
-                        entry_ecus_12=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_12 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_12, tags=("acentry12"))
-                        entry_ecus_12.delete(0,'end')
-                        entry_ecus_12.insert(0, ecus_records[13])
-                        
-                        label_2 = Label(cus_ecanvas_1,width=5,height=1,text="State", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel19"))
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="GSTIN", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel9"))
+                    
 
-                        entry_ecus_13=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_13 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_13, tags=("acentry13"))
-                        entry_ecus_13.delete(0,'end')
-                        entry_ecus_13.insert(0, ecus_records[14])
+                    entry_ecus_5=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
+                    window_entry_ecus_5 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_5, tags=("acentry5"))
+                    entry_ecus_5.delete(0,'end')
+                    entry_ecus_5.insert(0, edit_cus[7])
 
-                        label_2 = Label(cus_ecanvas_1,width=5,height=1,text="City", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2,tags=("aclabel20"))
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="PAN NO", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel10"))
 
-                        entry_ecus_14=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_14 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_14, tags=("acentry14"))
-                        entry_ecus_14.delete(0,'end')
-                        entry_ecus_14.insert(0, ecus_records[18])
+                    entry_ecus_6=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
+                    window_entry_ecus_6 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_6, tags=("acentry6"))
+                    entry_ecus_6.delete(0,'end')
+                    entry_ecus_6.insert(0, edit_cus[8])
 
-                        label_2 = Label(cus_ecanvas_1,width=5,height=1,text="State", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2,tags=("aclabel21"))
+                    label_2 = Label(cus_ecanvas_1,width=5,height=1,text="Email", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel11"))
 
-                        entry_ecus_15=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_15 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_15, tags=("acentry15"))
-                        entry_ecus_15.delete(0,'end')
-                        entry_ecus_15.insert(0, ecus_records[19])
+                    entry_ecus_7=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_7 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_7, tags=("acentry7"))
+                    entry_ecus_7.delete(0,'end')
+                    entry_ecus_7.insert(0, edit_cus[9])
 
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Pin Code", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel22"))
 
-                        entry_ecus_p12=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_p12 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_p12, tags=("acentry16"))
-                        entry_ecus_p12.delete(0,'end')
-                        entry_ecus_p12.insert(0, ecus_records[15])
-                        
-                        label_2 = Label(cus_ecanvas_1,width=8,height=1,text="Country", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel23"))
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Website", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel12"))
 
-                        entry_ecus_c13=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_c13 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_c13, tags=("acentry17"))
-                        entry_ecus_c13.delete(0,'end')
-                        entry_ecus_c13.insert(0, ecus_records[16])
+                    entry_ecus_8=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_8 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_8, tags=("acentry8"))
+                    entry_ecus_8.delete(0,'end')
+                    entry_ecus_8.insert(0, edit_cus[10])
 
-                        label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Pin Code", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel24"))
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Mobile", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel13"))
+                    
 
-                        entry_ecus_pin14=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_pin14 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_pin14, tags=("acentry18"))
-                        entry_ecus_pin14.delete(0,'end')
-                        entry_ecus_pin14.insert(0, ecus_records[20])
+                    entry_ecus_9=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_9 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_9, tags=("acentry9"))
+                    entry_ecus_9.delete(0,'end')
+                    entry_ecus_9.insert(0, edit_cus[11])
 
-                        label_2 = Label(cus_ecanvas_1,width=8,height=1,text="Country", font=('arial 12'),background="#1b3857",fg="white") 
-                        window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel25"))
+                    label_1 = Label(cus_ecanvas_1,width=20,height=1,text="Billing Address", font=('arial 16'),background="#1b3857",fg="white") 
+                    window_label_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aclabel14"))
 
-                        entry_ecus_co15=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
-                        window_entry_ecus_co15 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_co15, tags=("acentry19"))
-                        entry_ecus_co15.delete(0,'end')
-                        entry_ecus_co15.insert(0, ecus_records[21])
+                    label_2 = Label(cus_ecanvas_1,width=5,height=1,text="Street", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel16"))
 
-                        echk_str_1 = StringVar()
-                        echkbtn2 = Checkbutton(cus_ecanvas_1, text = "Agree to terms and conditions", variable = echk_str_1, onvalue = 1, offvalue = 0, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                        echkbtn2.select()
-                        window_echkbtn_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=echkbtn2,tags=("accheck2"))
+                    entry_ecus_10=Entry(cus_ecanvas_1,width=95,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_10 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=60,window=entry_ecus_10, tags=("acentry10"))
+                    entry_ecus_10.delete(0,'end')
+                    entry_ecus_10.insert(0, edit_cus[12])
 
-                        def ec_back_1_():
-                            cus_eframe_1.grid_forget()
-                            cus_frame.grid(row=0,column=0,sticky='nsew')
 
-                        ec_bck_btn1=Button(cus_ecanvas_1,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=ec_back_1_)
-                        window_ec_bck_btn1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=ec_bck_btn1,tags=('acbutton3'))
+                    label_1 = Label(cus_ecanvas_1,width=20,height=1,text="Shipping Address", font=('arial 16'),background="#1b3857",fg="white") 
+                    window_label_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aclabel15"))
 
-                        ecus_btn2=Button(cus_ecanvas_1,text='Submit Form', width=25,height=2,foreground="white",background="#1b3857",font='arial 12',command=sales_edit_new_cus)
-                        window_ecus_btn2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=ecus_btn2,tags=("acbutton1"))
-                    else:
-                        pass
+                    echk_str = StringVar()
+                    echkbtn1 = Checkbutton(cus_ecanvas_1, text = "Same As Billing Address", variable = echk_str, onvalue = 1, offvalue = 0, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                    echkbtn1.select()
+                    window_echkbtn_1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=echkbtn1, tags=("accheck1"))
+
+                    label_2 = Label(cus_ecanvas_1,width=5,height=1,text="Street", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel17"))
+
+                    entry_ecus_11=Entry(cus_ecanvas_1,width=95,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_11 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=60,window=entry_ecus_11, tags=("acentry11"))
+                    entry_ecus_11.delete(0,'end')
+                    entry_ecus_11.insert(0, edit_cus[17])
+
+                    label_2 = Label(cus_ecanvas_1,width=5,height=1,text="City", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel18"))
+
+                    entry_ecus_12=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_12 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_12, tags=("acentry12"))
+                    entry_ecus_12.delete(0,'end')
+                    entry_ecus_12.insert(0, edit_cus[13])
+                    
+                    label_2 = Label(cus_ecanvas_1,width=5,height=1,text="State", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel19"))
+
+                    entry_ecus_13=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_13 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_13, tags=("acentry13"))
+                    entry_ecus_13.delete(0,'end')
+                    entry_ecus_13.insert(0, edit_cus[14])
+
+                    label_2 = Label(cus_ecanvas_1,width=5,height=1,text="City", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2,tags=("aclabel20"))
+
+                    entry_ecus_14=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_14 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_14, tags=("acentry14"))
+                    entry_ecus_14.delete(0,'end')
+                    entry_ecus_14.insert(0, edit_cus[18])
+
+                    label_2 = Label(cus_ecanvas_1,width=5,height=1,text="State", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2,tags=("aclabel21"))
+
+                    entry_ecus_15=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_15 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_15, tags=("acentry15"))
+                    entry_ecus_15.delete(0,'end')
+                    entry_ecus_15.insert(0, edit_cus[19])
+
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Pin Code", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel22"))
+
+                    entry_ecus_p12=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_p12 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_p12, tags=("acentry16"))
+                    entry_ecus_p12.delete(0,'end')
+                    entry_ecus_p12.insert(0, edit_cus[15])
+                    
+                    label_2 = Label(cus_ecanvas_1,width=8,height=1,text="Country", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel23"))
+
+                    entry_ecus_c13=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_c13 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_c13, tags=("acentry17"))
+                    entry_ecus_c13.delete(0,'end')
+                    entry_ecus_c13.insert(0, edit_cus[16])
+
+                    label_2 = Label(cus_ecanvas_1,width=10,height=1,text="Pin Code", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel24"))
+
+                    entry_ecus_pin14=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_pin14 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_pin14, tags=("acentry18"))
+                    entry_ecus_pin14.delete(0,'end')
+                    entry_ecus_pin14.insert(0, edit_cus[20])
+
+                    label_2 = Label(cus_ecanvas_1,width=8,height=1,text="Country", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel25"))
+
+                    entry_ecus_co15=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    window_entry_ecus_co15 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_co15, tags=("acentry19"))
+                    entry_ecus_co15.delete(0,'end')
+                    entry_ecus_co15.insert(0, edit_cus[21])
+
+                    echk_str_1 = BooleanVar()
+                    echkbtn2 = Checkbutton(cus_ecanvas_1, text = "Agree to terms and conditions", variable = echk_str_1, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                    echkbtn2.select()
+                    window_echkbtn_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=echkbtn2,tags=("accheck2"))
+
+                    def ec_back_1_():
+                        cus_eframe_1.grid_forget()
+                        cus_frame.grid(row=0,column=0,sticky='nsew')
+
+                    ec_bck_btn1=Button(cus_ecanvas_1,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=ec_back_1_)
+                    window_ec_bck_btn1 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=ec_bck_btn1,tags=('acbutton3'))
+
+                    ecus_btn2=Button(cus_ecanvas_1,text='Submit Form', width=25,height=2,foreground="white",background="#1b3857",font='arial 12',command=sales_edit_new_cus)
+                    window_ecus_btn2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=ecus_btn2,tags=("acbutton1"))
+                    
                 
-                cus_sql_1 = "SELECT * FROM app1_customer"
-                fbcursor.execute(cus_sql_1)
-                cus_records = fbcursor.fetchone()
-
-                label_2 = Label(cus_canvas,width=16,height=1,text=str(""+cus_records[2]+" "+cus_records[3]), font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_2 = cus_canvas.create_window(0, 0, anchor="nw", window=label_2, tags=("cclabel1"))
-
-                label_2 = Label(cus_canvas,width=18,height=1,text=cus_records[6], font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_2 = cus_canvas.create_window(0, 0, anchor="nw", window=label_2, tags=("cclabel2"))
-
-                label_2 = Label(cus_canvas,width=16,height=1,text=cus_records[7], font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_2 = cus_canvas.create_window(0, 0, anchor="nw", window=label_2, tags=("cclabel3"))
-
-                label_2 = Label(cus_canvas,width=11,height=1,text=cus_records[8], font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_2 = cus_canvas.create_window(0, 0, anchor="nw", window=label_2, tags=("cclabel4"))
-
-                label_2 = Label(cus_canvas,width=15,height=1,text=cus_records[9], font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_2 = cus_canvas.create_window(0, 0, anchor="nw", window=label_2, tags=("cclabel5"))
-
-                label_2 = Label(cus_canvas,width=11,height=1,text=cus_records[11], font=('arial 10'),background="#1b3857",fg="white") 
-                window_label_2 = cus_canvas.create_window(0, 0, anchor="nw", window=label_2, tags=("cclabel6"))
-
-
+                
                 # Define the style for combobox widget
                 # style= ttk.Style()
                 # style.theme_use('clam')
                 # style.configure("TCombobox", fieldbackground= "#2f516f", background= "#2f516f")
 
-                ecus_comb_1 = ttk.Combobox(cus_canvas,)
-                ecus_comb_1['values'] = ['Actions','Edit','Delete']
-                ecus_comb_1.current(0)
-                ecus_comb_1.bind('<<ComboboxSelected>>',edit_customer)
-                window_ecus_comb_1 = cus_canvas.create_window(0, 0, anchor="nw", width=110,height=30,window=ecus_comb_1, tags=("ccombo1"))
+                # ecus_comb_1 = ttk.Combobox(cus_canvas,)
+                # ecus_comb_1['values'] = ['Actions','Edit','Delete']
+                # ecus_comb_1.current(0)
+                # ecus_comb_1.bind('<<ComboboxSelected>>',edit_customer)
+                # window_ecus_comb_1 = cus_canvas.create_window(0, 0, anchor="nw", width=110,height=30,window=ecus_comb_1, tags=("ccombo1"))
 
-                # btn1=Button(cus_canvas,text='Add Customer', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_customer)
-                # window_btn1 = cus_canvas.create_window(0, 0, anchor="nw", window=btn1, tags=("cbutton1"))
+                ecbtn1=Button(cus_canvas,text='Edit', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=lambda:edit_customer())
+                window_ecbtn1 = cus_canvas.create_window(0, 0, anchor="nw", window=ecbtn1, tags=("cbutton2"))
+
+                dcbtn1=Button(cus_canvas,text='Delete', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                window_dcbtn1 = cus_canvas.create_window(0, 0, anchor="nw", window=dcbtn1, tags=("cbutton3"))
 
                 #---------------------------Product & Services------------------------#
                 tab3_4.grid_columnconfigure(0,weight=1)
@@ -4264,62 +4441,7 @@ def main_sign_in():
                 window_label_2 = pro_canvas.create_window(0, 0, anchor="nw", window=label_2,tags=('plabel3'))
 
 
-                fgth = ttk.Style()
-                fgth.configure('mystyle105.Treeview.Heading', background='#2f516f',State='DISABLE')
-
-                pro_tree = ttk.Treeview(pro_canvas, columns = (1,2,3,4,5,6), height = 10, show = "headings",style='mystyle105.Treeview')
-                pro_tree.pack(side = 'top')
-                pro_tree.heading(1)
-                pro_tree.heading(2, text="TYPE")
-                pro_tree.heading(3, text="NAME")
-                pro_tree.heading(4, text="SKU")
-                pro_tree.heading(5, text="HSN/SAC")
-                pro_tree.heading(6, text="QUANTITY")
                 
-                pro_tree.column(1, width = 50)
-                pro_tree.column(2, width = 250)
-                pro_tree.column(3, width = 300)
-                pro_tree.column(4, width = 150)
-                pro_tree.column(5, width = 200)
-                pro_tree.column(6, width = 150)
-                window_label_4 = pro_canvas.create_window(0, 0, anchor="nw", window=pro_tree,tags=('ptree1'))
-                
-                p_sql_1 = "SELECT * FROM app1_inventory"
-                fbcursor.execute(p_sql_1)
-                p_data_1 = fbcursor.fetchall()
-
-                count = 0
-                for i in p_data_1:
-                    if True:
-                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
-                    else:
-                        pass
-                count += 1
-
-                p_sql_2 = "SELECT * FROM app1_noninventory"
-                fbcursor.execute(p_sql_2)
-                p_data_2 = fbcursor.fetchall()
-
-                count = 0
-                for i in p_data_2:
-                    if True:
-                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
-                    else:
-                        pass
-                count += 1
-
-                p_sql_3 = "SELECT * FROM app1_service"
-                fbcursor.execute(p_sql_3)
-                p_data_3 = fbcursor.fetchall()
-
-                count = 0
-                for i in p_data_3:
-                    if True:
-                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
-                    else:
-                        pass
-                count += 1
-
 
             
                 # Define the style for combobox widget
@@ -4441,6 +4563,8 @@ def main_sign_in():
                         x11,y11,
                         )
 
+                        dcanvas.coords("apimage1",dwidth/4.2,dheight/1.73)
+                        
                         dcanvas.coords("aplabel2",dwidth/3.9,dheight/1.75)
                         dcanvas.coords("aplabel3",dwidth/6.30,dheight/1.54)
                         dcanvas.coords("apbutton1",dwidth/4.1,dheight/1.30)
@@ -4477,6 +4601,8 @@ def main_sign_in():
                         x11,y11,
                         )
 
+                        dcanvas.coords("apimage2",dwidth/1.61,dheight/1.73)
+                        
                         dcanvas.coords("aplabel4",dwidth/1.58,dheight/1.75)
                         dcanvas.coords("aplabel5",dwidth/1.85,dheight/1.54)
                         dcanvas.coords("apbutton2",dwidth/1.6,dheight/1.30)
@@ -4513,6 +4639,9 @@ def main_sign_in():
                         x11,y11,
                         )
 
+                        
+                        dcanvas.coords("apimage3",dwidth/4.2,dheight/0.93)
+                        
                         dcanvas.coords("aplabel6",dwidth/3.9,dheight/0.95)
                         dcanvas.coords("aplabel7",dwidth/6.30,dheight/0.88)
                         dcanvas.coords("apbutton3",dwidth/4.1,dheight/0.80)
@@ -4549,6 +4678,8 @@ def main_sign_in():
                         x11,y11,
                         )
 
+                        dcanvas.coords("apimage4",dwidth/1.61,dheight/0.93)
+
                         dcanvas.coords("aplabel8",dwidth/1.58,dheight/0.95)
                         dcanvas.coords("aplabel9",dwidth/1.85,dheight/0.88)
                         dcanvas.coords("apbutton4",dwidth/1.6,dheight/0.80)
@@ -4580,11 +4711,25 @@ def main_sign_in():
 
                     p_canvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#2f516f",tags=("appoly3"))
 
+                    def invcall(event):
+                        p_canvas_1.itemconfig('apimage1',state='hidden')
+                        p_canvas_1.itemconfig('aplabel2',state='normal')
+                        p_canvas_1.itemconfig('aplabel3',state='normal')
+                        p_canvas_1.itemconfig('apbutton1',state='normal')
+
+                    image_i1 = Image.open("images/inventory.png")
+                    resize_image = image_i1.resize((200,150))
+                    image_i1 = ImageTk.PhotoImage(resize_image)
+                    btlogoi = Label(p_canvas_1, width=200, height=150, background="#1b3857", image = image_i1) 
+                    window_image = p_canvas_1.create_window(0, 0, anchor="nw", window=btlogoi,tags=('apimage1'))
+                    btlogoi.photo = image_i1
+                    btlogoi.bind("<Button-1>",invcall)
+
                     label_1 = Label(p_canvas_1,width=10,height=1,text="Inventory", font=('arial 20'),background="#2f516f",fg="white") 
-                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel2'))
+                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel2'),state=HIDDEN)
 
                     label_1 = Label(p_canvas_1,width=45,height=2,text="Inventory is the goods available for sale and raw materials \nused to produce goods available for sale.", font=('arial 12'),background="#2f516f",fg="white") 
-                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel3'))
+                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel3'),state=HIDDEN)
 
                     def inv_add_item():
                         pro_frame_1.grid_forget()
@@ -4803,6 +4948,62 @@ def main_sign_in():
                             i_p_val = (name,sku,hsn,unit,category,initialqty,date,stockalrt,invacnt,description,salesprice,incomeacnt,tax,purchaseinfo,cost,expacnt,purtax,revcharge,presupplier,cid)
                             fbcursor.execute(i_p_sql,i_p_val)
                             finsysdb.commit()
+
+                            #_________Refresh insert tree________#
+     
+                            for record in pro_tree.get_children():
+                                pro_tree.delete(record)
+
+
+                            sql_p="select * from auth_user where username=%s"
+                            sql_p_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_p,sql_p_val,)
+                            pr_dt=fbcursor.fetchone()
+
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dt[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dt=fbcursor.fetchone()
+
+                            p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
+                            p_val_1 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_1,p_val_1,)
+                            p_data_1 = fbcursor.fetchall()
+                            
+                            count0 = 0
+                            for i in p_data_1:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                                else:
+                                    pass
+                            count0 += 1
+
+                            p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
+                            p_val_2 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_2,p_val_2,)
+                            p_data_2 = fbcursor.fetchall()
+
+                            count1 = 0
+                            for i in p_data_2:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count1 += 1
+
+                            p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
+                            p_val_3 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_3,p_val_3,)
+                            p_data_3 = fbcursor.fetchall()
+                            
+
+                            count2 = 0
+                            for i in p_data_3:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count2 += 1
 
                             pro_frame_2.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
@@ -5550,15 +5751,30 @@ def main_sign_in():
 
 
                     p_btn_1=Button(p_canvas_1,text='Add Item', width=20,height=1,foreground="white",background="blue",font='arial 12',command=inv_add_item)
-                    window_p_btn_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=p_btn_1,tags=('apbutton1'))
+                    window_p_btn_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=p_btn_1,tags=('apbutton1'),state=HIDDEN)
 
                     p_canvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#2f516f",tags=("appoly4"))
 
+                    def noncall(event):
+                        p_canvas_1.itemconfig('apimage2',state='hidden')
+                        p_canvas_1.itemconfig('aplabel4',state='normal')
+                        p_canvas_1.itemconfig('aplabel5',state='normal')
+                        p_canvas_1.itemconfig('apbutton2',state='normal')
+
+                    image_n1 = Image.open("images/noninventory.png")
+                    resize_image = image_n1.resize((200,150))
+                    image_n1 = ImageTk.PhotoImage(resize_image)
+                    btlogon = Label(p_canvas_1, width=200, height=150, background="#1b3857", image = image_n1) 
+                    window_image = p_canvas_1.create_window(0, 0, anchor="nw", window=btlogon,tags=('apimage2'))
+                    btlogon.photo = image_n1
+                    btlogon.bind("<Button-1>",noncall)
+
+
                     label_1 = Label(p_canvas_1,width=11,height=1,text="Non-Inventory", font=('arial 20'),background="#2f516f",fg="white") 
-                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel4'))
+                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel4'),state=HIDDEN)
 
                     label_1 = Label(p_canvas_1,width=46,height=2,text="A non-inventory is a type of product that is procured, sold, \nconsumed in production but we do not keep inventories for it.", font=('arial 12'),background="#2f516f",fg="white") 
-                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel5'))
+                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel5'),state=HIDDEN)
 
                     def non_add_item():
                         pro_frame_1.grid_forget()
@@ -5767,6 +5983,58 @@ def main_sign_in():
                             n_p_val = (name,sku,hsn,unit,category,descr,saleprice,income,tax,purchasedescr,cost,expenseaccount,purchasetax,revcharge,presupplier,cid)
                             fbcursor.execute(n_p_sql,n_p_val)
                             finsysdb.commit()
+
+                            #_________Refresh insert tree________#
+     
+                            sql_p="select * from auth_user where username=%s"
+                            sql_p_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_p,sql_p_val,)
+                            pr_dt=fbcursor.fetchone()
+
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dt[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dt=fbcursor.fetchone()
+
+                            p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
+                            p_val_1 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_1,p_val_1,)
+                            p_data_1 = fbcursor.fetchall()
+                            
+                            count0 = 0
+                            for i in p_data_1:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                                else:
+                                    pass
+                            count0 += 1
+
+                            p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
+                            p_val_2 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_2,p_val_2,)
+                            p_data_2 = fbcursor.fetchall()
+
+                            count1 = 0
+                            for i in p_data_2:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count1 += 1
+
+                            p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
+                            p_val_3 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_3,p_val_3,)
+                            p_data_3 = fbcursor.fetchall()
+                            
+
+                            count2 = 0
+                            for i in p_data_3:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count2 += 1
 
                             pro_frame_3.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
@@ -6356,15 +6624,30 @@ def main_sign_in():
                         window_non_sub_btn1 = p_canvas_3.create_window(0, 0, anchor="nw", window=non_sub_btn1,tags=('npbutton5'))
 
                     p_btn_2=Button(p_canvas_1,text='Add Item', width=20,height=1,foreground="white",background="blue",font='arial 12',command=non_add_item)
-                    window_p_btn_2 = p_canvas_1.create_window(0, 0, anchor="nw", window=p_btn_2,tags=('apbutton2'))
+                    window_p_btn_2 = p_canvas_1.create_window(0, 0, anchor="nw", window=p_btn_2,tags=('apbutton2'),state=HIDDEN)
 
                     p_canvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#2f516f",tags=("appoly5"))
 
+                    def sercall(event):
+                        p_canvas_1.itemconfig('apimage3',state='hidden')
+                        p_canvas_1.itemconfig('aplabel6',state='normal')
+                        p_canvas_1.itemconfig('aplabel7',state='normal')
+                        p_canvas_1.itemconfig('apbutton3',state='normal')
+
+                    image_s1 = Image.open("images/service.png")
+                    resize_image = image_s1.resize((200,150))
+                    image_s1 = ImageTk.PhotoImage(resize_image)
+                    btlogos = Label(p_canvas_1, width=200, height=150, background="#1b3857", image = image_s1) 
+                    window_image = p_canvas_1.create_window(0, 0, anchor="nw", window=btlogos,tags=('apimage3'))
+                    btlogos.photo = image_s1
+                    btlogos.bind("<Button-1>",sercall)
+
+
                     label_1 = Label(p_canvas_1,width=10,height=1,text="Services", font=('arial 20'),background="#2f516f",fg="white") 
-                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel6'))
+                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel6'),state=HIDDEN)
 
                     label_1 = Label(p_canvas_1,width=45,height=2,text="A service is a transaction in which no physical goods are \ntransferred from the seller to the buyer.", font=('arial 12'),background="#2f516f",fg="white") 
-                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel7'))
+                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel7'),state=HIDDEN)
 
                     def ser_add_item():
                         pro_frame_1.grid_forget()
@@ -6582,6 +6865,58 @@ def main_sign_in():
                             s_p_val = (name,sku,sac,unit,categ,descr,saleprice,income,tax,abatement,sertype,purchasedescr,cost,expenseaccount,purchasetax,revcharge,presupplier,cid)
                             fbcursor.execute(s_p_sql,s_p_val)
                             finsysdb.commit()
+
+                            #_________Refresh insert tree________#
+     
+                            sql_p="select * from auth_user where username=%s"
+                            sql_p_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_p,sql_p_val,)
+                            pr_dt=fbcursor.fetchone()
+
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dt[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dt=fbcursor.fetchone()
+
+                            p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
+                            p_val_1 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_1,p_val_1,)
+                            p_data_1 = fbcursor.fetchall()
+                            
+                            count0 = 0
+                            for i in p_data_1:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                                else:
+                                    pass
+                            count0 += 1
+
+                            p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
+                            p_val_2 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_2,p_val_2,)
+                            p_data_2 = fbcursor.fetchall()
+
+                            count1 = 0
+                            for i in p_data_2:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count1 += 1
+
+                            p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
+                            p_val_3 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_3,p_val_3,)
+                            p_data_3 = fbcursor.fetchall()
+                            
+
+                            count2 = 0
+                            for i in p_data_3:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count2 += 1
 
                             pro_frame_4.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
@@ -7194,15 +7529,29 @@ def main_sign_in():
                         window_ser_sub_btn1 = p_canvas_4.create_window(0, 0, anchor="nw", window=ser_sub_btn1,tags=('spbutton5'))
 
                     p_btn_3=Button(p_canvas_1,text='Add Item', width=20,height=1,foreground="white",background="blue",font='arial 12',command=ser_add_item)
-                    window_p_btn_3 = p_canvas_1.create_window(0, 0, anchor="nw", window=p_btn_3,tags=('apbutton3'))
+                    window_p_btn_3 = p_canvas_1.create_window(0, 0, anchor="nw", window=p_btn_3,tags=('apbutton3'),state=HIDDEN)
 
                     p_canvas_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#2f516f",tags=("appoly6"))
 
+                    def buncall(event):
+                        p_canvas_1.itemconfig('apimage4',state='hidden')
+                        p_canvas_1.itemconfig('aplabel8',state='normal')
+                        p_canvas_1.itemconfig('aplabel9',state='normal')
+                        p_canvas_1.itemconfig('apbutton4',state='normal')
+
+                    image_b1 = Image.open("images/bundle.png")
+                    resize_image = image_b1.resize((200,150))
+                    image_b1 = ImageTk.PhotoImage(resize_image)
+                    btlogob = Label(p_canvas_1, width=200, height=150, background="#1b3857", image = image_b1) 
+                    window_image = p_canvas_1.create_window(0, 0, anchor="nw", window=btlogob,tags=('apimage4'))
+                    btlogob.photo = image_b1
+                    btlogob.bind("<Button-1>",buncall)
+
                     label_1 = Label(p_canvas_1,width=10,height=1,text="Bundle", font=('arial 20'),background="#2f516f",fg="white") 
-                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel8'))
+                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel8'),state=HIDDEN)
 
                     label_1 = Label(p_canvas_1,width=46,height=2,text="A bundle is a group of software programs or hardware \ndevices that are grouped together and sold as one.", font=('arial 12'),background="#2f516f",fg="white") 
-                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel9'))
+                    window_label_1 = p_canvas_1.create_window(0, 0, anchor="nw", window=label_1,tags=('aplabel9'),state=HIDDEN)
 
                     def bun_add_item():
                         pro_frame_1.grid_forget()
@@ -7499,7 +7848,7 @@ def main_sign_in():
                         label_1 = Label(p_canvas_5,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_1, tags=('bplabel5'))
 
-                        entry_bun_item_7=scrolledtext.ScrolledText(p_canvas_5,width=145,background='#2f516f',foreground="white")
+                        entry_bun_item_7=scrolledtext.ScrolledText(p_canvas_5,width=146,background='#2f516f',foreground="white")
                         window_entry_bun_item_7 = p_canvas_5.create_window(0, 0, anchor="nw", height=60,window=entry_bun_item_7, tags=('bpentry3'))
 
                         label_1 = Label(p_canvas_5,width=30,height=1,text="Products/services included in the bundle", font=('arial 12'),background="#1b3857",fg="white") 
@@ -7605,16 +7954,16 @@ def main_sign_in():
 
 
 
-                        bun_entry_5=Entry(p_canvas_5,width=32,justify=LEFT,background='#2f516f',foreground="white")
+                        bun_entry_5=scrolledtext.ScrolledText(p_canvas_5,width=23,background='#2f516f',foreground="white")
                         window_bun_entry_5 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_5,tags=('bpentry8'))
 
-                        bun_entry_6=Entry(p_canvas_5,width=32,justify=LEFT,background='#2f516f',foreground="white")
+                        bun_entry_6=scrolledtext.ScrolledText(p_canvas_5,width=23,background='#2f516f',foreground="white")
                         window_bun_entry_6 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_6,tags=('bpentry9'))
 
-                        bun_entry_7=Entry(p_canvas_5,width=32,justify=LEFT,background='#2f516f',foreground="white")
+                        bun_entry_7=scrolledtext.ScrolledText(p_canvas_5,width=23,background='#2f516f',foreground="white")
                         window_bun_entry_7 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_7,tags=('bpentry10'))
 
-                        bun_entry_8=Entry(p_canvas_5,width=32,justify=LEFT,background='#2f516f',foreground="white")
+                        bun_entry_8=scrolledtext.ScrolledText(p_canvas_5,width=23,background='#2f516f',foreground="white")
                         window_bun_entry_8 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_8,tags=('bpentry11'))
 
 
@@ -7706,7 +8055,7 @@ def main_sign_in():
 
 
                     p_btn_4=Button(p_canvas_1,text='Add Item', width=20,height=1,foreground="white",background="blue",font='arial 12',command=bun_add_item)
-                    window_p_btn_4 = p_canvas_1.create_window(0, 0, anchor="nw", window=p_btn_4,tags=('apbutton4'))
+                    window_p_btn_4 = p_canvas_1.create_window(0, 0, anchor="nw", window=p_btn_4,tags=('apbutton4'),state=HIDDEN)
 
                     def pro_back_1():
                         pro_frame_1.grid_forget()
@@ -7719,11 +8068,618 @@ def main_sign_in():
                 pbtn1=Button(pro_canvas,text='Add Products', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_product)
                 window_pbtn1 = pro_canvas.create_window(0, 0, anchor="nw", window=pbtn1,tags=('pbutton1'))
 
-                pebtn1=Button(pro_canvas,text='Edit', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                def inv_edit_item():
+                    pro_frame.grid_forget()
+                    pro_frame_edit_1 = Frame(tab3_4)
+                    pro_frame_edit_1.grid(row=0,column=0,sticky='nsew')
+
+                    def pro_responsive_widgets_2(event):
+                        dwidth = event.width
+                        dheight = event.height
+                        dcanvas = event.widget
+                    
+                        r1 = 25
+                        x1 = dwidth/63
+                        x2 = dwidth/1.021
+                        y1 = dheight/14 
+                        y2 = dheight/3.505
+
+                        dcanvas.coords("ieppoly1",x1 + r1,y1,
+                        x1 + r1,y1,
+                        x2 - r1,y1,
+                        x2 - r1,y1,     
+                        x2,y1,     
+                        #--------------------
+                        x2,y1 + r1,     
+                        x2,y1 + r1,     
+                        x2,y2 - r1,     
+                        x2,y2 - r1,     
+                        x2,y2,
+                        #--------------------
+                        x2 - r1,y2,     
+                        x2 - r1,y2,     
+                        x1 + r1,y2,
+                        x1 + r1,y2,
+                        x1,y2,
+                        #--------------------
+                        x1,y2 - r1,
+                        x1,y2 - r1,
+                        x1,y1 + r1,
+                        x1,y1 + r1,
+                        x1,y1,
+                        )
+
+                        dcanvas.coords("ieplabel1",dwidth/3,dheight/8.24)
+                        dcanvas.coords("iephline",dwidth/21,dheight/4.67,dwidth/1.055,dheight/4.67)
+
+                        r2 = 25
+                        x11 = dwidth/63
+                        x21 = dwidth/1.021
+                        y11 = dheight/2.8
+                        y21 = dheight/0.29
+
+
+                        dcanvas.coords("ieppoly2",x11 + r2,y11,
+                        x11 + r2,y11,
+                        x21 - r2,y11,
+                        x21 - r2,y11,     
+                        x21,y11,     
+                        #--------------------
+                        x21,y11 + r2,     
+                        x21,y11 + r2,     
+                        x21,y21 - r2,     
+                        x21,y21 - r2,     
+                        x21,y21,
+                        #--------------------
+                        x21 - r2,y21,     
+                        x21 - r2,y21,     
+                        x11 + r2,y21,
+                        x11 + r2,y21,
+                        x11,y21,
+                        #--------------------
+                        x11,y21 - r2,
+                        x11,y21 - r2,
+                        x11,y11 + r2,
+                        x11,y11 + r2,
+                        x11,y11,
+                        )
+
+                        r2 = 25
+                        x11 = dwidth/24
+                        x21 = dwidth/1.050
+                        y11 = dheight/2.1
+                        y21 = dheight/1.35
+
+
+                        dcanvas.coords("ieppoly3",x11 + r2,y11,
+                        x11 + r2,y11,
+                        x21 - r2,y11,
+                        x21 - r2,y11,     
+                        x21,y11,     
+                        #--------------------
+                        x21,y11 + r2,     
+                        x21,y11 + r2,     
+                        x21,y21 - r2,     
+                        x21,y21 - r2,     
+                        x21,y21,
+                        #--------------------
+                        x21 - r2,y21,     
+                        x21 - r2,y21,     
+                        x11 + r2,y21,
+                        x11 + r2,y21,
+                        x11,y21,
+                        #--------------------
+                        x11,y21 - r2,
+                        x11,y21 - r2,
+                        x11,y11 + r2,
+                        x11,y11 + r2,
+                        x11,y11,
+                        )
+
+                        dcanvas.coords("ieplabel2",dwidth/2.4,dheight/1.77)
+                        dcanvas.coords("iepbutton1",dwidth/1.8,dheight/1.77)
+
+                        dcanvas.coords("ieplabel3",dwidth/23.2,dheight/1.23)
+                        dcanvas.coords("ieplabel4",dwidth/23.3,dheight/1.02)
+                        dcanvas.coords("ieplabel5",dwidth/1.9,dheight/1.02)
+                        dcanvas.coords("ieplabel6",dwidth/1.9,dheight/0.92)
+                        dcanvas.coords("ieplabel7",dwidth/27,dheight/0.865)
+                        dcanvas.coords("ieplabel8",dwidth/1.915,dheight/0.865)
+                        dcanvas.coords("ieplabel9",dwidth/50,dheight/0.76)
+                        dcanvas.coords("ieplabel10",dwidth/2.95,dheight/0.76)
+                        dcanvas.coords("ieplabel11",dwidth/1.54,dheight/0.76)
+                        dcanvas.coords("ieplabel12",dwidth/38,dheight/0.675)
+                        dcanvas.coords("ieplabel13",dwidth/26.8,dheight/0.606)
+                        dcanvas.coords("ieplabel14",dwidth/28.3,dheight/0.538)
+                        dcanvas.coords("ieplabel15",dwidth/1.9,dheight/0.538)
+                        dcanvas.coords("ieplabel16",dwidth/28.4,dheight/0.485)
+                        dcanvas.coords("ieplabel17",dwidth/29.3,dheight/0.438)
+                        dcanvas.coords("ieplabel18",dwidth/28,dheight/0.401)
+                        dcanvas.coords("ieplabel19",dwidth/1.91,dheight/0.401)
+                        dcanvas.coords("ieplabel20",dwidth/28,dheight/0.37)
+                        dcanvas.coords("ieplabel21",dwidth/26,dheight/0.35)
+                        dcanvas.coords("ieplabel22",dwidth/1.9,dheight/0.35)
+
+                        dcanvas.coords("iepentry1",dwidth/23.2,dheight/1.165)
+                        dcanvas.coords("iepentry2",dwidth/23.2,dheight/0.975)
+                        dcanvas.coords("iepentry3",dwidth/1.9,dheight/0.975)
+                        dcanvas.coords("iepentry4",dwidth/1.9,dheight/0.83)
+                        dcanvas.coords("iepentry5",dwidth/23.2,dheight/0.73)
+                        dcanvas.coords("iepentry6",dwidth/1.52,dheight/0.73)
+                        dcanvas.coords("iepentry7",dwidth/23.2,dheight/0.59)
+                        dcanvas.coords("iepentry8",dwidth/23.2,dheight/0.525)
+                        dcanvas.coords("iepentry9",dwidth/23.2,dheight/0.43)
+                        dcanvas.coords("iepentry10",dwidth/23.2,dheight/0.394)
+                        dcanvas.coords("iepentry11",dwidth/23.2,dheight/0.344)
+
+                        dcanvas.coords("iepcombo1",dwidth/23.2,dheight/0.83)
+                        dcanvas.coords("iepcombo2",dwidth/23.2,dheight/0.654)
+                        dcanvas.coords("iepcombo3",dwidth/1.9,dheight/0.525)
+                        dcanvas.coords("iepcombo4",dwidth/23.2,dheight/0.474)
+                        dcanvas.coords("iepcombo5",dwidth/1.89,dheight/0.394)
+                        dcanvas.coords("iepcombo6",dwidth/23.2,dheight/0.364)
+                        dcanvas.coords("iepcombo7",dwidth/1.89,dheight/0.344)
+
+                        dcanvas.coords("iepcbutton1",dwidth/23.2,dheight/0.51)
+                        dcanvas.coords("iepcbutton2",dwidth/23.2,dheight/0.385)
+
+                        dcanvas.coords("iepbutton2",dwidth/2.45,dheight/0.654)
+                        dcanvas.coords("iepbutton3",dwidth/2.45,dheight/0.474)
+                        dcanvas.coords("iepbutton4",dwidth/2.45,dheight/0.364)
+                        dcanvas.coords("iepbutton5",dwidth/2.38,dheight/0.325)
+
+                        dcanvas.coords("iepbuttn1",dwidth/23,dheight/3.415)
+
+                        dcanvas.coords("iephline1",dwidth/21,dheight/0.448,dwidth/1.055,dheight/0.448)
+
+                        try:
+                            dcanvas.coords("iepdate1",dwidth/2.9,dheight/0.73)
+                        except:
+                            pass
+
+
+                    p_canvas_edit_1=Canvas(pro_frame_edit_1, bg='#2f516f', width=953, height=600, scrollregion=(0,0,700,2050))
+
+                    pro_frame_edit_1.grid_columnconfigure(0,weight=1)
+                    pro_frame_edit_1.grid_rowconfigure(0,weight=1)
+                
+                    vertibar=Scrollbar(pro_frame_edit_1, orient=VERTICAL)
+                    vertibar.grid(row=0,column=1,sticky='ns')
+                    vertibar.config(command=p_canvas_edit_1.yview)
+
+                    p_canvas_edit_1.bind("<Configure>", pro_responsive_widgets_2)
+                    p_canvas_edit_1.config(yscrollcommand=vertibar.set)
+                    p_canvas_edit_1.grid(row=0,column=0,sticky='nsew')
+
+                    inv_peditid = pro_tree.item(pro_tree.focus())["values"][2]
+                    print(inv_peditid)
+
+                    inv_peditid_1 = pro_tree.item(pro_tree.focus())["values"][3]
+                    print(inv_peditid_1)
+
+                    sql_pi="select * from auth_user where username=%s"
+                    pi_val=(nm_ent.get(),)
+                    fbcursor.execute(sql_pi,pi_val,)
+                    pi_dtl=fbcursor.fetchone()
+
+                    sql = "select * from app1_company where id_id=%s"
+                    val = (pi_dtl[0],)
+                    fbcursor.execute(sql, val,)
+                    cmp_dtli=fbcursor.fetchone()
+                    print(cmp_dtli)
+
+                    sql = 'select * from app1_inventory where name = %s and sku = %s and cid_id = %s'
+                    val =  (inv_peditid,inv_peditid_1,cmp_dtli[0],)
+                    fbcursor.execute(sql,val)
+                    edit_pinv = fbcursor.fetchone()
+
+                    def edit_new_pro_inv():
+                        name = edit_inv_pitem_1.get()
+                        sku = edit_inv_pitem_2.get()
+                        hsn = edit_inv_pitem_h1.get()
+                        unit = comb_inv_edit_p1.get()
+                        category = edit_inv_pitem_3.get()
+                        initialqty = edit_inv_pitem_4.get()
+                        date = edit_inv_pitem_aod5.get_date()
+                        stockalrt = edit_inv_pitem_6.get()
+                        invacnt = comb_inv_edit_i2.get()
+                        description = edit_inv_pitem_7.get('1.0', 'end-1c')
+                        salesprice = edit_inv_pitem_8.get()
+                        incomeacnt = comb_inv_edit_in4.get()
+                        tax = comb_inv_edit_t3.get()
+                        purchaseinfo = edit_inv_pitem_9.get('1.0', 'end-1c')
+                        cost = edit_inv_pitem_10.get()
+                        expacnt = comb_inv_edit_ex6.get()
+                        purtax = comb_inv_edit_pu5.get()
+                        revcharge = edit_inv_pitem_11.get()
+                        presupplier = comb_inv_edit_pr7.get()
+
+                        usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
+                        usrp_val = (nm_ent.get(),)
+                        fbcursor.execute(usrp_sql,usrp_val)
+                        usrp_data = fbcursor.fetchone()
+
+                        cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                        cmpp_val = (usrp_data[0],)
+                        fbcursor.execute(cmpp_sql,cmpp_val)
+                        cmpp_data = fbcursor.fetchone()
+                        cid = cmpp_data[0]
+                        
+                        i_p_sql = "UPDATE app1_inventory set  name=%s,sku=%s,hsn=%s,unit=%s,category=%s,initialqty=%s,date=%s,stockalrt=%s,invacnt=%s,description=%s,salesprice=%s,incomeacnt=%s,tax=%s,purchaseinfo=%s,cost=%s,expacnt=%s,purtax=%s,revcharge=%s,presupplier=%s,cid_id=%s where name=%s and sku = %s"
+                        i_p_val = (name,sku,hsn,unit,category,initialqty,date,stockalrt,invacnt,description,salesprice,incomeacnt,tax,purchaseinfo,cost,expacnt,purtax,revcharge,presupplier,cid,inv_peditid,inv_peditid_1)
+                        fbcursor.execute(i_p_sql,i_p_val)
+                        finsysdb.commit()
+
+                        #_________Refresh insert tree________#
+    
+                        for record in pro_tree.get_children():
+                            pro_tree.delete(record)
+
+
+                        sql_p="select * from auth_user where username=%s"
+                        sql_p_val=(nm_ent.get(),)
+                        fbcursor.execute(sql_p,sql_p_val,)
+                        pr_dt=fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (pr_dt[0],)
+                        fbcursor.execute(sql, val,)
+                        cmp_dt=fbcursor.fetchone()
+
+                        p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
+                        p_val_1 = (cmp_dt[0],)
+                        fbcursor.execute(p_sql_1,p_val_1,)
+                        p_data_1 = fbcursor.fetchall()
+                        
+                        count0 = 0
+                        for i in p_data_1:
+                            if True:
+                                pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                            else:
+                                pass
+                        count0 += 1
+
+                        p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
+                        p_val_2 = (cmp_dt[0],)
+                        fbcursor.execute(p_sql_2,p_val_2,)
+                        p_data_2 = fbcursor.fetchall()
+
+                        count1 = 0
+                        for i in p_data_2:
+                            if True:
+                                pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                            else:
+                                pass
+                        count1 += 1
+
+                        p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
+                        p_val_3 = (cmp_dt[0],)
+                        fbcursor.execute(p_sql_3,p_val_3,)
+                        p_data_3 = fbcursor.fetchall()
+                        
+
+                        count2 = 0
+                        for i in p_data_3:
+                            if True:
+                                pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                            else:
+                                pass
+                        count2 += 1
+
+                        pro_frame_edit_1.destroy()
+                        pro_frame.grid(row=0,column=0,sticky='nsew')
+
+
+
+                    p_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('ieppoly1'))
+
+                    label_1 = Label(p_canvas_edit_1,width=30,height=1,text="PRODUCT / SERVICE INFORMATION", font=('arial 20'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel1'))
+
+                    p_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('iephline'))
+
+                    p_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('ieppoly2'))
+
+                    p_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#2f516f",tags=('ieppoly3'))
+
+                    label_1 = Label(p_canvas_edit_1,width=10,height=2,text="INVENTORY", font=('arial 20'),background="#2f516f",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel2'))
+
+
+                    label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Name", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel3'))
+
+                    edit_inv_pitem_1=Entry(p_canvas_edit_1,width=200,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_1, tags=('iepentry1'))
+                    edit_inv_pitem_1.delete(0,'end')
+                    edit_inv_pitem_1.insert(0, edit_pinv[2])
+
+                    label_1 = Label(p_canvas_edit_1,width=4,height=1,text="SKU", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel4'))
+
+                    def pei_sku_1(event):
+                        if edit_inv_pitem_2.get()==edit_pinv[3]:
+                            edit_inv_pitem_2.delete(0,END)
+                        else:
+                            pass
+                    
+                    edit_inv_pitem_2=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_2, tags=('iepentry2'))
+                    # edit_inv_pitem_2.insert(0,"N41554")
+                    edit_inv_pitem_2.bind("<Button-1>",pei_sku_1)
+                    edit_inv_pitem_2.delete(0,'end')
+                    edit_inv_pitem_2.insert(0, edit_pinv[3])
+
+
+                    label_1 = Label(p_canvas_edit_1,width=9,height=1,text="HSN Code", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel5'))
+
+                    edit_inv_pitem_h1=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_h1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_h1, tags=('iepentry3'))
+                    edit_inv_pitem_h1.delete(0,'end')
+                    edit_inv_pitem_h1.insert(0, edit_pinv[4])
+
+                    #Define a callback function
+                    def ecallback(url):
+                        webbrowser.open_new_tab(url)
+
+                    link_e1 = Label(p_canvas_edit_1,width=30,height=1,text="Not sure about HSN Code..? Click here", font=('arial 12'),background="#1b3857",fg="skyblue") 
+                    window_link_e1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=link_e1, tags=('ieplabel6'))
+                    link_e1.bind("<Button-1>", lambda e:
+                    ecallback("https://gstcouncil.gov.in/sites/default/files/goods-rates-booklet-03July2017.pdf"))
+
+                    label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Unit", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel7'))
+
+                    comb_inv_edit_p1 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                    comb_inv_edit_p1['values'] = ("Choose...","BAG Bags","BAL Bale BOU","BDL Bundles","BKL Buckles","BOX Box","BTL Bottles","CAN Cans","CTN Cartons","CCM Cubic centimeters","CBM Cubic meters","CMS Centimeters","DRM Drums","DOZ Dozens","GGK Great gross GYD","GRS GrossGMS","KME Kilometre","KGS Kilograms","KLR Kilo litre","MTS Metric ton","MLT Mili litre","MTR Meters","NOS Numbers","PAC Packs","PCS Pieces","PRS Pairs","QTL Quintal","ROL Rolls","SQY Square Yards","SET Sets","SQF Square feet","SQM Square meters","TBS Tablets","TUB Tubes","TGM Ten Gross","THD Thousands","TON Tonnes","UNT Units","UGS US Gallons","YDS Yards",)
+                    comb_inv_edit_p1.current(0)
+                    window_comb_inv_edit_p1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_p1, tags=('iepcombo1'))
+                    comb_inv_edit_p1.delete(0,'end')
+                    comb_inv_edit_p1.insert(0, edit_pinv[5])
+
+
+                    label_1 = Label(p_canvas_edit_1,width=9,height=1,text="Category", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel8'))
+
+                    edit_inv_pitem_3=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_3 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_3,tags=('iepentry4'))
+                    edit_inv_pitem_3.delete(0,'end')
+                    edit_inv_pitem_3.insert(0, edit_pinv[6])
+
+                    label_1 = Label(p_canvas_edit_1,width=24,height=1,text="Initial quantity on hand", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel9'))
+
+                    edit_inv_pitem_4=Entry(p_canvas_edit_1,width=60,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_4 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_4,tags=('iepentry5'))
+                    edit_inv_pitem_4.delete(0,'end')
+                    edit_inv_pitem_4.insert(0, edit_pinv[7])
+
+                    label_1 = Label(p_canvas_edit_1,width=10,height=1,text="As of date", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel10'))
+        
+                    label_1 = Label(p_canvas_edit_1,width=14,height=1,text="Low stock alert", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel11'))
+
+                    edit_inv_pitem_6=Entry(p_canvas_edit_1,width=60,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_6 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_6,tags=('iepentry6'))
+                    edit_inv_pitem_6.delete(0,'end')
+                    edit_inv_pitem_6.insert(0, edit_pinv[9])
+
+                    label_1 = Label(p_canvas_edit_1,width=22,height=1,text="Inventory asset account", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(35, 910, anchor="nw", window=label_1,tags=('ieplabel12'))
+
+                    comb_inv_edit_i2 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                    comb_inv_edit_i2['values'] = ("Inventory Asset",)
+                    comb_inv_edit_i2.current(0)
+                    window_comb_inv_edit_i2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_edit_i2,tags=('iepcombo2'))
+                    comb_inv_edit_i2.delete(0,'end')
+                    comb_inv_edit_i2.insert(0, edit_pinv[10])
+
+                    
+                    label_1 = Label(p_canvas_edit_1,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel13'))
+
+                    edit_inv_pitem_7=scrolledtext.ScrolledText(p_canvas_edit_1,width=145,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_7 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=60,window=edit_inv_pitem_7,tags=('iepentry7'))
+                    edit_inv_pitem_7.insert(1.0,edit_pinv[11])
+
+                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel14'))
+                    
+                    edit_inv_pitem_8=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_8 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_8,tags=('iepentry8'))
+                    edit_inv_pitem_8.delete(0,'end')
+                    edit_inv_pitem_8.insert(0, edit_pinv[12])
+
+                    chk_str_einv_item = StringVar()
+                    chkbtn_inv_pitem_1 = Checkbutton(p_canvas_edit_1, text = "Inclusive of tax", variable = chk_str_einv_item, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                    chkbtn_inv_pitem_1.select()
+                    window_chkbtn_inv_pitem_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=chkbtn_inv_pitem_1,tags=('iepcbutton1'))
+
+                    label_1 = Label(p_canvas_edit_1,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel15'))
+
+                    comb_inv_edit_t3 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                    comb_inv_edit_t3['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                    comb_inv_edit_t3.current(0)
+                    window_comb_inv_edit_t3 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_t3,tags=('iepcombo3'))
+                    comb_inv_edit_t3.delete(0,'end')
+                    comb_inv_edit_t3.insert(0, edit_pinv[14])
+
+                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel16'))
+
+                    comb_inv_edit_in4 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                    comb_inv_edit_in4['values'] = ("Choose...","Billable Expense Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales of Product Income","Uncategorised Income",)
+                    comb_inv_edit_in4.current(0)
+                    window_comb_inv_edit_in4 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_edit_in4,tags=('iepcombo4'))
+                    comb_inv_edit_in4.delete(0,'end')
+                    comb_inv_edit_in4.insert(0, edit_pinv[13])
+
+
+                    p_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('iephline1'))
+
+                    label_1 = Label(p_canvas_edit_1,width=22,height=1,text="Purchasing information", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel17'))
+
+                    edit_inv_pitem_9=scrolledtext.ScrolledText(p_canvas_edit_1,width=145,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_9 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=60,window=edit_inv_pitem_9,tags=('iepentry9'))
+                    edit_inv_pitem_9.insert(1.0,edit_pinv[15])
+
+                    label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel18'))
+                    
+                    edit_inv_pitem_10=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_10 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_10,tags=('iepentry10'))
+                    edit_inv_pitem_10.delete(0,'end')
+                    edit_inv_pitem_10.insert(0, edit_pinv[16])
+
+
+                    chk_str_inv_pitem_1 = StringVar()
+                    chkbtn_inv_pitem_2 = Checkbutton(p_canvas_edit_1, text = "Inclusive of purchase tax", variable = chk_str_inv_pitem_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                    chkbtn_inv_pitem_2.select()
+                    window_chkbtn_inv_pitem_2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=chkbtn_inv_pitem_2,tags=('iepcbutton2'))
+
+                    label_1 = Label(p_canvas_edit_1,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(700, 1530, anchor="nw", window=label_1,tags=('ieplabel19'))
+
+                    comb_inv_edit_pu5 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                    comb_inv_edit_pu5['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                    comb_inv_edit_pu5.current(0)
+                    window_comb_inv_edit_pu5 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_pu5,tags=('iepcombo5'))
+                    comb_inv_edit_pu5.delete(0,'end')
+                    comb_inv_edit_pu5.insert(0, edit_pinv[18])
+
+                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel20'))
+
+                    comb_inv_edit_ex6 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                    comb_inv_edit_ex6['values'] = ("Cost of sales",)
+                    comb_inv_edit_ex6.current(0)
+                    window_comb_inv_edit_ex6 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_edit_ex6,tags=('iepcombo6'))
+                    comb_inv_edit_ex6.delete(0,'end')
+                    comb_inv_edit_ex6.insert(0, edit_pinv[17])
+
+                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Reverse Charge %", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel21'))
+
+                    def p_erc_1(event):
+                        if edit_inv_pitem_11.get()=="0":
+                            edit_inv_pitem_11.delete(0,END)
+                        else:
+                            pass
+
+                    edit_inv_pitem_11=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_11 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_11,tags=('iepentry11'))
+                    # edit_inv_pitem_11.insert(0,"0")
+                    edit_inv_pitem_11.bind("<Button-1>",p_erc_1)
+                    edit_inv_pitem_11.delete(0,'end')
+                    edit_inv_pitem_11.insert(0, edit_pinv[19])
+                    
+
+                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Preferred Supplier", font=('arial 12'),background="#1b3857",fg="white") 
+                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel22'))
+
+                    comb_inv_edit_pr7 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                    comb_inv_edit_pr7['values'] = ("Select Supplier",)
+                    comb_inv_edit_pr7.current(0)
+                    window_comb_inv_edit_pr7 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_pr7,tags=('iepcombo7'))
+                    comb_inv_edit_pr7.delete(0,'end')
+                    comb_inv_edit_pr7.insert(0, edit_pinv[20])
+
+                    einv_sub_btn1=Button(p_canvas_edit_1,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=edit_new_pro_inv)
+                    window_einv_sub_btn1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=einv_sub_btn1,tags=('iepbutton5'))
+
+                    def i_eback_1_():
+                        pro_frame_edit_1.grid_forget()
+                        pro_frame.grid(row=0,column=0,sticky='nsew')
+
+                    bck_eibtn1=Button(p_canvas_edit_1,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=i_eback_1_)
+                    window_bck_eibtn1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=bck_eibtn1,tags=('iepbuttn1'))
+
+                    edit_inv_pitem_aod5=DateEntry(p_canvas_edit_1,width=60,justify=LEFT,background='#2f516f',foreground="white")
+                    window_edit_inv_pitem_aod5 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_aod5,tags=('iepdate1'))
+                    edit_inv_pitem_aod5.delete(0, 'end')
+                    edit_inv_pitem_aod5.insert(0, edit_pinv[8])
+
+
+                pebtn1=Button(pro_canvas,text='Edit', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=inv_edit_item)
                 window_pebtn1 = pro_canvas.create_window(0, 0, anchor="nw", window=pebtn1,tags=('pbutton2'))
 
                 pdbtn1=Button(pro_canvas,text='Delete', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
                 window_pdbtn1 = pro_canvas.create_window(0, 0, anchor="nw", window=pdbtn1,tags=('pbutton3'))
+
+                fgth = ttk.Style()
+                fgth.configure('mystyle105.Treeview.Heading', background='#2f516f',State='DISABLE')
+
+                pro_tree = ttk.Treeview(pro_canvas, columns = (1,2,3,4,5,6), height = 10, show = "headings",style='mystyle105.Treeview')
+                pro_tree.pack(side = 'top')
+                pro_tree.heading(1)
+                pro_tree.heading(2, text="TYPE")
+                pro_tree.heading(3, text="NAME")
+                pro_tree.heading(4, text="SKU")
+                pro_tree.heading(5, text="HSN/SAC")
+                pro_tree.heading(6, text="QUANTITY")
+                
+                pro_tree.column(1, width = 50)
+                pro_tree.column(2, width = 250)
+                pro_tree.column(3, width = 300)
+                pro_tree.column(4, width = 150)
+                pro_tree.column(5, width = 200)
+                pro_tree.column(6, width = 150)
+                window_label_4 = pro_canvas.create_window(0, 0, anchor="nw", window=pro_tree,tags=('ptree1'))
+
+                sql_p="select * from auth_user where username=%s"
+                sql_p_val=(nm_ent.get(),)
+                fbcursor.execute(sql_p,sql_p_val,)
+                pr_dt=fbcursor.fetchone()
+
+                sql = "select * from app1_company where id_id=%s"
+                val = (pr_dt[0],)
+                fbcursor.execute(sql, val,)
+                cmp_dt=fbcursor.fetchone()
+
+                p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
+                p_val_1 = (cmp_dt[0],)
+                fbcursor.execute(p_sql_1,p_val_1,)
+                p_data_1 = fbcursor.fetchall()
+                
+                count0 = 0
+                for i in p_data_1:
+                    if True:
+                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                    else:
+                        pass
+                count0 += 1
+
+                p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
+                p_val_2 = (cmp_dt[0],)
+                fbcursor.execute(p_sql_2,p_val_2,)
+                p_data_2 = fbcursor.fetchall()
+
+                count1 = 0
+                for i in p_data_2:
+                    if True:
+                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                    else:
+                        pass
+                count1 += 1
+
+                p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
+                p_val_3 = (cmp_dt[0],)
+                fbcursor.execute(p_sql_3,p_val_3,)
+                p_data_3 = fbcursor.fetchall()
+                
+
+                count2 = 0
+                for i in p_data_3:
+                    if True:
+                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                    else:
+                        pass
+                count2 += 1
+
 
 
                 #3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333{Expenses Tab}
