@@ -4284,17 +4284,6 @@ def main_sign_in():
                     window_ecus_btn2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=ecus_btn2,tags=("acbutton1"))
                     
                 
-                
-                # Define the style for combobox widget
-                # style= ttk.Style()
-                # style.theme_use('clam')
-                # style.configure("TCombobox", fieldbackground= "#2f516f", background= "#2f516f")
-
-                # ecus_comb_1 = ttk.Combobox(cus_canvas,)
-                # ecus_comb_1['values'] = ['Actions','Edit','Delete']
-                # ecus_comb_1.current(0)
-                # ecus_comb_1.bind('<<ComboboxSelected>>',edit_customer)
-                # window_ecus_comb_1 = cus_canvas.create_window(0, 0, anchor="nw", width=110,height=30,window=ecus_comb_1, tags=("ccombo1"))
 
                 ecbtn1=Button(cus_canvas,text='Edit', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=lambda:edit_customer())
                 window_ecbtn1 = cus_canvas.create_window(0, 0, anchor="nw", window=ecbtn1, tags=("cbutton2"))
@@ -4444,10 +4433,7 @@ def main_sign_in():
                 
 
             
-                # Define the style for combobox widget
-                # style= ttk.Style(canvas)
-                # style.theme_use('clam')
-                # style.configure("TCombobox", fieldbackground= "#2f516f", background= "#2f516f")
+                
 
                 # cus_comb_1 = ttk.Combobox(pro_canvas,font=('arial 10'),foreground="white")
                 # cus_comb_1['values'] = ("Actions","Edit","Delete")
@@ -5222,7 +5208,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_2_1,width=10,height=1,text="Account Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_2_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ialabel2'))
 
-                            comb_inv_1_1 = ttk.Combobox(p_canvas_2_1, font=('arial 10'),foreground="white")
+                            comb_inv_1_1 = ttk.Combobox(p_canvas_2_1, font=('arial 10'))
                             comb_inv_1_1['values'] = ("Current Assets",)
                             comb_inv_1_1.current(0)
                             window_comb_inv_1_1 = p_canvas_2_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_1_1,tags=('iacombo1'))
@@ -5236,7 +5222,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_2_1,width=10,height=1,text="*Detail Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_2_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ialabel4'))
 
-                            comb_inv_1_2 = ttk.Combobox(p_canvas_2_1, font=('arial 10'),foreground="white")
+                            comb_inv_1_2 = ttk.Combobox(p_canvas_2_1, font=('arial 10'))
                             comb_inv_1_2['values'] = ("Inventory",)
                             comb_inv_1_2.current(0)
                             window_comb_inv_1_2 = p_canvas_2_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_1_2,tags=('iacombo2'))
@@ -5251,22 +5237,24 @@ def main_sign_in():
                             inv_text_1.insert(END, 'Use Cash and Cash Equivalents to track cash or assets that can be converted into cash immediately. For example, marketable securities and Treasury bills.')
                             window_inv_text_1 = p_canvas_2_1.create_window(0, 0, anchor="nw",window=inv_text_1,tags=('iatext1'))
 
-                            chk_str_inv_1_1 = StringVar()
-                            chkbtn_inv_1_1 = Checkbutton(p_canvas_2_1, text = "Is sub-account", variable = chk_str_inv_1_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_inv_1_1.select()
+                            def sub_check_1():
+                                comb_inv_1_3.config(state=NORMAL if chk_str_inv_1_1.get() else DISABLED)
+                                
+
+                            chk_str_inv_1_1 = IntVar()
+                            chkbtn_inv_1_1 = Checkbutton(p_canvas_2_1, text = "Is sub-account", variable = chk_str_inv_1_1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=sub_check_1)
                             window_chkbtn_inv_1_1 = p_canvas_2_1.create_window(0, 0, anchor="nw", window=chkbtn_inv_1_1,tags=('iacheck1'))
 
-                            comb_inv_1_3 = ttk.Combobox(p_canvas_2_1, font=('arial 10'),foreground="white")
+                            comb_inv_1_3 = ttk.Combobox(p_canvas_2_1, font=('arial 10'),state=DISABLED)
                             comb_inv_1_3['values'] = ("Deferred CGST","Deferred GST Input Credit","Deferred IGST","Deferred Krishi Kalyan Cess Input Credit","Deferred Service Tax Input Credit","Deferred SGST","Deferred VAT Input Credit","GST Refund","Inventory Asset","Paid Insurance","Service Tax Refund","TDS Receivable","Uncategorised Asset","Accumulated Depreciation","Building and Improvements","Furniture and Equipment","Land","Leasehold Improvements","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi Kalyan Cess","Input Krishi Kalyan Cess RCM","Input Service Tax","Input Service Tax RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Input VAT 5%","Krishi Kalyan Cess Payable","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output Service Tax","Output Sevice Tax RCM","Output SGST","Output SGST Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","Service Tax Payable","service Tax Suspense","SGST Payable","SGST Suspense","Swachh Barath Cess Payable" ,"Swachh Barath Cess Suspense" ,"TDS Payable" ,"VAT Payable","VAT Suspense","Opening Balance","Equity",)
-                            comb_inv_1_3.current(0)
                             window_comb_inv_1_3 = p_canvas_2_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_1_3,tags=('iacombo3'))
 
                             label_1 = Label(p_canvas_2_1,width=15,height=1,text="Default Tax Code", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_2_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ialabel6'))
 
-                            comb_inv_1_4 = ttk.Combobox(p_canvas_2_1, font=('arial 10'),foreground="white")
+                            
+                            comb_inv_1_4 = ttk.Combobox(p_canvas_2_1, font=('arial 10'))
                             comb_inv_1_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
-                            comb_inv_1_4.current(0)
                             window_comb_inv_1_4 = p_canvas_2_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_1_4,tags=('iacombo4'))
 
 
@@ -5441,7 +5429,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_2_2,width=10,height=1,text="Account Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_2_2.create_window(0, 0, anchor="nw", window=label_1,tags=('ialabel2'))
 
-                            comb_inv_2_1 = ttk.Combobox(p_canvas_2_2, font=('arial 10'),foreground="white")
+                            comb_inv_2_1 = ttk.Combobox(p_canvas_2_2, font=('arial 10'))
                             comb_inv_2_1['values'] = ("Income",)
                             comb_inv_2_1.current(0)
                             window_comb_inv_2_1 = p_canvas_2_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_2_1,tags=('iacombo1'))
@@ -5455,7 +5443,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_2_2,width=10,height=1,text="*Detail Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_2_2.create_window(0, 0, anchor="nw", window=label_1,tags=('ialabel4'))
 
-                            comb_inv_2_2 = ttk.Combobox(p_canvas_2_2, font=('arial 10'),foreground="white")
+                            comb_inv_2_2 = ttk.Combobox(p_canvas_2_2, font=('arial 10'))
                             comb_inv_2_2['values'] = ("Sales of Product Income",)
                             comb_inv_2_2.current(0)
                             window_comb_inv_2_2 = p_canvas_2_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_2_2,tags=('iacombo2'))
@@ -5470,22 +5458,22 @@ def main_sign_in():
                             inv_text_2.insert(END, 'Use Cash and Cash Equivalents to track cash or assets that can be converted into cash immediately. For example, marketable securities and Treasury bills.')
                             window_inv_text_2 = p_canvas_2_2.create_window(0, 0, anchor="nw",window=inv_text_2,tags=('iatext1'))
 
-                            chk_str_inv_2_1 = StringVar()
-                            chkbtn_inv_2_1 = Checkbutton(p_canvas_2_2, text = "Is sub-account", variable = chk_str_inv_2_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_inv_2_1.select()
+                            def sub_check_2():
+                                comb_inv_2_3.config(state=NORMAL if chk_str_inv_2_1.get() else DISABLED)
+
+                            chk_str_inv_2_1 = IntVar()
+                            chkbtn_inv_2_1 = Checkbutton(p_canvas_2_2, text = "Is sub-account", variable = chk_str_inv_2_1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=sub_check_2)
                             window_chkbtn_inv_2_1 = p_canvas_2_2.create_window(0, 0, anchor="nw", window=chkbtn_inv_2_1,tags=('iacheck1'))
 
-                            comb_inv_2_3 = ttk.Combobox(p_canvas_2_2, font=('arial 10'),foreground="white")
+                            comb_inv_2_3 = ttk.Combobox(p_canvas_2_2, font=('arial 10'),state=DISABLED)
                             comb_inv_2_3['values'] = ("Deferred CGST","Deferred GST Input Credit","Deferred IGST","Deferred Krishi Kalyan Cess Input Credit","Deferred Service Tax Input Credit","Deferred SGST","Deferred VAT Input Credit","GST Refund","Inventory Asset","Paid Insurance","Service Tax Refund","TDS Receivable","Uncategorised Asset","Accumulated Depreciation","Building and Improvements","Furniture and Equipment","Land","Leasehold Improvements","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi Kalyan Cess","Input Krishi Kalyan Cess RCM","Input Service Tax","Input Service Tax RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Input VAT 5%","Krishi Kalyan Cess Payable","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output Service Tax","Output Sevice Tax RCM","Output SGST","Output SGST Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","Service Tax Payable","service Tax Suspense","SGST Payable","SGST Suspense","Swachh Barath Cess Payable" ,"Swachh Barath Cess Suspense" ,"TDS Payable" ,"VAT Payable","VAT Suspense","Opening Balance","Equity",)
-                            comb_inv_2_3.current(0)
                             window_comb_inv_2_3 = p_canvas_2_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_2_3,tags=('iacombo3'))
 
                             label_1 = Label(p_canvas_2_2,width=15,height=1,text="Default Tax Code", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_2_2.create_window(0, 0, anchor="nw", window=label_1,tags=('ialabel6'))
 
-                            comb_inv_2_4 = ttk.Combobox(p_canvas_2_2, font=('arial 10'),foreground="white")
+                            comb_inv_2_4 = ttk.Combobox(p_canvas_2_2, font=('arial 10'))
                             comb_inv_2_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
-                            comb_inv_2_4.current(0)
                             window_comb_inv_2_4 = p_canvas_2_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_2_4,tags=('iacombo4'))
 
                             inv_sub_btn_2_1=Button(p_canvas_2_2,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
@@ -5660,9 +5648,8 @@ def main_sign_in():
                             label_1 = Label(p_canvas_2_3,width=10,height=1,text="Account Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_2_3.create_window(0, 0, anchor="nw", window=label_1,tags=('ialabel2'))
 
-                            comb_inv_3_1 = ttk.Combobox(p_canvas_2_3, font=('arial 10'),foreground="white")
+                            comb_inv_3_1 = ttk.Combobox(p_canvas_2_3, font=('arial 10'))
                             comb_inv_3_1['values'] = ("Cost of Goods Sold",)
-                            comb_inv_3_1.current(0)
                             window_comb_inv_3_1 = p_canvas_2_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_3_1,tags=('iacombo1'))
 
                             label_1 = Label(p_canvas_2_3,width=5,height=1,text="*Name", font=('arial 12'),background="#1b3857",fg="white") 
@@ -5674,9 +5661,8 @@ def main_sign_in():
                             label_1 = Label(p_canvas_2_3,width=10,height=1,text="*Detail Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_2_3.create_window(0, 0, anchor="nw", window=label_1,tags=('ialabel4'))
 
-                            comb_inv_3_2 = ttk.Combobox(p_canvas_2_3, font=('arial 10'),foreground="white")
+                            comb_inv_3_2 = ttk.Combobox(p_canvas_2_3, font=('arial 10'))
                             comb_inv_3_2['values'] = ("Suppliers and Materials-COS",)
-                            comb_inv_3_2.current(0)
                             window_comb_inv_3_2 = p_canvas_2_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_3_2,tags=('iacombo2'))
 
                             label_1 = Label(p_canvas_2_3,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
@@ -5689,22 +5675,24 @@ def main_sign_in():
                             inv_text_3.insert(END, 'Use Cash and Cash Equivalents to track cash or assets that can be converted into cash immediately. For example, marketable securities and Treasury bills.')
                             window_inv_text_3 = p_canvas_2_3.create_window(0, 0, anchor="nw",window=inv_text_3,tags=('iatext1'))
 
-                            chk_str_inv_3_1 = StringVar()
-                            chkbtn_inv_3_1 = Checkbutton(p_canvas_2_3, text = "Is sub-account", variable = chk_str_inv_3_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                            def sub_check_3():
+                                comb_inv_3_3.config(state=NORMAL if chk_str_inv_3_1.get() else DISABLED)
+                                
+
+                            chk_str_inv_3_1 = IntVar()
+                            chkbtn_inv_3_1 = Checkbutton(p_canvas_2_3, text = "Is sub-account", variable = chk_str_inv_3_1,  font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
                             chkbtn_inv_3_1.select()
                             window_chkbtn_inv_3_1 = p_canvas_2_3.create_window(0, 0, anchor="nw", window=chkbtn_inv_3_1,tags=('iacheck1'))
 
-                            comb_inv_3_3 = ttk.Combobox(p_canvas_2_3, font=('arial 10'),foreground="white")
+                            comb_inv_3_3 = ttk.Combobox(p_canvas_2_3, font=('arial 10'),state=DISABLED)
                             comb_inv_3_3['values'] = ("Deferred CGST","Deferred GST Input Credit","Deferred IGST","Deferred Krishi Kalyan Cess Input Credit","Deferred Service Tax Input Credit","Deferred SGST","Deferred VAT Input Credit","GST Refund","Inventory Asset","Paid Insurance","Service Tax Refund","TDS Receivable","Uncategorised Asset","Accumulated Depreciation","Building and Improvements","Furniture and Equipment","Land","Leasehold Improvements","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi Kalyan Cess","Input Krishi Kalyan Cess RCM","Input Service Tax","Input Service Tax RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Input VAT 5%","Krishi Kalyan Cess Payable","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output Service Tax","Output Sevice Tax RCM","Output SGST","Output SGST Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","Service Tax Payable","service Tax Suspense","SGST Payable","SGST Suspense","Swachh Barath Cess Payable" ,"Swachh Barath Cess Suspense" ,"TDS Payable" ,"VAT Payable","VAT Suspense","Opening Balance","Equity",)
-                            comb_inv_3_3.current(0)
                             window_comb_inv_3_3 = p_canvas_2_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_3_3,tags=('iacombo3'))
 
                             label_1 = Label(p_canvas_2_3,width=15,height=1,text="Default Tax Code", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_2_3.create_window(0, 0, anchor="nw", window=label_1,tags=('ialabel6'))
 
-                            comb_inv_3_4 = ttk.Combobox(p_canvas_2_3, font=('arial 10'),foreground="white")
+                            comb_inv_3_4 = ttk.Combobox(p_canvas_2_3, font=('arial 10'))
                             comb_inv_3_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
-                            comb_inv_3_4.current(0)
                             window_comb_inv_3_4 = p_canvas_2_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_3_4,tags=('iacombo4'))
 
                             inv_sub_btn_3_1=Button(p_canvas_2_3,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
@@ -5985,6 +5973,10 @@ def main_sign_in():
                             finsysdb.commit()
 
                             #_________Refresh insert tree________#
+
+                            for record in pro_tree.get_children():
+                                pro_tree.delete(record)
+
      
                             sql_p="select * from auth_user where username=%s"
                             sql_p_val=(nm_ent.get(),)
@@ -6291,7 +6283,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_3_1,width=10,height=1,text="Account Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_3_1.create_window(0, 0, anchor="nw", window=label_1,tags=('nalabel2'))
 
-                            comb_non_2_1 = ttk.Combobox(p_canvas_3_1, font=('arial 10'),foreground="white")
+                            comb_non_2_1 = ttk.Combobox(p_canvas_3_1, font=('arial 10') )
                             comb_non_2_1['values'] = ("Income",)
                             comb_non_2_1.current(0)
                             window_comb_non_2_1 = p_canvas_3_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_2_1,tags=('nacombo1'))
@@ -6867,6 +6859,10 @@ def main_sign_in():
                             finsysdb.commit()
 
                             #_________Refresh insert tree________#
+
+                            for record in pro_tree.get_children():
+                                pro_tree.delete(record)
+
      
                             sql_p="select * from auth_user where username=%s"
                             sql_p_val=(nm_ent.get(),)
@@ -8068,553 +8064,1677 @@ def main_sign_in():
                 pbtn1=Button(pro_canvas,text='Add Products', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_product)
                 window_pbtn1 = pro_canvas.create_window(0, 0, anchor="nw", window=pbtn1,tags=('pbutton1'))
 
-                def inv_edit_item():
-                    pro_frame.grid_forget()
-                    pro_frame_edit_1 = Frame(tab3_4)
-                    pro_frame_edit_1.grid(row=0,column=0,sticky='nsew')
+                def pro_edit_item():
+                    if pro_tree.item(pro_tree.focus())["values"][1] == 'Inventory':
+                        pro_frame.grid_forget()
+                        pro_frame_edit_1 = Frame(tab3_4)
+                        pro_frame_edit_1.grid(row=0,column=0,sticky='nsew')
 
-                    def pro_responsive_widgets_2(event):
-                        dwidth = event.width
-                        dheight = event.height
-                        dcanvas = event.widget
-                    
-                        r1 = 25
-                        x1 = dwidth/63
-                        x2 = dwidth/1.021
-                        y1 = dheight/14 
-                        y2 = dheight/3.505
-
-                        dcanvas.coords("ieppoly1",x1 + r1,y1,
-                        x1 + r1,y1,
-                        x2 - r1,y1,
-                        x2 - r1,y1,     
-                        x2,y1,     
-                        #--------------------
-                        x2,y1 + r1,     
-                        x2,y1 + r1,     
-                        x2,y2 - r1,     
-                        x2,y2 - r1,     
-                        x2,y2,
-                        #--------------------
-                        x2 - r1,y2,     
-                        x2 - r1,y2,     
-                        x1 + r1,y2,
-                        x1 + r1,y2,
-                        x1,y2,
-                        #--------------------
-                        x1,y2 - r1,
-                        x1,y2 - r1,
-                        x1,y1 + r1,
-                        x1,y1 + r1,
-                        x1,y1,
-                        )
-
-                        dcanvas.coords("ieplabel1",dwidth/3,dheight/8.24)
-                        dcanvas.coords("iephline",dwidth/21,dheight/4.67,dwidth/1.055,dheight/4.67)
-
-                        r2 = 25
-                        x11 = dwidth/63
-                        x21 = dwidth/1.021
-                        y11 = dheight/2.8
-                        y21 = dheight/0.29
-
-
-                        dcanvas.coords("ieppoly2",x11 + r2,y11,
-                        x11 + r2,y11,
-                        x21 - r2,y11,
-                        x21 - r2,y11,     
-                        x21,y11,     
-                        #--------------------
-                        x21,y11 + r2,     
-                        x21,y11 + r2,     
-                        x21,y21 - r2,     
-                        x21,y21 - r2,     
-                        x21,y21,
-                        #--------------------
-                        x21 - r2,y21,     
-                        x21 - r2,y21,     
-                        x11 + r2,y21,
-                        x11 + r2,y21,
-                        x11,y21,
-                        #--------------------
-                        x11,y21 - r2,
-                        x11,y21 - r2,
-                        x11,y11 + r2,
-                        x11,y11 + r2,
-                        x11,y11,
-                        )
-
-                        r2 = 25
-                        x11 = dwidth/24
-                        x21 = dwidth/1.050
-                        y11 = dheight/2.1
-                        y21 = dheight/1.35
-
-
-                        dcanvas.coords("ieppoly3",x11 + r2,y11,
-                        x11 + r2,y11,
-                        x21 - r2,y11,
-                        x21 - r2,y11,     
-                        x21,y11,     
-                        #--------------------
-                        x21,y11 + r2,     
-                        x21,y11 + r2,     
-                        x21,y21 - r2,     
-                        x21,y21 - r2,     
-                        x21,y21,
-                        #--------------------
-                        x21 - r2,y21,     
-                        x21 - r2,y21,     
-                        x11 + r2,y21,
-                        x11 + r2,y21,
-                        x11,y21,
-                        #--------------------
-                        x11,y21 - r2,
-                        x11,y21 - r2,
-                        x11,y11 + r2,
-                        x11,y11 + r2,
-                        x11,y11,
-                        )
-
-                        dcanvas.coords("ieplabel2",dwidth/2.4,dheight/1.77)
-                        dcanvas.coords("iepbutton1",dwidth/1.8,dheight/1.77)
-
-                        dcanvas.coords("ieplabel3",dwidth/23.2,dheight/1.23)
-                        dcanvas.coords("ieplabel4",dwidth/23.3,dheight/1.02)
-                        dcanvas.coords("ieplabel5",dwidth/1.9,dheight/1.02)
-                        dcanvas.coords("ieplabel6",dwidth/1.9,dheight/0.92)
-                        dcanvas.coords("ieplabel7",dwidth/27,dheight/0.865)
-                        dcanvas.coords("ieplabel8",dwidth/1.915,dheight/0.865)
-                        dcanvas.coords("ieplabel9",dwidth/50,dheight/0.76)
-                        dcanvas.coords("ieplabel10",dwidth/2.95,dheight/0.76)
-                        dcanvas.coords("ieplabel11",dwidth/1.54,dheight/0.76)
-                        dcanvas.coords("ieplabel12",dwidth/38,dheight/0.675)
-                        dcanvas.coords("ieplabel13",dwidth/26.8,dheight/0.606)
-                        dcanvas.coords("ieplabel14",dwidth/28.3,dheight/0.538)
-                        dcanvas.coords("ieplabel15",dwidth/1.9,dheight/0.538)
-                        dcanvas.coords("ieplabel16",dwidth/28.4,dheight/0.485)
-                        dcanvas.coords("ieplabel17",dwidth/29.3,dheight/0.438)
-                        dcanvas.coords("ieplabel18",dwidth/28,dheight/0.401)
-                        dcanvas.coords("ieplabel19",dwidth/1.91,dheight/0.401)
-                        dcanvas.coords("ieplabel20",dwidth/28,dheight/0.37)
-                        dcanvas.coords("ieplabel21",dwidth/26,dheight/0.35)
-                        dcanvas.coords("ieplabel22",dwidth/1.9,dheight/0.35)
-
-                        dcanvas.coords("iepentry1",dwidth/23.2,dheight/1.165)
-                        dcanvas.coords("iepentry2",dwidth/23.2,dheight/0.975)
-                        dcanvas.coords("iepentry3",dwidth/1.9,dheight/0.975)
-                        dcanvas.coords("iepentry4",dwidth/1.9,dheight/0.83)
-                        dcanvas.coords("iepentry5",dwidth/23.2,dheight/0.73)
-                        dcanvas.coords("iepentry6",dwidth/1.52,dheight/0.73)
-                        dcanvas.coords("iepentry7",dwidth/23.2,dheight/0.59)
-                        dcanvas.coords("iepentry8",dwidth/23.2,dheight/0.525)
-                        dcanvas.coords("iepentry9",dwidth/23.2,dheight/0.43)
-                        dcanvas.coords("iepentry10",dwidth/23.2,dheight/0.394)
-                        dcanvas.coords("iepentry11",dwidth/23.2,dheight/0.344)
-
-                        dcanvas.coords("iepcombo1",dwidth/23.2,dheight/0.83)
-                        dcanvas.coords("iepcombo2",dwidth/23.2,dheight/0.654)
-                        dcanvas.coords("iepcombo3",dwidth/1.9,dheight/0.525)
-                        dcanvas.coords("iepcombo4",dwidth/23.2,dheight/0.474)
-                        dcanvas.coords("iepcombo5",dwidth/1.89,dheight/0.394)
-                        dcanvas.coords("iepcombo6",dwidth/23.2,dheight/0.364)
-                        dcanvas.coords("iepcombo7",dwidth/1.89,dheight/0.344)
-
-                        dcanvas.coords("iepcbutton1",dwidth/23.2,dheight/0.51)
-                        dcanvas.coords("iepcbutton2",dwidth/23.2,dheight/0.385)
-
-                        dcanvas.coords("iepbutton2",dwidth/2.45,dheight/0.654)
-                        dcanvas.coords("iepbutton3",dwidth/2.45,dheight/0.474)
-                        dcanvas.coords("iepbutton4",dwidth/2.45,dheight/0.364)
-                        dcanvas.coords("iepbutton5",dwidth/2.38,dheight/0.325)
-
-                        dcanvas.coords("iepbuttn1",dwidth/23,dheight/3.415)
-
-                        dcanvas.coords("iephline1",dwidth/21,dheight/0.448,dwidth/1.055,dheight/0.448)
-
-                        try:
-                            dcanvas.coords("iepdate1",dwidth/2.9,dheight/0.73)
-                        except:
-                            pass
-
-
-                    p_canvas_edit_1=Canvas(pro_frame_edit_1, bg='#2f516f', width=953, height=600, scrollregion=(0,0,700,2050))
-
-                    pro_frame_edit_1.grid_columnconfigure(0,weight=1)
-                    pro_frame_edit_1.grid_rowconfigure(0,weight=1)
-                
-                    vertibar=Scrollbar(pro_frame_edit_1, orient=VERTICAL)
-                    vertibar.grid(row=0,column=1,sticky='ns')
-                    vertibar.config(command=p_canvas_edit_1.yview)
-
-                    p_canvas_edit_1.bind("<Configure>", pro_responsive_widgets_2)
-                    p_canvas_edit_1.config(yscrollcommand=vertibar.set)
-                    p_canvas_edit_1.grid(row=0,column=0,sticky='nsew')
-
-                    inv_peditid = pro_tree.item(pro_tree.focus())["values"][2]
-                    print(inv_peditid)
-
-                    inv_peditid_1 = pro_tree.item(pro_tree.focus())["values"][3]
-                    print(inv_peditid_1)
-
-                    sql_pi="select * from auth_user where username=%s"
-                    pi_val=(nm_ent.get(),)
-                    fbcursor.execute(sql_pi,pi_val,)
-                    pi_dtl=fbcursor.fetchone()
-
-                    sql = "select * from app1_company where id_id=%s"
-                    val = (pi_dtl[0],)
-                    fbcursor.execute(sql, val,)
-                    cmp_dtli=fbcursor.fetchone()
-                    print(cmp_dtli)
-
-                    sql = 'select * from app1_inventory where name = %s and sku = %s and cid_id = %s'
-                    val =  (inv_peditid,inv_peditid_1,cmp_dtli[0],)
-                    fbcursor.execute(sql,val)
-                    edit_pinv = fbcursor.fetchone()
-
-                    def edit_new_pro_inv():
-                        name = edit_inv_pitem_1.get()
-                        sku = edit_inv_pitem_2.get()
-                        hsn = edit_inv_pitem_h1.get()
-                        unit = comb_inv_edit_p1.get()
-                        category = edit_inv_pitem_3.get()
-                        initialqty = edit_inv_pitem_4.get()
-                        date = edit_inv_pitem_aod5.get_date()
-                        stockalrt = edit_inv_pitem_6.get()
-                        invacnt = comb_inv_edit_i2.get()
-                        description = edit_inv_pitem_7.get('1.0', 'end-1c')
-                        salesprice = edit_inv_pitem_8.get()
-                        incomeacnt = comb_inv_edit_in4.get()
-                        tax = comb_inv_edit_t3.get()
-                        purchaseinfo = edit_inv_pitem_9.get('1.0', 'end-1c')
-                        cost = edit_inv_pitem_10.get()
-                        expacnt = comb_inv_edit_ex6.get()
-                        purtax = comb_inv_edit_pu5.get()
-                        revcharge = edit_inv_pitem_11.get()
-                        presupplier = comb_inv_edit_pr7.get()
-
-                        usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
-                        usrp_val = (nm_ent.get(),)
-                        fbcursor.execute(usrp_sql,usrp_val)
-                        usrp_data = fbcursor.fetchone()
-
-                        cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
-                        cmpp_val = (usrp_data[0],)
-                        fbcursor.execute(cmpp_sql,cmpp_val)
-                        cmpp_data = fbcursor.fetchone()
-                        cid = cmpp_data[0]
+                        def pro_responsive_widgets_2(event):
+                            dwidth = event.width
+                            dheight = event.height
+                            dcanvas = event.widget
                         
-                        i_p_sql = "UPDATE app1_inventory set  name=%s,sku=%s,hsn=%s,unit=%s,category=%s,initialqty=%s,date=%s,stockalrt=%s,invacnt=%s,description=%s,salesprice=%s,incomeacnt=%s,tax=%s,purchaseinfo=%s,cost=%s,expacnt=%s,purtax=%s,revcharge=%s,presupplier=%s,cid_id=%s where name=%s and sku = %s"
-                        i_p_val = (name,sku,hsn,unit,category,initialqty,date,stockalrt,invacnt,description,salesprice,incomeacnt,tax,purchaseinfo,cost,expacnt,purtax,revcharge,presupplier,cid,inv_peditid,inv_peditid_1)
-                        fbcursor.execute(i_p_sql,i_p_val)
-                        finsysdb.commit()
+                            r1 = 25
+                            x1 = dwidth/63
+                            x2 = dwidth/1.021
+                            y1 = dheight/14 
+                            y2 = dheight/3.505
 
-                        #_________Refresh insert tree________#
-    
-                        for record in pro_tree.get_children():
-                            pro_tree.delete(record)
+                            dcanvas.coords("ieppoly1",x1 + r1,y1,
+                            x1 + r1,y1,
+                            x2 - r1,y1,
+                            x2 - r1,y1,     
+                            x2,y1,     
+                            #--------------------
+                            x2,y1 + r1,     
+                            x2,y1 + r1,     
+                            x2,y2 - r1,     
+                            x2,y2 - r1,     
+                            x2,y2,
+                            #--------------------
+                            x2 - r1,y2,     
+                            x2 - r1,y2,     
+                            x1 + r1,y2,
+                            x1 + r1,y2,
+                            x1,y2,
+                            #--------------------
+                            x1,y2 - r1,
+                            x1,y2 - r1,
+                            x1,y1 + r1,
+                            x1,y1 + r1,
+                            x1,y1,
+                            )
+
+                            dcanvas.coords("ieplabel1",dwidth/3,dheight/8.24)
+                            dcanvas.coords("iephline",dwidth/21,dheight/4.67,dwidth/1.055,dheight/4.67)
+
+                            r2 = 25
+                            x11 = dwidth/63
+                            x21 = dwidth/1.021
+                            y11 = dheight/2.8
+                            y21 = dheight/0.29
 
 
-                        sql_p="select * from auth_user where username=%s"
-                        sql_p_val=(nm_ent.get(),)
-                        fbcursor.execute(sql_p,sql_p_val,)
-                        pr_dt=fbcursor.fetchone()
+                            dcanvas.coords("ieppoly2",x11 + r2,y11,
+                            x11 + r2,y11,
+                            x21 - r2,y11,
+                            x21 - r2,y11,     
+                            x21,y11,     
+                            #--------------------
+                            x21,y11 + r2,     
+                            x21,y11 + r2,     
+                            x21,y21 - r2,     
+                            x21,y21 - r2,     
+                            x21,y21,
+                            #--------------------
+                            x21 - r2,y21,     
+                            x21 - r2,y21,     
+                            x11 + r2,y21,
+                            x11 + r2,y21,
+                            x11,y21,
+                            #--------------------
+                            x11,y21 - r2,
+                            x11,y21 - r2,
+                            x11,y11 + r2,
+                            x11,y11 + r2,
+                            x11,y11,
+                            )
+
+                            r2 = 25
+                            x11 = dwidth/24
+                            x21 = dwidth/1.050
+                            y11 = dheight/2.1
+                            y21 = dheight/1.35
+
+
+                            dcanvas.coords("ieppoly3",x11 + r2,y11,
+                            x11 + r2,y11,
+                            x21 - r2,y11,
+                            x21 - r2,y11,     
+                            x21,y11,     
+                            #--------------------
+                            x21,y11 + r2,     
+                            x21,y11 + r2,     
+                            x21,y21 - r2,     
+                            x21,y21 - r2,     
+                            x21,y21,
+                            #--------------------
+                            x21 - r2,y21,     
+                            x21 - r2,y21,     
+                            x11 + r2,y21,
+                            x11 + r2,y21,
+                            x11,y21,
+                            #--------------------
+                            x11,y21 - r2,
+                            x11,y21 - r2,
+                            x11,y11 + r2,
+                            x11,y11 + r2,
+                            x11,y11,
+                            )
+
+                            dcanvas.coords("ieplabel2",dwidth/2.4,dheight/1.77)
+                            dcanvas.coords("iepbutton1",dwidth/1.8,dheight/1.77)
+
+                            dcanvas.coords("ieplabel3",dwidth/23.2,dheight/1.23)
+                            dcanvas.coords("ieplabel4",dwidth/23.3,dheight/1.02)
+                            dcanvas.coords("ieplabel5",dwidth/1.9,dheight/1.02)
+                            dcanvas.coords("ieplabel6",dwidth/1.9,dheight/0.92)
+                            dcanvas.coords("ieplabel7",dwidth/27,dheight/0.865)
+                            dcanvas.coords("ieplabel8",dwidth/1.915,dheight/0.865)
+                            dcanvas.coords("ieplabel9",dwidth/50,dheight/0.76)
+                            dcanvas.coords("ieplabel10",dwidth/2.95,dheight/0.76)
+                            dcanvas.coords("ieplabel11",dwidth/1.54,dheight/0.76)
+                            dcanvas.coords("ieplabel12",dwidth/38,dheight/0.675)
+                            dcanvas.coords("ieplabel13",dwidth/26.8,dheight/0.606)
+                            dcanvas.coords("ieplabel14",dwidth/28.3,dheight/0.538)
+                            dcanvas.coords("ieplabel15",dwidth/1.9,dheight/0.538)
+                            dcanvas.coords("ieplabel16",dwidth/28.4,dheight/0.485)
+                            dcanvas.coords("ieplabel17",dwidth/29.3,dheight/0.438)
+                            dcanvas.coords("ieplabel18",dwidth/28,dheight/0.401)
+                            dcanvas.coords("ieplabel19",dwidth/1.91,dheight/0.401)
+                            dcanvas.coords("ieplabel20",dwidth/28,dheight/0.37)
+                            dcanvas.coords("ieplabel21",dwidth/26,dheight/0.35)
+                            dcanvas.coords("ieplabel22",dwidth/1.9,dheight/0.35)
+
+                            dcanvas.coords("iepentry1",dwidth/23.2,dheight/1.165)
+                            dcanvas.coords("iepentry2",dwidth/23.2,dheight/0.975)
+                            dcanvas.coords("iepentry3",dwidth/1.9,dheight/0.975)
+                            dcanvas.coords("iepentry4",dwidth/1.9,dheight/0.83)
+                            dcanvas.coords("iepentry5",dwidth/23.2,dheight/0.73)
+                            dcanvas.coords("iepentry6",dwidth/1.52,dheight/0.73)
+                            dcanvas.coords("iepentry7",dwidth/23.2,dheight/0.59)
+                            dcanvas.coords("iepentry8",dwidth/23.2,dheight/0.525)
+                            dcanvas.coords("iepentry9",dwidth/23.2,dheight/0.43)
+                            dcanvas.coords("iepentry10",dwidth/23.2,dheight/0.394)
+                            dcanvas.coords("iepentry11",dwidth/23.2,dheight/0.344)
+
+                            dcanvas.coords("iepcombo1",dwidth/23.2,dheight/0.83)
+                            dcanvas.coords("iepcombo2",dwidth/23.2,dheight/0.654)
+                            dcanvas.coords("iepcombo3",dwidth/1.9,dheight/0.525)
+                            dcanvas.coords("iepcombo4",dwidth/23.2,dheight/0.474)
+                            dcanvas.coords("iepcombo5",dwidth/1.89,dheight/0.394)
+                            dcanvas.coords("iepcombo6",dwidth/23.2,dheight/0.364)
+                            dcanvas.coords("iepcombo7",dwidth/1.89,dheight/0.344)
+
+                            dcanvas.coords("iepcbutton1",dwidth/23.2,dheight/0.51)
+                            dcanvas.coords("iepcbutton2",dwidth/23.2,dheight/0.385)
+
+                            dcanvas.coords("iepbutton2",dwidth/2.45,dheight/0.654)
+                            dcanvas.coords("iepbutton3",dwidth/2.45,dheight/0.474)
+                            dcanvas.coords("iepbutton4",dwidth/2.45,dheight/0.364)
+                            dcanvas.coords("iepbutton5",dwidth/2.38,dheight/0.325)
+
+                            dcanvas.coords("iepbuttn1",dwidth/23,dheight/3.415)
+
+                            dcanvas.coords("iephline1",dwidth/21,dheight/0.448,dwidth/1.055,dheight/0.448)
+
+                            try:
+                                dcanvas.coords("iepdate1",dwidth/2.9,dheight/0.73)
+                            except:
+                                pass
+
+
+                        p_canvas_edit_1=Canvas(pro_frame_edit_1, bg='#2f516f', width=953, height=600, scrollregion=(0,0,700,2050))
+
+                        pro_frame_edit_1.grid_columnconfigure(0,weight=1)
+                        pro_frame_edit_1.grid_rowconfigure(0,weight=1)
+                    
+                        vertibar=Scrollbar(pro_frame_edit_1, orient=VERTICAL)
+                        vertibar.grid(row=0,column=1,sticky='ns')
+                        vertibar.config(command=p_canvas_edit_1.yview)
+
+                        p_canvas_edit_1.bind("<Configure>", pro_responsive_widgets_2)
+                        p_canvas_edit_1.config(yscrollcommand=vertibar.set)
+                        p_canvas_edit_1.grid(row=0,column=0,sticky='nsew')
+
+                        inv_peditid = pro_tree.item(pro_tree.focus())["values"][2]
+                        print(inv_peditid)
+
+                        inv_peditid_1 = pro_tree.item(pro_tree.focus())["values"][3]
+                        print(inv_peditid_1)
+
+                        sql_pi="select * from auth_user where username=%s"
+                        pi_val=(nm_ent.get(),)
+                        fbcursor.execute(sql_pi,pi_val,)
+                        pi_dtl=fbcursor.fetchone()
 
                         sql = "select * from app1_company where id_id=%s"
-                        val = (pr_dt[0],)
+                        val = (pi_dtl[0],)
                         fbcursor.execute(sql, val,)
-                        cmp_dt=fbcursor.fetchone()
+                        cmp_dtli=fbcursor.fetchone()
+                        print(cmp_dtli)
 
-                        p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
-                        p_val_1 = (cmp_dt[0],)
-                        fbcursor.execute(p_sql_1,p_val_1,)
-                        p_data_1 = fbcursor.fetchall()
-                        
-                        count0 = 0
-                        for i in p_data_1:
-                            if True:
-                                pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
-                            else:
-                                pass
-                        count0 += 1
+                        sql = 'select * from app1_inventory where name = %s and sku = %s and cid_id = %s'
+                        val =  (inv_peditid,inv_peditid_1,cmp_dtli[0],)
+                        fbcursor.execute(sql,val)
+                        edit_pinv = fbcursor.fetchone()
 
-                        p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
-                        p_val_2 = (cmp_dt[0],)
-                        fbcursor.execute(p_sql_2,p_val_2,)
-                        p_data_2 = fbcursor.fetchall()
+                        def edit_new_pro_inv():
+                            name = edit_inv_pitem_1.get()
+                            sku = edit_inv_pitem_2.get()
+                            hsn = edit_inv_pitem_h1.get()
+                            unit = comb_inv_edit_p1.get()
+                            category = edit_inv_pitem_3.get()
+                            initialqty = edit_inv_pitem_4.get()
+                            date = edit_inv_pitem_aod5.get_date()
+                            stockalrt = edit_inv_pitem_6.get()
+                            invacnt = comb_inv_edit_i2.get()
+                            description = edit_inv_pitem_7.get('1.0', 'end-1c')
+                            salesprice = edit_inv_pitem_8.get()
+                            incomeacnt = comb_inv_edit_in4.get()
+                            tax = comb_inv_edit_t3.get()
+                            purchaseinfo = edit_inv_pitem_9.get('1.0', 'end-1c')
+                            cost = edit_inv_pitem_10.get()
+                            expacnt = comb_inv_edit_ex6.get()
+                            purtax = comb_inv_edit_pu5.get()
+                            revcharge = edit_inv_pitem_11.get()
+                            presupplier = comb_inv_edit_pr7.get()
 
-                        count1 = 0
-                        for i in p_data_2:
-                            if True:
-                                pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
-                            else:
-                                pass
-                        count1 += 1
+                            usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usrp_val = (nm_ent.get(),)
+                            fbcursor.execute(usrp_sql,usrp_val)
+                            usrp_data = fbcursor.fetchone()
 
-                        p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
-                        p_val_3 = (cmp_dt[0],)
-                        fbcursor.execute(p_sql_3,p_val_3,)
-                        p_data_3 = fbcursor.fetchall()
-                        
+                            cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmpp_val = (usrp_data[0],)
+                            fbcursor.execute(cmpp_sql,cmpp_val)
+                            cmpp_data = fbcursor.fetchone()
+                            cid = cmpp_data[0]
+                            
+                            i_p_sql = "UPDATE app1_inventory set  name=%s,sku=%s,hsn=%s,unit=%s,category=%s,initialqty=%s,date=%s,stockalrt=%s,invacnt=%s,description=%s,salesprice=%s,incomeacnt=%s,tax=%s,purchaseinfo=%s,cost=%s,expacnt=%s,purtax=%s,revcharge=%s,presupplier=%s,cid_id=%s where name=%s and sku = %s"
+                            i_p_val = (name,sku,hsn,unit,category,initialqty,date,stockalrt,invacnt,description,salesprice,incomeacnt,tax,purchaseinfo,cost,expacnt,purtax,revcharge,presupplier,cid,inv_peditid,inv_peditid_1)
+                            fbcursor.execute(i_p_sql,i_p_val)
+                            finsysdb.commit()
 
-                        count2 = 0
-                        for i in p_data_3:
-                            if True:
-                                pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
-                            else:
-                                pass
-                        count2 += 1
-
-                        pro_frame_edit_1.destroy()
-                        pro_frame.grid(row=0,column=0,sticky='nsew')
-
-
-
-                    p_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('ieppoly1'))
-
-                    label_1 = Label(p_canvas_edit_1,width=30,height=1,text="PRODUCT / SERVICE INFORMATION", font=('arial 20'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel1'))
-
-                    p_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('iephline'))
-
-                    p_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('ieppoly2'))
-
-                    p_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#2f516f",tags=('ieppoly3'))
-
-                    label_1 = Label(p_canvas_edit_1,width=10,height=2,text="INVENTORY", font=('arial 20'),background="#2f516f",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel2'))
-
-
-                    label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Name", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel3'))
-
-                    edit_inv_pitem_1=Entry(p_canvas_edit_1,width=200,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_1, tags=('iepentry1'))
-                    edit_inv_pitem_1.delete(0,'end')
-                    edit_inv_pitem_1.insert(0, edit_pinv[2])
-
-                    label_1 = Label(p_canvas_edit_1,width=4,height=1,text="SKU", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel4'))
-
-                    def pei_sku_1(event):
-                        if edit_inv_pitem_2.get()==edit_pinv[3]:
-                            edit_inv_pitem_2.delete(0,END)
-                        else:
-                            pass
-                    
-                    edit_inv_pitem_2=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_2, tags=('iepentry2'))
-                    # edit_inv_pitem_2.insert(0,"N41554")
-                    edit_inv_pitem_2.bind("<Button-1>",pei_sku_1)
-                    edit_inv_pitem_2.delete(0,'end')
-                    edit_inv_pitem_2.insert(0, edit_pinv[3])
-
-
-                    label_1 = Label(p_canvas_edit_1,width=9,height=1,text="HSN Code", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel5'))
-
-                    edit_inv_pitem_h1=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_h1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_h1, tags=('iepentry3'))
-                    edit_inv_pitem_h1.delete(0,'end')
-                    edit_inv_pitem_h1.insert(0, edit_pinv[4])
-
-                    #Define a callback function
-                    def ecallback(url):
-                        webbrowser.open_new_tab(url)
-
-                    link_e1 = Label(p_canvas_edit_1,width=30,height=1,text="Not sure about HSN Code..? Click here", font=('arial 12'),background="#1b3857",fg="skyblue") 
-                    window_link_e1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=link_e1, tags=('ieplabel6'))
-                    link_e1.bind("<Button-1>", lambda e:
-                    ecallback("https://gstcouncil.gov.in/sites/default/files/goods-rates-booklet-03July2017.pdf"))
-
-                    label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Unit", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel7'))
-
-                    comb_inv_edit_p1 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
-                    comb_inv_edit_p1['values'] = ("Choose...","BAG Bags","BAL Bale BOU","BDL Bundles","BKL Buckles","BOX Box","BTL Bottles","CAN Cans","CTN Cartons","CCM Cubic centimeters","CBM Cubic meters","CMS Centimeters","DRM Drums","DOZ Dozens","GGK Great gross GYD","GRS GrossGMS","KME Kilometre","KGS Kilograms","KLR Kilo litre","MTS Metric ton","MLT Mili litre","MTR Meters","NOS Numbers","PAC Packs","PCS Pieces","PRS Pairs","QTL Quintal","ROL Rolls","SQY Square Yards","SET Sets","SQF Square feet","SQM Square meters","TBS Tablets","TUB Tubes","TGM Ten Gross","THD Thousands","TON Tonnes","UNT Units","UGS US Gallons","YDS Yards",)
-                    comb_inv_edit_p1.current(0)
-                    window_comb_inv_edit_p1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_p1, tags=('iepcombo1'))
-                    comb_inv_edit_p1.delete(0,'end')
-                    comb_inv_edit_p1.insert(0, edit_pinv[5])
-
-
-                    label_1 = Label(p_canvas_edit_1,width=9,height=1,text="Category", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel8'))
-
-                    edit_inv_pitem_3=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_3 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_3,tags=('iepentry4'))
-                    edit_inv_pitem_3.delete(0,'end')
-                    edit_inv_pitem_3.insert(0, edit_pinv[6])
-
-                    label_1 = Label(p_canvas_edit_1,width=24,height=1,text="Initial quantity on hand", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel9'))
-
-                    edit_inv_pitem_4=Entry(p_canvas_edit_1,width=60,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_4 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_4,tags=('iepentry5'))
-                    edit_inv_pitem_4.delete(0,'end')
-                    edit_inv_pitem_4.insert(0, edit_pinv[7])
-
-                    label_1 = Label(p_canvas_edit_1,width=10,height=1,text="As of date", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel10'))
+                            #_________Refresh insert tree________#
         
-                    label_1 = Label(p_canvas_edit_1,width=14,height=1,text="Low stock alert", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel11'))
+                            for record in pro_tree.get_children():
+                                pro_tree.delete(record)
 
-                    edit_inv_pitem_6=Entry(p_canvas_edit_1,width=60,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_6 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_6,tags=('iepentry6'))
-                    edit_inv_pitem_6.delete(0,'end')
-                    edit_inv_pitem_6.insert(0, edit_pinv[9])
 
-                    label_1 = Label(p_canvas_edit_1,width=22,height=1,text="Inventory asset account", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(35, 910, anchor="nw", window=label_1,tags=('ieplabel12'))
+                            sql_p="select * from auth_user where username=%s"
+                            sql_p_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_p,sql_p_val,)
+                            pr_dt=fbcursor.fetchone()
 
-                    comb_inv_edit_i2 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
-                    comb_inv_edit_i2['values'] = ("Inventory Asset",)
-                    comb_inv_edit_i2.current(0)
-                    window_comb_inv_edit_i2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_edit_i2,tags=('iepcombo2'))
-                    comb_inv_edit_i2.delete(0,'end')
-                    comb_inv_edit_i2.insert(0, edit_pinv[10])
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dt[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dt=fbcursor.fetchone()
 
+                            p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
+                            p_val_1 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_1,p_val_1,)
+                            p_data_1 = fbcursor.fetchall()
+                            
+                            count0 = 0
+                            for i in p_data_1:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                                else:
+                                    pass
+                            count0 += 1
+
+                            p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
+                            p_val_2 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_2,p_val_2,)
+                            p_data_2 = fbcursor.fetchall()
+
+                            count1 = 0
+                            for i in p_data_2:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count1 += 1
+
+                            p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
+                            p_val_3 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_3,p_val_3,)
+                            p_data_3 = fbcursor.fetchall()
+                            
+
+                            count2 = 0
+                            for i in p_data_3:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count2 += 1
+
+                            pro_frame_edit_1.destroy()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
+
+
+
+                        p_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('ieppoly1'))
+
+                        label_1 = Label(p_canvas_edit_1,width=30,height=1,text="PRODUCT / SERVICE INFORMATION", font=('arial 20'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel1'))
+
+                        p_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('iephline'))
+
+                        p_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('ieppoly2'))
+
+                        p_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#2f516f",tags=('ieppoly3'))
+
+                        label_1 = Label(p_canvas_edit_1,width=10,height=2,text="INVENTORY", font=('arial 20'),background="#2f516f",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel2'))
+
+
+                        label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Name", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel3'))
+
+                        edit_inv_pitem_1=Entry(p_canvas_edit_1,width=200,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_1, tags=('iepentry1'))
+                        edit_inv_pitem_1.delete(0,'end')
+                        edit_inv_pitem_1.insert(0, edit_pinv[2])
+
+                        label_1 = Label(p_canvas_edit_1,width=4,height=1,text="SKU", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel4'))
+
+                        def pei_sku_1(event):
+                            if edit_inv_pitem_2.get()==edit_pinv[3]:
+                                edit_inv_pitem_2.delete(0,END)
+                            else:
+                                pass
+                        
+                        edit_inv_pitem_2=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_2, tags=('iepentry2'))
+                        # edit_inv_pitem_2.insert(0,"N41554")
+                        edit_inv_pitem_2.bind("<Button-1>",pei_sku_1)
+                        edit_inv_pitem_2.delete(0,'end')
+                        edit_inv_pitem_2.insert(0, edit_pinv[3])
+
+
+                        label_1 = Label(p_canvas_edit_1,width=9,height=1,text="HSN Code", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel5'))
+
+                        edit_inv_pitem_h1=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_h1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_h1, tags=('iepentry3'))
+                        edit_inv_pitem_h1.delete(0,'end')
+                        edit_inv_pitem_h1.insert(0, edit_pinv[4])
+
+                        #Define a callback function
+                        def ecallback(url):
+                            webbrowser.open_new_tab(url)
+
+                        link_e1 = Label(p_canvas_edit_1,width=30,height=1,text="Not sure about HSN Code..? Click here", font=('arial 12'),background="#1b3857",fg="skyblue") 
+                        window_link_e1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=link_e1, tags=('ieplabel6'))
+                        link_e1.bind("<Button-1>", lambda e:
+                        ecallback("https://gstcouncil.gov.in/sites/default/files/goods-rates-booklet-03July2017.pdf"))
+
+                        label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Unit", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1, tags=('ieplabel7'))
+
+                        comb_inv_edit_p1 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                        comb_inv_edit_p1['values'] = ("Choose...","BAG Bags","BAL Bale BOU","BDL Bundles","BKL Buckles","BOX Box","BTL Bottles","CAN Cans","CTN Cartons","CCM Cubic centimeters","CBM Cubic meters","CMS Centimeters","DRM Drums","DOZ Dozens","GGK Great gross GYD","GRS GrossGMS","KME Kilometre","KGS Kilograms","KLR Kilo litre","MTS Metric ton","MLT Mili litre","MTR Meters","NOS Numbers","PAC Packs","PCS Pieces","PRS Pairs","QTL Quintal","ROL Rolls","SQY Square Yards","SET Sets","SQF Square feet","SQM Square meters","TBS Tablets","TUB Tubes","TGM Ten Gross","THD Thousands","TON Tonnes","UNT Units","UGS US Gallons","YDS Yards",)
+                        comb_inv_edit_p1.current(0)
+                        window_comb_inv_edit_p1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_p1, tags=('iepcombo1'))
+                        comb_inv_edit_p1.delete(0,'end')
+                        comb_inv_edit_p1.insert(0, edit_pinv[5])
+
+
+                        label_1 = Label(p_canvas_edit_1,width=9,height=1,text="Category", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel8'))
+
+                        edit_inv_pitem_3=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_3 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_3,tags=('iepentry4'))
+                        edit_inv_pitem_3.delete(0,'end')
+                        edit_inv_pitem_3.insert(0, edit_pinv[6])
+
+                        label_1 = Label(p_canvas_edit_1,width=24,height=1,text="Initial quantity on hand", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel9'))
+
+                        edit_inv_pitem_4=Entry(p_canvas_edit_1,width=60,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_4 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_4,tags=('iepentry5'))
+                        edit_inv_pitem_4.delete(0,'end')
+                        edit_inv_pitem_4.insert(0, edit_pinv[7])
+
+                        label_1 = Label(p_canvas_edit_1,width=10,height=1,text="As of date", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel10'))
+            
+                        label_1 = Label(p_canvas_edit_1,width=14,height=1,text="Low stock alert", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel11'))
+
+                        edit_inv_pitem_6=Entry(p_canvas_edit_1,width=60,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_6 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_6,tags=('iepentry6'))
+                        edit_inv_pitem_6.delete(0,'end')
+                        edit_inv_pitem_6.insert(0, edit_pinv[9])
+
+                        label_1 = Label(p_canvas_edit_1,width=22,height=1,text="Inventory asset account", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(35, 910, anchor="nw", window=label_1,tags=('ieplabel12'))
+
+                        comb_inv_edit_i2 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                        comb_inv_edit_i2['values'] = ("Inventory Asset",)
+                        comb_inv_edit_i2.current(0)
+                        window_comb_inv_edit_i2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_edit_i2,tags=('iepcombo2'))
+                        comb_inv_edit_i2.delete(0,'end')
+                        comb_inv_edit_i2.insert(0, edit_pinv[10])
+
+                        
+                        label_1 = Label(p_canvas_edit_1,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel13'))
+
+                        edit_inv_pitem_7=scrolledtext.ScrolledText(p_canvas_edit_1,width=145,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_7 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=60,window=edit_inv_pitem_7,tags=('iepentry7'))
+                        edit_inv_pitem_7.insert(1.0,edit_pinv[11])
+
+                        label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel14'))
+                        
+                        edit_inv_pitem_8=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_8 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_8,tags=('iepentry8'))
+                        edit_inv_pitem_8.delete(0,'end')
+                        edit_inv_pitem_8.insert(0, edit_pinv[12])
+
+                        chk_str_einv_item = StringVar()
+                        chkbtn_inv_pitem_1 = Checkbutton(p_canvas_edit_1, text = "Inclusive of tax", variable = chk_str_einv_item, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        chkbtn_inv_pitem_1.select()
+                        window_chkbtn_inv_pitem_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=chkbtn_inv_pitem_1,tags=('iepcbutton1'))
+
+                        label_1 = Label(p_canvas_edit_1,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel15'))
+
+                        comb_inv_edit_t3 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                        comb_inv_edit_t3['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                        comb_inv_edit_t3.current(0)
+                        window_comb_inv_edit_t3 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_t3,tags=('iepcombo3'))
+                        comb_inv_edit_t3.delete(0,'end')
+                        comb_inv_edit_t3.insert(0, edit_pinv[14])
+
+                        label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel16'))
+
+                        comb_inv_edit_in4 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                        comb_inv_edit_in4['values'] = ("Choose...","Billable Expense Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales of Product Income","Uncategorised Income",)
+                        comb_inv_edit_in4.current(0)
+                        window_comb_inv_edit_in4 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_edit_in4,tags=('iepcombo4'))
+                        comb_inv_edit_in4.delete(0,'end')
+                        comb_inv_edit_in4.insert(0, edit_pinv[13])
+
+
+                        p_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('iephline1'))
+
+                        label_1 = Label(p_canvas_edit_1,width=22,height=1,text="Purchasing information", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel17'))
+
+                        edit_inv_pitem_9=scrolledtext.ScrolledText(p_canvas_edit_1,width=145,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_9 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=60,window=edit_inv_pitem_9,tags=('iepentry9'))
+                        edit_inv_pitem_9.insert(1.0,edit_pinv[15])
+
+                        label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel18'))
+                        
+                        edit_inv_pitem_10=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_10 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_10,tags=('iepentry10'))
+                        edit_inv_pitem_10.delete(0,'end')
+                        edit_inv_pitem_10.insert(0, edit_pinv[16])
+
+
+                        chk_str_inv_pitem_1 = StringVar()
+                        chkbtn_inv_pitem_2 = Checkbutton(p_canvas_edit_1, text = "Inclusive of purchase tax", variable = chk_str_inv_pitem_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        chkbtn_inv_pitem_2.select()
+                        window_chkbtn_inv_pitem_2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=chkbtn_inv_pitem_2,tags=('iepcbutton2'))
+
+                        label_1 = Label(p_canvas_edit_1,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(700, 1530, anchor="nw", window=label_1,tags=('ieplabel19'))
+
+                        comb_inv_edit_pu5 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                        comb_inv_edit_pu5['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                        comb_inv_edit_pu5.current(0)
+                        window_comb_inv_edit_pu5 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_pu5,tags=('iepcombo5'))
+                        comb_inv_edit_pu5.delete(0,'end')
+                        comb_inv_edit_pu5.insert(0, edit_pinv[18])
+
+                        label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel20'))
+
+                        comb_inv_edit_ex6 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                        comb_inv_edit_ex6['values'] = ("Cost of sales",)
+                        comb_inv_edit_ex6.current(0)
+                        window_comb_inv_edit_ex6 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_edit_ex6,tags=('iepcombo6'))
+                        comb_inv_edit_ex6.delete(0,'end')
+                        comb_inv_edit_ex6.insert(0, edit_pinv[17])
+
+                        label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Reverse Charge %", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel21'))
+
+                        def p_erc_1(event):
+                            if edit_inv_pitem_11.get()=="0":
+                                edit_inv_pitem_11.delete(0,END)
+                            else:
+                                pass
+
+                        edit_inv_pitem_11=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_11 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_11,tags=('iepentry11'))
+                        # edit_inv_pitem_11.insert(0,"0")
+                        edit_inv_pitem_11.bind("<Button-1>",p_erc_1)
+                        edit_inv_pitem_11.delete(0,'end')
+                        edit_inv_pitem_11.insert(0, edit_pinv[19])
+                        
+
+                        label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Preferred Supplier", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel22'))
+
+                        comb_inv_edit_pr7 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
+                        comb_inv_edit_pr7['values'] = ("Select Supplier",)
+                        comb_inv_edit_pr7.current(0)
+                        window_comb_inv_edit_pr7 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_pr7,tags=('iepcombo7'))
+                        comb_inv_edit_pr7.delete(0,'end')
+                        comb_inv_edit_pr7.insert(0, edit_pinv[20])
+
+                        einv_sub_btn1=Button(p_canvas_edit_1,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=edit_new_pro_inv)
+                        window_einv_sub_btn1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=einv_sub_btn1,tags=('iepbutton5'))
+
+                        def i_eback_1_():
+                            pro_frame_edit_1.grid_forget()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
+
+                        bck_eibtn1=Button(p_canvas_edit_1,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=i_eback_1_)
+                        window_bck_eibtn1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=bck_eibtn1,tags=('iepbuttn1'))
+
+                        edit_inv_pitem_aod5=DateEntry(p_canvas_edit_1,width=60,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_pitem_aod5 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_aod5,tags=('iepdate1'))
+                        edit_inv_pitem_aod5.delete(0, 'end')
+                        edit_inv_pitem_aod5.insert(0, edit_pinv[8])
+
+                    elif pro_tree.item(pro_tree.focus())["values"][1] == 'Noninventory':
+                        pro_frame.grid_forget()
+                        pro_frame_edit_2 = Frame(tab3_4)
+                        pro_frame_edit_2.grid(row=0,column=0,sticky='nsew')
+
+                        def pro_responsive_widgets_e3(event):
+                            dwidth = event.width
+                            dheight = event.height
+                            dcanvas = event.widget
+                        
+                            r1 = 25
+                            x1 = dwidth/63
+                            x2 = dwidth/1.021
+                            y1 = dheight/14 
+                            y2 = dheight/3.505
+
+                            dcanvas.coords("neppoly1",x1 + r1,y1,
+                            x1 + r1,y1,
+                            x2 - r1,y1,
+                            x2 - r1,y1,     
+                            x2,y1,     
+                            #--------------------
+                            x2,y1 + r1,     
+                            x2,y1 + r1,     
+                            x2,y2 - r1,     
+                            x2,y2 - r1,     
+                            x2,y2,
+                            #--------------------
+                            x2 - r1,y2,     
+                            x2 - r1,y2,     
+                            x1 + r1,y2,
+                            x1 + r1,y2,
+                            x1,y2,
+                            #--------------------
+                            x1,y2 - r1,
+                            x1,y2 - r1,
+                            x1,y1 + r1,
+                            x1,y1 + r1,
+                            x1,y1,
+                            )
+
+                            dcanvas.coords("neplabel1",dwidth/3,dheight/8.24)
+                            dcanvas.coords("nephline",dwidth/21,dheight/4.67,dwidth/1.055,dheight/4.67)
+
+                            r2 = 25
+                            x11 = dwidth/63
+                            x21 = dwidth/1.021
+                            y11 = dheight/2.8
+                            y21 = dheight/0.29
+
+
+                            dcanvas.coords("neppoly2",x11 + r2,y11,
+                            x11 + r2,y11,
+                            x21 - r2,y11,
+                            x21 - r2,y11,     
+                            x21,y11,     
+                            #--------------------
+                            x21,y11 + r2,     
+                            x21,y11 + r2,     
+                            x21,y21 - r2,     
+                            x21,y21 - r2,     
+                            x21,y21,
+                            #--------------------
+                            x21 - r2,y21,     
+                            x21 - r2,y21,     
+                            x11 + r2,y21,
+                            x11 + r2,y21,
+                            x11,y21,
+                            #--------------------
+                            x11,y21 - r2,
+                            x11,y21 - r2,
+                            x11,y11 + r2,
+                            x11,y11 + r2,
+                            x11,y11,
+                            )
+
+                            r2 = 25
+                            x11 = dwidth/24
+                            x21 = dwidth/1.050
+                            y11 = dheight/2.1
+                            y21 = dheight/1.35
+
+
+                            dcanvas.coords("neppoly3",x11 + r2,y11,
+                            x11 + r2,y11,
+                            x21 - r2,y11,
+                            x21 - r2,y11,     
+                            x21,y11,     
+                            #--------------------
+                            x21,y11 + r2,     
+                            x21,y11 + r2,     
+                            x21,y21 - r2,     
+                            x21,y21 - r2,     
+                            x21,y21,
+                            #--------------------
+                            x21 - r2,y21,     
+                            x21 - r2,y21,     
+                            x11 + r2,y21,
+                            x11 + r2,y21,
+                            x11,y21,
+                            #--------------------
+                            x11,y21 - r2,
+                            x11,y21 - r2,
+                            x11,y11 + r2,
+                            x11,y11 + r2,
+                            x11,y11,
+                            )
+
+                            dcanvas.coords("neplabel2",dwidth/2.4,dheight/1.77)
+                            dcanvas.coords("nepbutton1",dwidth/1.8,dheight/1.77)
+
+                            dcanvas.coords("neplabel3",dwidth/23.2,dheight/1.23)
+                            dcanvas.coords("neplabel4",dwidth/23.3,dheight/1.02)
+                            dcanvas.coords("neplabel5",dwidth/1.9,dheight/1.02)
+                            dcanvas.coords("neplabel6",dwidth/1.9,dheight/0.92)
+                            dcanvas.coords("neplabel7",dwidth/27,dheight/0.865)
+                            dcanvas.coords("neplabel8",dwidth/1.915,dheight/0.865)
+                            dcanvas.coords("neplabel12",dwidth/26,dheight/0.675)
+                            dcanvas.coords("neplabel13",dwidth/26.8,dheight/0.606)
+                            dcanvas.coords("neplabel14",dwidth/28.3,dheight/0.538)
+                            dcanvas.coords("neplabel15",dwidth/1.9,dheight/0.538)
+                            dcanvas.coords("neplabel16",dwidth/28.4,dheight/0.485)
+                            dcanvas.coords("neplabel17",dwidth/50,dheight/0.438)
+                            dcanvas.coords("neplabel18",dwidth/26,dheight/0.420)
+                            dcanvas.coords("neplabel20",dwidth/28,dheight/0.368)
+                            dcanvas.coords("neplabel21",dwidth/2.6,dheight/0.368)
+                            dcanvas.coords("neplabel22",dwidth/1.5,dheight/0.368)
+
+                            dcanvas.coords("neplabel9",dwidth/23.2,dheight/0.392)
+                            dcanvas.coords("neplabel10",dwidth/1.9,dheight/0.392)
+
+
+                            dcanvas.coords("nepentry1",dwidth/23.2,dheight/1.165)
+                            dcanvas.coords("nepentry2",dwidth/23.2,dheight/0.975)
+                            dcanvas.coords("nepentry3",dwidth/1.9,dheight/0.975)
+                            dcanvas.coords("nepentry4",dwidth/1.9,dheight/0.83)
+                            dcanvas.coords("nepentry7",dwidth/23.2,dheight/0.59)
+                            dcanvas.coords("nepentry8",dwidth/23.2,dheight/0.525)
+                            dcanvas.coords("nepentry9",dwidth/23.2,dheight/0.43)
+                            dcanvas.coords("nepentry10",dwidth/23.2,dheight/0.412)
+                            dcanvas.coords("nepentry11",dwidth/2.6,dheight/0.362)
+
+                            dcanvas.coords("nepcentry2",dwidth/23.2,dheight/0.385)
+                            dcanvas.coords("nepcentry3",dwidth/1.9,dheight/0.385)
+
+                            dcanvas.coords("nepcombo1",dwidth/23.2,dheight/0.83)
+                            dcanvas.coords("nepcombo3",dwidth/1.9,dheight/0.525)
+                            dcanvas.coords("nepcombo4",dwidth/23.2,dheight/0.474)
+                            dcanvas.coords("nepcombo6",dwidth/23.2,dheight/0.362)
+                            dcanvas.coords("nepcombo7",dwidth/1.5,dheight/0.362)
+
+                            dcanvas.coords("nepbutton2",dwidth/23.2,dheight/0.654)
+                            dcanvas.coords("nepbutton3",dwidth/2.45,dheight/0.474)
+                            dcanvas.coords("nepbutton4",dwidth/3.37,dheight/0.362)
+                            dcanvas.coords("nepbutton5",dwidth/2.38,dheight/0.345)
+
+                            dcanvas.coords("nepcbutton1",dwidth/23.2,dheight/0.51)
+                            dcanvas.coords("nepcbutton2",dwidth/23.2,dheight/0.378)
+
+                            dcanvas.coords("nepline1",dwidth/21,dheight/0.73,dwidth/1.055,dheight/0.73)
+                            dcanvas.coords("nephline1",dwidth/21,dheight/0.448,dwidth/1.055,dheight/0.448)
+
+                            dcanvas.coords("nepbuttn1",dwidth/23,dheight/3.415)
+
+                            
+
+                        p_canvas_edit_2=Canvas(pro_frame_edit_2, bg='#2f516f', width=953, height=600, scrollregion=(0,0,700,2050))
+
+                        pro_frame_edit_2.grid_columnconfigure(0,weight=1)
+                        pro_frame_edit_2.grid_rowconfigure(0,weight=1)
                     
-                    label_1 = Label(p_canvas_edit_1,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel13'))
+                        vertibar=Scrollbar(pro_frame_edit_2, orient=VERTICAL)
+                        vertibar.grid(row=0,column=1,sticky='ns')
+                        vertibar.config(command=p_canvas_edit_2.yview)
 
-                    edit_inv_pitem_7=scrolledtext.ScrolledText(p_canvas_edit_1,width=145,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_7 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=60,window=edit_inv_pitem_7,tags=('iepentry7'))
-                    edit_inv_pitem_7.insert(1.0,edit_pinv[11])
+                        p_canvas_edit_2.bind("<Configure>", pro_responsive_widgets_e3)
+                        p_canvas_edit_2.config(yscrollcommand=vertibar.set)
+                        p_canvas_edit_2.grid(row=0,column=0,sticky='nsew')
 
-                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel14'))
+                        non_peditid = pro_tree.item(pro_tree.focus())["values"][2]
+                        print(non_peditid)
+
+                        non_peditid_1 = pro_tree.item(pro_tree.focus())["values"][3]
+                        print(non_peditid_1)
+
+                        sql_pn="select * from auth_user where username=%s"
+                        pn_val=(nm_ent.get(),)
+                        fbcursor.execute(sql_pn,pn_val,)
+                        pn_dtl=fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (pn_dtl[0],)
+                        fbcursor.execute(sql, val,)
+                        cmp_dtln=fbcursor.fetchone()
+                        print(cmp_dtln)
+
+                        sql = 'select * from app1_noninventory where name = %s and sku = %s and cid_id = %s'
+                        val =  (non_peditid,non_peditid_1,cmp_dtln[0],)
+                        fbcursor.execute(sql,val)
+                        edit_pnon = fbcursor.fetchone()
+
+                        def edit_new_pro_non():
+                            name = edit_non_item_1.get()
+                            sku = edit_non_iitem_2.get()
+                            hsn = edit_non_item_2.get()
+                            unit = comb_enon_item_1.get()
+                            category = edit_non_item_3.get()
+                            descr = edit_non_item_7.get('1.0', 'end-1c')
+                            saleprice = edit_non_item_8.get()
+                            income = comb_enon_item_4.get()
+                            tax = comb_enon_item_3.get()
+                            purchasedescr = edit_non_item_9.get('1.0', 'end-1c')
+                            cost = edit_non_item_10.get()
+                            expenseaccount = comb_enon_item_6.get()
+                            purchasetax = comb_enon_item_5.get()
+                            revcharge = edit_non_item_11.get()
+                            presupplier = comb_enon_item_7.get()
+
+                            usrp1_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usrp1_val = (nm_ent.get(),)
+                            fbcursor.execute(usrp1_sql,usrp1_val)
+                            usrp1_data = fbcursor.fetchone()
+
+                            cmpp1_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmpp1_val = (usrp1_data[0],)
+                            fbcursor.execute(cmpp1_sql,cmpp1_val)
+                            cmpp1_data = fbcursor.fetchone()
+                            cid = cmpp1_data[0]
+
+                            n_p_sql = "UPDATE app1_noninventory set name=%s,sku=%s,hsn=%s,unit=%s,category=%s,descr=%s,saleprice=%s,income=%s,tax=%s,purchasedescr=%s,cost=%s,expenseaccount=%s,purchasetax=%s,revcharge=%s,presupplier=%s,cid_id=%s where name=%s and sku = %s"
+                            n_p_val = (name,sku,hsn,unit,category,descr,saleprice,income,tax,purchasedescr,cost,expenseaccount,purchasetax,revcharge,presupplier,cid,non_peditid,non_peditid_1)
+                            fbcursor.execute(n_p_sql,n_p_val)
+                            finsysdb.commit()
+
+                            #_________Refresh insert tree________#
+
+                            for record in pro_tree.get_children():
+                                pro_tree.delete(record)
+
+     
+                            sql_p="select * from auth_user where username=%s"
+                            sql_p_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_p,sql_p_val,)
+                            pr_dt=fbcursor.fetchone()
+
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dt[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dt=fbcursor.fetchone()
+
+                            p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
+                            p_val_1 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_1,p_val_1,)
+                            p_data_1 = fbcursor.fetchall()
+                            
+                            count0 = 0
+                            for i in p_data_1:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                                else:
+                                    pass
+                            count0 += 1
+
+                            p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
+                            p_val_2 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_2,p_val_2,)
+                            p_data_2 = fbcursor.fetchall()
+
+                            count1 = 0
+                            for i in p_data_2:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count1 += 1
+
+                            p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
+                            p_val_3 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_3,p_val_3,)
+                            p_data_3 = fbcursor.fetchall()
+                            
+
+                            count2 = 0
+                            for i in p_data_3:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count2 += 1
+
+                            pro_frame_edit_2.destroy()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
+
+                        p_canvas_edit_2.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('neppoly1'))
+
+                        label_1 = Label(p_canvas_edit_2,width=30,height=1,text="PRODUCT / SERVICE INFORMATION", font=('arial 20'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1, tags=('neplabel1'))
+
+                        p_canvas_edit_2.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('iephline'))
+
+                        p_canvas_edit_2.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('neppoly2'))
+
+                        p_canvas_edit_2.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#2f516f",tags=('neppoly3'))
+
+                        label_1 = Label(p_canvas_edit_2,width=13,height=2,text="NONINVENTORY", font=('arial 20'),background="#2f516f",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1, tags=('neplabel2'))
+
+                        label_1 = Label(p_canvas_edit_2,width=5,height=1,text="Name", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1, tags=('neplabel3'))
+
+                        edit_non_item_1=Entry(p_canvas_edit_2,width=200,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_non_item_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=30,window=edit_non_item_1, tags=('nepentry1'))
+                        edit_non_item_1.delete(0,'end')
+                        edit_non_item_1.insert(0, edit_pnon[2])
+
+                        label_1 = Label(p_canvas_edit_2,width=5,height=1,text="SKU", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1, tags=('neplabel4'))
+
+                        def pns_2(event):
+                            if edit_non_iitem_2.get()==edit_pnon[3]:
+                                edit_non_iitem_2.delete(0,END)
+                            else:
+                                pass
+
+                        edit_non_iitem_2=Entry(p_canvas_edit_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_non_iitem_2 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=30,window=edit_non_iitem_2, tags=('nepentry2'))
+                        edit_non_iitem_2.insert(0,"N41554")
+                        edit_non_iitem_2.bind("<Button-1>",pns_2)
+                        edit_non_iitem_2.delete(0,'end')
+                        edit_non_iitem_2.insert(0, edit_pnon[3])
+
+                        label_1 = Label(p_canvas_edit_2,width=9,height=1,text="HSN Code", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1, tags=('neplabel5'))
+
+                        edit_non_item_2=Entry(p_canvas_edit_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_non_item_2 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=30,window=edit_non_item_2, tags=('nepentry3'))
+                        edit_non_item_2.delete(0,'end')
+                        edit_non_item_2.insert(0, edit_pnon[4])
+
+                        #Define a callback function
+                        def ncallback_1(url):
+                            webbrowser.open_new_tab(url)
+
+                        link_2 = Label(p_canvas_edit_2,width=30,height=1,text="Not sure about HSN Code..? Click here", font=('arial 12'),background="#1b3857",fg="skyblue") 
+                        window_link_2 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=link_2, tags=('neplabel6'))
+                        link_2.bind("<Button-1>", lambda e:
+                        ncallback_1("https://gstcouncil.gov.in/sites/default/files/goods-rates-booklet-03July2017.pdf"))
+
+
+                        label_1 = Label(p_canvas_edit_2,width=5,height=1,text="Unit", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1, tags=('neplabel7'))
+
+                        comb_enon_item_1 = ttk.Combobox(p_canvas_edit_2, font=('arial 10'))
+                        comb_enon_item_1['values'] = ("Choose Unit Quantity Code(UQC)...","BAG Bags","BAL Bale BOU","BDL Bundles","BKL Buckles","BOX Box","BTL Bottles","CAN Cans","CTN Cartons","CCM Cubic centimeters","CBM Cubic meters","CMS Centimeters","DRM Drums","DOZ Dozens","GGK Great gross GYD","GRS GrossGMS","KME Kilometre","KGS Kilograms","KLR Kilo litre","MTS Metric ton","MLT Mili litre","MTR Meters","NOS Numbers","PAC Packs","PCS Pieces","PRS Pairs","QTL Quintal","ROL Rolls","SQY Square Yards","SET Sets","SQF Square feet","SQM Square meters","TBS Tablets","TUB Tubes","TGM Ten Gross","THD Thousands","TON Tonnes","UNT Units","UGS US Gallons","YDS Yards","OTH Others",)
+                        comb_enon_item_1.current(0)
+                        window_comb_enon_item_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_enon_item_1, tags=('nepcombo1'))
+                        comb_enon_item_1.delete(0,'end')
+                        comb_enon_item_1.insert(0, edit_pnon[5])
+                        
+
+                        label_1 = Label(p_canvas_edit_2,width=9,height=1,text="Category", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel8'))
+
+                        edit_non_item_3=Entry(p_canvas_edit_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_inv_item_3 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=30,window=edit_non_item_3,tags=('nepentry4'))
+                        edit_non_item_3.delete(0,'end')
+                        edit_non_item_3.insert(0, edit_pnon[6])
+
+                        p_canvas_edit_2.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('nepline1'))
+
+                        label_1 = Label(p_canvas_edit_2,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel12'))
+
+
+                        def d_enon_check():
+
+                            if chk_str_enon_item.get() == True:
+                                p_canvas_edit_2.itemconfig('neplabel13',state='normal')
+                                p_canvas_edit_2.itemconfig('nepentry7',state='normal')
+                                p_canvas_edit_2.itemconfig('neplabel14',state='normal')
+                                p_canvas_edit_2.itemconfig('nepentry8',state='normal')
+                                p_canvas_edit_2.itemconfig('nepcbutton1',state='normal')
+                                p_canvas_edit_2.itemconfig('neplabel15',state='normal')
+                                p_canvas_edit_2.itemconfig('nepcombo3',state='normal')
+                                p_canvas_edit_2.itemconfig('neplabel16',state='normal')
+                                p_canvas_edit_2.itemconfig('nepcombo4',state='normal')
+                                p_canvas_edit_2.itemconfig('nepbutton3',state='normal')
+                            else:
+                                pass                     
+
+
+                        chk_str_enon_item = BooleanVar()
+                        chkbtn_enon_item = Checkbutton(p_canvas_edit_2, text = "I sell this product/service to my customers.", variable = chk_str_enon_item, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=d_enon_check)
+                        window_chkbtn_enon_item = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=chkbtn_enon_item,tags=('nepbutton2'))
+
+                        label_1 = Label(p_canvas_edit_2,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel13'),state=HIDDEN)
+                        
+
+                        edit_non_item_7=scrolledtext.ScrolledText(p_canvas_edit_2,width=145,background='#2f516f',foreground="white")
+                        window_edit_non_item_7 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=60,window=edit_non_item_7,tags=('nepentry7'),state=HIDDEN)
+                        edit_non_item_7.insert(1.0,edit_pnon[7])
+
+                        label_1 = Label(p_canvas_edit_2,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel14'),state=HIDDEN)
+                        
+                        edit_non_item_8=Entry(p_canvas_edit_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_non_item_8 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=30,window=edit_non_item_8,tags=('nepentry8'),state=HIDDEN)
+                        edit_non_item_8.delete(0,'end')
+                        edit_non_item_8.insert(0, edit_pnon[8])
+
+                        chk_str_non_item_e1 = BooleanVar()
+                        chkbtn_non_item_e1 = Checkbutton(p_canvas_edit_2, text = "Inclusive of tax", variable = chk_str_non_item_e1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        chkbtn_non_item_e1.select()
+                        window_chkbtn_non_item_e1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=chkbtn_non_item_e1,tags=('nepcbutton1'),state=HIDDEN)
+
+                        label_1 = Label(p_canvas_edit_2,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel15'),state=HIDDEN)
+
+                        comb_enon_item_3 = ttk.Combobox(p_canvas_edit_2, font=('arial 10'))
+                        comb_enon_item_3['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                        #comb_non_item_3.current(0)
+                        window_comb_enon_item_3 = p_canvas_edit_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_enon_item_3,tags=('nepcombo3'),state=HIDDEN)
+                        comb_enon_item_3.delete(0,'end')
+                        comb_enon_item_3.insert(0, edit_pnon[10])
+
+                        label_1 = Label(p_canvas_edit_2,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel16'),state=HIDDEN)
+
+                        comb_enon_item_4 = ttk.Combobox(p_canvas_edit_2, font=('arial 10'))
+                        comb_enon_item_4['values'] = ("Billable Expense Income","Consulting Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales Discount","Sales of Product Income","Services","Unapplied Cash Payment Income","Uncategorised Income",)
+                        #comb_non_item_4.current(0)
+                        window_comb_enon_item_4 = p_canvas_edit_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_enon_item_4,tags=('nepcombo4'),state=HIDDEN)
+                        comb_enon_item_4.delete(0,'end')
+                        comb_enon_item_4.insert(0, edit_pnon[9])
+
+                        p_canvas_edit_2.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('nephline1'))
+
+                        label_1 = Label(p_canvas_edit_2,width=25,height=1,text="Purchasing information", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(26, 1300, anchor="nw", window=label_1,tags=('neplabel17'))
+
+                        def p_enon_check():
+                            
+                            if chk_str_enon_pitem.get() == True:
+                                p_canvas_edit_2.itemconfig('neplabel18',state='normal')
+                                p_canvas_edit_2.itemconfig('nepentry10',state='normal')
+                                p_canvas_edit_2.itemconfig('neplabel9',state='normal')
+                                p_canvas_edit_2.itemconfig('nepcentry2',state='normal')
+                                p_canvas_edit_2.itemconfig('nepcbutton2',state='normal')
+                                p_canvas_edit_2.itemconfig('neplabel10',state='normal')
+                                p_canvas_edit_2.itemconfig('nepcentry3',state='normal')
+                                p_canvas_edit_2.itemconfig('neplabel20',state='normal')
+                                p_canvas_edit_2.itemconfig('nepcombo6',state='normal')
+                                p_canvas_edit_2.itemconfig('nepbutton4',state='normal')
+                                p_canvas_edit_2.itemconfig('neplabel21',state='normal')
+                                p_canvas_edit_2.itemconfig('nepentry11',state='normal')
+                                p_canvas_edit_2.itemconfig('neplabel22',state='normal')
+                                p_canvas_edit_2.itemconfig('nepcombo7',state='normal')
+                            else:
+                                pass
+
+                        chk_str_enon_pitem = BooleanVar()
+                        chkbtn_enon_pitem = Checkbutton(p_canvas_edit_2, text = "I Purchase this product/service from Supplier.", variable = chk_str_enon_pitem, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=p_enon_check)
+                        window_chkbtn_enon_pitem = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=chkbtn_enon_pitem,tags=('nepentry9'))
+
+
+                        label_1 = Label(p_canvas_edit_2,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel18'),state=HIDDEN)
+
+                        edit_non_item_9=scrolledtext.ScrolledText(p_canvas_edit_2,width=145,background='#2f516f',foreground="white")
+                        window_edit_non_item_9 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=60,window=edit_non_item_9,tags=('nepentry10'),state=HIDDEN)
+                        edit_non_item_9.insert(1.0,edit_pnon[11])
+
+                        label_1 = Label(p_canvas_edit_2,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel9'),state=HIDDEN)
+                        
+                        edit_non_item_10=Entry(p_canvas_edit_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_non_item_10 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=30,window=edit_non_item_10,tags=('nepcentry2'),state=HIDDEN)
+                        edit_non_item_10.delete(0,'end')
+                        edit_non_item_10.insert(0, edit_pnon[12])
+
+                        chk_str_enon_item_2 = BooleanVar()
+                        chkbtn_enon_item_2 = Checkbutton(p_canvas_edit_2, text = "Inclusive of purchase tax", variable = chk_str_enon_item_2, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        chkbtn_enon_item_2.select()
+                        window_chkbtn_enon_item_2 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=chkbtn_enon_item_2,tags=('nepcbutton2'),state=HIDDEN)
+
+                        label_1 = Label(p_canvas_edit_2,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel10'),state=HIDDEN)
+
+                        comb_enon_item_5 = ttk.Combobox(p_canvas_edit_2, font=('arial 10'))
+                        comb_enon_item_5['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                        #comb_non_item_5.current(0)
+                        window_comb_enon_item_5 = p_canvas_edit_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_enon_item_5,tags=('nepcentry3'),state=HIDDEN)
+                        comb_enon_item_5.delete(0,'end')
+                        comb_enon_item_5.insert(0, edit_pnon[14])
+
+                        label_1 = Label(p_canvas_edit_2,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel20'),state=HIDDEN)
+
+                        comb_enon_item_6 = ttk.Combobox(p_canvas_edit_2, font=('arial 10'))
+                        comb_enon_item_6['values'] = ("Choose","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Continuing Education","Depreciation Expense","Dues and Subscriptions","House Keeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Interest Expenses","Meals and Entertainment","Office Supplies","Postage and Delivery","Printing and Reproduction","Professional Fees","Purchases","Rent Expense","Repair and Maintanance","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities",)
+                        #comb_non_item_6.current(0)
+                        window_comb_enon_item_6 = p_canvas_edit_2.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_enon_item_6,tags=('nepcombo6'),state=HIDDEN)
+                        comb_enon_item_6.delete(0,'end')
+                        comb_enon_item_6.insert(0, edit_pnon[13])
+
+
+                        label_1 = Label(p_canvas_edit_2,width=15,height=1,text="Reverse Charge %", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel21'),state=HIDDEN)
+
+                        def pr_e2(event):
+                            if edit_non_item_11.get()==edit_pnon[15]:
+                                edit_non_item_11.delete(0,END)
+                            else:
+                                pass
+
+                        edit_non_item_11=Entry(p_canvas_edit_2,width=50,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_non_item_11 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=30,window=edit_non_item_11,tags=('nepentry11'),state=HIDDEN)
+                        edit_non_item_11.insert(0,"0")
+                        edit_non_item_11.bind("<Button-1>",pr_e2)
+                        edit_non_item_11.delete(0,'end')
+                        edit_non_item_11.insert(0, edit_pnon[15])
+
+
+                        label_1 = Label(p_canvas_edit_2,width=15,height=1,text="Preferred Supplier", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel22'),state=HIDDEN)
+
+                        comb_enon_item_7 = ttk.Combobox(p_canvas_edit_2, font=('arial 10'))
+                        comb_enon_item_7['values'] = ("Select Supplier",)
+                        #comb_non_item_7.current(0)
+                        window_comb_enon_item_7 = p_canvas_edit_2.create_window(0, 0, anchor="nw", width=345, height=30,window=comb_enon_item_7,tags=('nepcombo7'),state=HIDDEN)
+                        comb_enon_item_7.delete(0,'end')
+                        comb_enon_item_7.insert(0, edit_pnon[16])
+
+                        enon_sub_btn1=Button(p_canvas_edit_2,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=edit_new_pro_non)
+                        window_enon_sub_btn1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=enon_sub_btn1,tags=('nepbutton5'))
+
+                        def no_eback_1_():
+                            pro_frame_edit_2.grid_forget()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
+
+                        bck_enbtn1=Button(p_canvas_edit_2,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=no_eback_1_)
+                        window_bck_enbtn1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=bck_enbtn1,tags=('nepbuttn1'))
                     
-                    edit_inv_pitem_8=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_8 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_8,tags=('iepentry8'))
-                    edit_inv_pitem_8.delete(0,'end')
-                    edit_inv_pitem_8.insert(0, edit_pinv[12])
+                    elif pro_tree.item(pro_tree.focus())["values"][1] == 'Service':
+                        pro_frame.grid_forget()
+                        pro_frame_edit_3 = Frame(tab3_4)
+                        pro_frame_edit_3.grid(row=0,column=0,sticky='nsew')
 
-                    chk_str_einv_item = StringVar()
-                    chkbtn_inv_pitem_1 = Checkbutton(p_canvas_edit_1, text = "Inclusive of tax", variable = chk_str_einv_item, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                    chkbtn_inv_pitem_1.select()
-                    window_chkbtn_inv_pitem_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=chkbtn_inv_pitem_1,tags=('iepcbutton1'))
+                        def pro_responsive_widgets_e4(event):
+                            dwidth = event.width
+                            dheight = event.height
+                            dcanvas = event.widget
+                        
+                            r1 = 25
+                            x1 = dwidth/63
+                            x2 = dwidth/1.021
+                            y1 = dheight/14 
+                            y2 = dheight/3.505
 
-                    label_1 = Label(p_canvas_edit_1,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel15'))
+                            dcanvas.coords("sppoly1",x1 + r1,y1,
+                            x1 + r1,y1,
+                            x2 - r1,y1,
+                            x2 - r1,y1,     
+                            x2,y1,     
+                            #--------------------
+                            x2,y1 + r1,     
+                            x2,y1 + r1,     
+                            x2,y2 - r1,     
+                            x2,y2 - r1,     
+                            x2,y2,
+                            #--------------------
+                            x2 - r1,y2,     
+                            x2 - r1,y2,     
+                            x1 + r1,y2,
+                            x1 + r1,y2,
+                            x1,y2,
+                            #--------------------
+                            x1,y2 - r1,
+                            x1,y2 - r1,
+                            x1,y1 + r1,
+                            x1,y1 + r1,
+                            x1,y1,
+                            )
 
-                    comb_inv_edit_t3 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
-                    comb_inv_edit_t3['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
-                    comb_inv_edit_t3.current(0)
-                    window_comb_inv_edit_t3 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_t3,tags=('iepcombo3'))
-                    comb_inv_edit_t3.delete(0,'end')
-                    comb_inv_edit_t3.insert(0, edit_pinv[14])
+                            dcanvas.coords("splabel1",dwidth/3,dheight/8.24)
+                            dcanvas.coords("sphline",dwidth/21,dheight/4.67,dwidth/1.055,dheight/4.67)
 
-                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel16'))
-
-                    comb_inv_edit_in4 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
-                    comb_inv_edit_in4['values'] = ("Choose...","Billable Expense Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales of Product Income","Uncategorised Income",)
-                    comb_inv_edit_in4.current(0)
-                    window_comb_inv_edit_in4 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_edit_in4,tags=('iepcombo4'))
-                    comb_inv_edit_in4.delete(0,'end')
-                    comb_inv_edit_in4.insert(0, edit_pinv[13])
+                            r2 = 25
+                            x11 = dwidth/63
+                            x21 = dwidth/1.021
+                            y11 = dheight/2.8
+                            y21 = dheight/0.29
 
 
-                    p_canvas_edit_1.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('iephline1'))
+                            dcanvas.coords("sppoly2",x11 + r2,y11,
+                            x11 + r2,y11,
+                            x21 - r2,y11,
+                            x21 - r2,y11,     
+                            x21,y11,     
+                            #--------------------
+                            x21,y11 + r2,     
+                            x21,y11 + r2,     
+                            x21,y21 - r2,     
+                            x21,y21 - r2,     
+                            x21,y21,
+                            #--------------------
+                            x21 - r2,y21,     
+                            x21 - r2,y21,     
+                            x11 + r2,y21,
+                            x11 + r2,y21,
+                            x11,y21,
+                            #--------------------
+                            x11,y21 - r2,
+                            x11,y21 - r2,
+                            x11,y11 + r2,
+                            x11,y11 + r2,
+                            x11,y11,
+                            )
 
-                    label_1 = Label(p_canvas_edit_1,width=22,height=1,text="Purchasing information", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel17'))
+                            r2 = 25
+                            x11 = dwidth/24
+                            x21 = dwidth/1.050
+                            y11 = dheight/2.1
+                            y21 = dheight/1.35
 
-                    edit_inv_pitem_9=scrolledtext.ScrolledText(p_canvas_edit_1,width=145,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_9 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=60,window=edit_inv_pitem_9,tags=('iepentry9'))
-                    edit_inv_pitem_9.insert(1.0,edit_pinv[15])
 
-                    label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel18'))
+                            dcanvas.coords("sppoly3",x11 + r2,y11,
+                            x11 + r2,y11,
+                            x21 - r2,y11,
+                            x21 - r2,y11,     
+                            x21,y11,     
+                            #--------------------
+                            x21,y11 + r2,     
+                            x21,y11 + r2,     
+                            x21,y21 - r2,     
+                            x21,y21 - r2,     
+                            x21,y21,
+                            #--------------------
+                            x21 - r2,y21,     
+                            x21 - r2,y21,     
+                            x11 + r2,y21,
+                            x11 + r2,y21,
+                            x11,y21,
+                            #--------------------
+                            x11,y21 - r2,
+                            x11,y21 - r2,
+                            x11,y11 + r2,
+                            x11,y11 + r2,
+                            x11,y11,
+                            )
+
+                            dcanvas.coords("seplabel2",dwidth/2.3,dheight/1.77)
+                            dcanvas.coords("sepbutton1",dwidth/1.8,dheight/1.77)
+
+                            dcanvas.coords("seplabel3",dwidth/23.2,dheight/1.23)
+                            dcanvas.coords("seplabel4",dwidth/23.3,dheight/1.02)
+                            dcanvas.coords("seplabel5",dwidth/1.9,dheight/1.02)
+                            dcanvas.coords("seplabel7",dwidth/27,dheight/0.865)
+                            dcanvas.coords("seplabel8",dwidth/1.915,dheight/0.865)
+                            dcanvas.coords("seplabel12",dwidth/26,dheight/0.675)
+                            dcanvas.coords("seplabel13",dwidth/26.8,dheight/0.606)
+                            dcanvas.coords("seplabel14",dwidth/28.3,dheight/0.538)
+                            dcanvas.coords("seplabel15",dwidth/1.9,dheight/0.538)
+                            dcanvas.coords("seplabel16",dwidth/28.4,dheight/0.485)
+                            dcanvas.coords("seplabel17",dwidth/50,dheight/0.438)
+                            dcanvas.coords("seplabel18",dwidth/26,dheight/0.420)
+                            dcanvas.coords("seplabel9",dwidth/23.2,dheight/0.392)
+                            dcanvas.coords("seplabel10",dwidth/1.9,dheight/0.392)
+                            dcanvas.coords("seplabel20",dwidth/28,dheight/0.368)
+                            dcanvas.coords("seplabel21",dwidth/2.6,dheight/0.368)
+                            dcanvas.coords("seplabel22",dwidth/1.5,dheight/0.368)
+
+                            dcanvas.coords("seplabel23",dwidth/2.6,dheight/0.485)
+
+                            dcanvas.coords("seplabel24",dwidth/1.53,dheight/0.485)
+                            
+
+                            dcanvas.coords("sepentry1",dwidth/23.2,dheight/1.165)
+                            dcanvas.coords("sepentry2",dwidth/23.2,dheight/0.975)
+                            dcanvas.coords("sepentry3",dwidth/1.9,dheight/0.975)
+                            dcanvas.coords("sepentry4",dwidth/1.9,dheight/0.83)
+                            dcanvas.coords("sepentry7",dwidth/23.2,dheight/0.59)
+                            dcanvas.coords("sepentry8",dwidth/23.2,dheight/0.525)
+                            dcanvas.coords("sepentry9",dwidth/23.2,dheight/0.43)
+                            dcanvas.coords("sepentry10",dwidth/23.2,dheight/0.412)
+                            dcanvas.coords("sepentry11",dwidth/2.6,dheight/0.362)
+
+                            dcanvas.coords("sepentry12",dwidth/2.6,dheight/0.474)
+
+                            dcanvas.coords("sepcentry2",dwidth/23.2,dheight/0.385)
+                            dcanvas.coords("sepcentry3",dwidth/1.9,dheight/0.385)
+
+                            dcanvas.coords("sepcombo1",dwidth/23.2,dheight/0.83)
+                            dcanvas.coords("sepcombo3",dwidth/1.9,dheight/0.525)
+                            dcanvas.coords("sepcombo4",dwidth/23.2,dheight/0.474)
+                            dcanvas.coords("sepcombo6",dwidth/23.2,dheight/0.362)
+                            dcanvas.coords("sepcombo7",dwidth/1.5,dheight/0.362)
+
+                            dcanvas.coords("sepcombo8",dwidth/1.5,dheight/0.474)
+
+                            dcanvas.coords("sepbutton2",dwidth/23.2,dheight/0.654)
+                            dcanvas.coords("sepbutton3",dwidth/3.37,dheight/0.474)
+                            dcanvas.coords("sepbutton4",dwidth/3.37,dheight/0.362)
+                            dcanvas.coords("sepbutton5",dwidth/2.38,dheight/0.345)
+
+                            dcanvas.coords("sepcbutton1",dwidth/23.2,dheight/0.51)
+                            dcanvas.coords("sepcbutton2",dwidth/23.2,dheight/0.378)
+
+                            dcanvas.coords("sepline1",dwidth/21,dheight/0.73,dwidth/1.055,dheight/0.73)
+
+                            dcanvas.coords("sephline1",dwidth/21,dheight/0.448,dwidth/1.055,dheight/0.448)
+                            dcanvas.coords("sepbuttn1",dwidth/23,dheight/3.415) 
+
+                            
+
+                        p_canvas_edit_3=Canvas(pro_frame_edit_3, bg='#2f516f', width=953, height=600, scrollregion=(0,0,700,2050))
+
+                        pro_frame_edit_3.grid_columnconfigure(0,weight=1)
+                        pro_frame_edit_3.grid_rowconfigure(0,weight=1)
                     
-                    edit_inv_pitem_10=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_10 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_10,tags=('iepentry10'))
-                    edit_inv_pitem_10.delete(0,'end')
-                    edit_inv_pitem_10.insert(0, edit_pinv[16])
+                        vertibar=Scrollbar(pro_frame_edit_3, orient=VERTICAL)
+                        vertibar.grid(row=0,column=1,sticky='ns')
+                        vertibar.config(command=p_canvas_edit_3.yview)
+
+                        p_canvas_edit_3.bind("<Configure>", pro_responsive_widgets_e4)
+                        p_canvas_edit_3.config(yscrollcommand=vertibar.set)
+                        p_canvas_edit_3.grid(row=0,column=0,sticky='nsew')
+
+                        ser_peditid = pro_tree.item(pro_tree.focus())["values"][2]
+                        print(ser_peditid)
+
+                        ser_peditid_1 = pro_tree.item(pro_tree.focus())["values"][3]
+                        print(ser_peditid_1)
+
+                        sql_pn="select * from auth_user where username=%s"
+                        pn_val=(nm_ent.get(),)
+                        fbcursor.execute(sql_pn,pn_val,)
+                        pn_dtl=fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (pn_dtl[0],)
+                        fbcursor.execute(sql, val,)
+                        cmp_dtln=fbcursor.fetchone()
+                        print(cmp_dtln)
+
+                        sql = 'select * from app1_service where name = %s and sku = %s and cid_id = %s'
+                        val =  (ser_peditid,ser_peditid_1,cmp_dtln[0],)
+                        fbcursor.execute(sql,val)
+                        edit_pser = fbcursor.fetchone()
+
+                        def edit_new_pro_ser():
+                            name = edit_ser_item_1.get()
+                            sku = edit_ser_iitem_2.get()
+                            sac = edit_ser_item_2.get()
+                            unit = comb_eser_item_1.get()
+                            categ = edit_ser_item_3.get()
+                            descr = edit_ser_item_7.get('1.0', 'end-1c')
+                            saleprice = edit_ser_item_s8.get()
+                            income = comb_eser_item_6.get()
+                            tax = comb_eser_item_3.get()
+                            abatement = edit_ser_iitem_11.get()
+                            sertype = comb_eser_iitem_7.get()
+                            purchasedescr = edit_ser_item_9.get('1.0', 'end-1c')
+                            cost = edit_ser_item_10.get()
+                            expenseaccount = comb_eser_item_e6.get()
+                            purchasetax = comb_eser_item_5.get()
+                            revcharge = edit_sser_item_11.get()
+                            presupplier = comb_eser_item_ps7.get()
+
+                            usrp2_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usrp2_val = (nm_ent.get(),)
+                            fbcursor.execute(usrp2_sql,usrp2_val)
+                            usrp2_data = fbcursor.fetchone()
+
+                            cmpp2_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmpp2_val = (usrp2_data[0],)
+                            fbcursor.execute(cmpp2_sql,cmpp2_val)
+                            cmpp2_data = fbcursor.fetchone()
+                            cid = cmpp2_data[0]
+
+                            s_p_sql = "UPDATE app1_service set name=%s,sku=%s,sac=%s,unit=%s,categ=%s,descr=%s,saleprice=%s,income=%s,tax=%s,abatement=%s,sertype=%s,purchasedescr=%s,cost=%s,expenseaccount=%s,purchasetax=%s,revcharge=%s,presupplier=%s,cid_id=%s where name=%s and sku = %s"
+                            s_p_val = (name,sku,sac,unit,categ,descr,saleprice,income,tax,abatement,sertype,purchasedescr,cost,expenseaccount,purchasetax,revcharge,presupplier,cid,ser_peditid,ser_peditid_1)
+                            fbcursor.execute(s_p_sql,s_p_val)
+                            finsysdb.commit()
+
+                            #_________Refresh insert tree________#
+
+                            for record in pro_tree.get_children():
+                                pro_tree.delete(record)
+
+     
+                            sql_p="select * from auth_user where username=%s"
+                            sql_p_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_p,sql_p_val,)
+                            pr_dt=fbcursor.fetchone()
+
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dt[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dt=fbcursor.fetchone()
+
+                            p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
+                            p_val_1 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_1,p_val_1,)
+                            p_data_1 = fbcursor.fetchall()
+                            
+                            count0 = 0
+                            for i in p_data_1:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                                else:
+                                    pass
+                            count0 += 1
+
+                            p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
+                            p_val_2 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_2,p_val_2,)
+                            p_data_2 = fbcursor.fetchall()
+
+                            count1 = 0
+                            for i in p_data_2:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count1 += 1
+
+                            p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
+                            p_val_3 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_3,p_val_3,)
+                            p_data_3 = fbcursor.fetchall()
+                            
+
+                            count2 = 0
+                            for i in p_data_3:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count2 += 1
+
+                            pro_frame_edit_3.destroy()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
+
+                        p_canvas_edit_3.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('sppoly1'))
+
+                        label_1 = Label(p_canvas_edit_3,width=30,height=1,text="PRODUCT / SERVICE INFORMATION", font=('arial 20'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1, tags=('splabel1'))
+
+                        p_canvas_edit_3.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('sphline'))
+
+                        p_canvas_edit_3.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('sppoly2'))
+
+                        p_canvas_edit_3.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#2f516f",tags=('sppoly3'))
+
+                        label_1 = Label(p_canvas_edit_3,width=10,height=2,text="SERVICE", font=('arial 20'),background="#2f516f",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1, tags=('seplabel2'))
+
+                        label_1 = Label(p_canvas_edit_3,width=5,height=1,text="Name", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1, tags=('seplabel3'))
+
+                        edit_ser_item_1=Entry(p_canvas_edit_3,width=200,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_ser_item_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=30,window=edit_ser_item_1, tags=('sepentry1'))
+                        edit_ser_item_1.delete(0,'end')
+                        edit_ser_item_1.insert(0, edit_pser[2])
+
+                        label_1 = Label(p_canvas_edit_3,width=5,height=1,text="SKU", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1, tags=('seplabel4'))
+
+                        def pse_3(event):
+                            if edit_ser_iitem_2.get()=="N41554":
+                                edit_ser_iitem_2.delete(0,END)
+                            else:
+                                pass
+
+                        edit_ser_iitem_2=Entry(p_canvas_edit_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_ser_iitem_2 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=30,window=edit_ser_iitem_2, tags=('sepentry2'))
+                        edit_ser_iitem_2.insert(0,"N41554")
+                        edit_ser_iitem_2.bind("<Button-1>",pse_3)
+                        edit_ser_iitem_2.delete(0,'end')
+                        edit_ser_iitem_2.insert(0, edit_pser[3])
+
+                        label_1 = Label(p_canvas_edit_3,width=9,height=1,text="SAC Code", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1, tags=('seplabel5'))
+
+                        def p_sac_e1(event):
+                            if edit_ser_item_2.get()==edit_pser[4]:
+                                edit_ser_item_2.delete(0,END)
+                            else:
+                                pass
+                        edit_ser_item_2=Entry(p_canvas_edit_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_ser_item_2 = p_canvas_edit_3.create_window(710, 630, anchor="nw", height=30,window=edit_ser_item_2, tags=('sepentry3'))
+                        edit_ser_item_2.insert(0,"Eg: 998841-Coke and refined petroleum product manufacturing services")
+                        edit_ser_item_2.bind("<Button-1>",p_sac_e1)
+                        edit_ser_item_2.delete(0,'end')
+                        edit_ser_item_2.insert(0, edit_pser[4])
 
 
-                    chk_str_inv_pitem_1 = StringVar()
-                    chkbtn_inv_pitem_2 = Checkbutton(p_canvas_edit_1, text = "Inclusive of purchase tax", variable = chk_str_inv_pitem_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                    chkbtn_inv_pitem_2.select()
-                    window_chkbtn_inv_pitem_2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=chkbtn_inv_pitem_2,tags=('iepcbutton2'))
+                        label_1 = Label(p_canvas_edit_3,width=5,height=1,text="Unit", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1, tags=('seplabel7'))
 
-                    label_1 = Label(p_canvas_edit_1,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(700, 1530, anchor="nw", window=label_1,tags=('ieplabel19'))
+                        comb_eser_item_1 = ttk.Combobox(p_canvas_edit_3, font=('arial 10'))
+                        comb_eser_item_1['values'] = ("Choose Unit Quantity Code(UQC)...","BAG-BAGS","BAL-BALE","BDL-BUNDLES","BKL-BUCKLES","BOX-BOX","BOU-BILLIONS OF UNITS","BTL-BOTTLES","BUN-BUNCHES","CAN-CANS","CBM-CUBIC METER","CMS-CENTIMETER","CCM-CUBIC CENTIMETER","CTN-CARTONS","DOZ-DOZEN","DRM-DRUM","GGR-GREAT GROSS","GMS-GRAMS","GRS-GROSS","GYD-GRODD YARDS","KGS-KILOGRAMS","KLR-KILOLITER","KME-KILOMETRE","MTS-METRIC TON","MLT-MILLILITRE","MTR-METERS","NOS-NUMBER","PAC-PACKS","PCS-PIECES","PRS-PAIRS","QTL-QUINTAL","ROL-ROLLS","SQF-SQUARE FEET","SET-SETS","SQM-SQUARE METERS","SQY-SQUARE YARDS","TBS-TABLETS","TGM-TEN GROSS","THD-THOUSAND","TON-TONNES","TUB-TUBES","UGS-US GALLONS","UNT-UNITS","YDS-YARDS","OTH-OTHERS",)
+                        comb_eser_item_1.current(0)
+                        window_comb_eser_item_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_eser_item_1, tags=('sepcombo1'))
+                        comb_eser_item_1.delete(0,'end')
+                        comb_eser_item_1.insert(0, edit_pser[5])
 
-                    comb_inv_edit_pu5 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
-                    comb_inv_edit_pu5['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
-                    comb_inv_edit_pu5.current(0)
-                    window_comb_inv_edit_pu5 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_pu5,tags=('iepcombo5'))
-                    comb_inv_edit_pu5.delete(0,'end')
-                    comb_inv_edit_pu5.insert(0, edit_pinv[18])
+                        label_1 = Label(p_canvas_edit_3,width=9,height=1,text="Category", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(705, 710, anchor="nw", window=label_1,tags=('seplabel8'))
 
-                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel20'))
+                        edit_ser_item_3=Entry(p_canvas_edit_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_ser_item_3 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=30,window=edit_ser_item_3,tags=('sepentry4'))
+                        edit_ser_item_3.delete(0,'end')
+                        edit_ser_item_3.insert(0, edit_pser[6])
 
-                    comb_inv_edit_ex6 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
-                    comb_inv_edit_ex6['values'] = ("Cost of sales",)
-                    comb_inv_edit_ex6.current(0)
-                    window_comb_inv_edit_ex6 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_edit_ex6,tags=('iepcombo6'))
-                    comb_inv_edit_ex6.delete(0,'end')
-                    comb_inv_edit_ex6.insert(0, edit_pinv[17])
-
-                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Reverse Charge %", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel21'))
-
-                    def p_erc_1(event):
-                        if edit_inv_pitem_11.get()=="0":
-                            edit_inv_pitem_11.delete(0,END)
-                        else:
-                            pass
-
-                    edit_inv_pitem_11=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_11 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_11,tags=('iepentry11'))
-                    # edit_inv_pitem_11.insert(0,"0")
-                    edit_inv_pitem_11.bind("<Button-1>",p_erc_1)
-                    edit_inv_pitem_11.delete(0,'end')
-                    edit_inv_pitem_11.insert(0, edit_pinv[19])
-                    
-
-                    label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Preferred Supplier", font=('arial 12'),background="#1b3857",fg="white") 
-                    window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel22'))
-
-                    comb_inv_edit_pr7 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
-                    comb_inv_edit_pr7['values'] = ("Select Supplier",)
-                    comb_inv_edit_pr7.current(0)
-                    window_comb_inv_edit_pr7 = p_canvas_edit_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_edit_pr7,tags=('iepcombo7'))
-                    comb_inv_edit_pr7.delete(0,'end')
-                    comb_inv_edit_pr7.insert(0, edit_pinv[20])
-
-                    einv_sub_btn1=Button(p_canvas_edit_1,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=edit_new_pro_inv)
-                    window_einv_sub_btn1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=einv_sub_btn1,tags=('iepbutton5'))
-
-                    def i_eback_1_():
-                        pro_frame_edit_1.grid_forget()
-                        pro_frame.grid(row=0,column=0,sticky='nsew')
-
-                    bck_eibtn1=Button(p_canvas_edit_1,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=i_eback_1_)
-                    window_bck_eibtn1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=bck_eibtn1,tags=('iepbuttn1'))
-
-                    edit_inv_pitem_aod5=DateEntry(p_canvas_edit_1,width=60,justify=LEFT,background='#2f516f',foreground="white")
-                    window_edit_inv_pitem_aod5 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_aod5,tags=('iepdate1'))
-                    edit_inv_pitem_aod5.delete(0, 'end')
-                    edit_inv_pitem_aod5.insert(0, edit_pinv[8])
+                        p_canvas_edit_3.create_line(0, 0, 0, 0, fill='gray',width=1,tags=('sepline1'))
 
 
-                pebtn1=Button(pro_canvas,text='Edit', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=inv_edit_item)
+                        label_1 = Label(p_canvas_edit_3,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel12'))
+
+                        def d_eser_check():
+
+                            if chk_str_eser_item.get() == True:
+                                p_canvas_edit_3.itemconfig('seplabel13',state='normal')
+                                p_canvas_edit_3.itemconfig('sepentry7',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel14',state='normal')
+                                p_canvas_edit_3.itemconfig('sepentry8',state='normal')
+                                p_canvas_edit_3.itemconfig('sepcbutton1',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel15',state='normal')
+                                p_canvas_edit_3.itemconfig('sepcombo3',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel16',state='normal')
+                                p_canvas_edit_3.itemconfig('sepcombo4',state='normal')
+                                p_canvas_edit_3.itemconfig('sepbutton3',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel23',state='normal')
+                                p_canvas_edit_3.itemconfig('sepentry12',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel24',state='normal')
+                                p_canvas_edit_3.itemconfig('sepcombo8',state='normal')
+                            else:
+                                pass
+
+                        chk_str_eser_item = BooleanVar()
+                        chkbtn_eser_item = Checkbutton(p_canvas_edit_3, text = "I sell this product/service to my customers.", variable = chk_str_eser_item, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=d_eser_check)
+                        window_chkbtn_eser_item = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=chkbtn_eser_item,tags=('sepbutton2'))
+
+                        label_d1 = Label(p_canvas_edit_3,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_d1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_d1,tags=('seplabel13'),state=HIDDEN)
+
+                        edit_ser_item_7=scrolledtext.ScrolledText(p_canvas_edit_3,width=145,background='#2f516f',foreground="white")
+                        window_edit_ser_item_7 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=60,window=edit_ser_item_7,tags=('sepentry7'),state=HIDDEN)
+                        edit_ser_item_7.insert(1.0,edit_pser[7])
+
+
+                        label_1 = Label(p_canvas_edit_3,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel14'),state=HIDDEN)
+                        
+                        edit_ser_item_s8=Entry(p_canvas_edit_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_ser_item_s8 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=30,window=edit_ser_item_s8,tags=('sepentry8'),state=HIDDEN)
+                        edit_ser_item_s8.delete(0,'end')
+                        edit_ser_item_s8.insert(0, edit_pser[8])
+
+                        chk_str_eser_item_1 = BooleanVar()
+                        chkbtn_eser_item_1 = Checkbutton(p_canvas_edit_3, text = "Inclusive of tax", variable = chk_str_eser_item_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        chkbtn_eser_item_1.select()
+                        window_chkbtn_eser_item_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=chkbtn_eser_item_1,tags=('sepcbutton1'),state=HIDDEN)
+
+                        label_1 = Label(p_canvas_edit_3,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel15'),state=HIDDEN)
+
+                        comb_eser_item_3 = ttk.Combobox(p_canvas_edit_3, font=('arial 10'))
+                        comb_eser_item_3['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                        comb_eser_item_3.current(0)
+                        window_comb_eser_item_3 = p_canvas_edit_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_eser_item_3,tags=('sepcombo3'),state=HIDDEN)
+                        comb_eser_item_3.delete(0,'end')
+                        comb_eser_item_3.insert(0, edit_pser[10])
+
+                        label_1 = Label(p_canvas_edit_3,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel16'),state=HIDDEN)
+
+                        
+                        comb_eser_item_6 = ttk.Combobox(p_canvas_edit_3, font=('arial 10'))
+                        comb_eser_item_6['values'] = ("Choose...","Billable Expense income","Product Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales Discounts","Sales of Product Income","Cost of sales","Equipment Rental for Jobs","Uncategorised Income","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Depreciation Expense","Dues and Subscriptions","Housekeeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Internet Expenses","Meals and Enetrtainments","Office Suppliers","Postage and Delivery","Printing and Reprooduction","Professional Fees","Purchases","Rent Expense","Repair and Maintananace","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities","Finance charge Income","Insurance Proceeds Received","Interest Income","Proceeds From Sale os Assets","Shipping and delivery Income","Ask My Accountant","CGST Write-off","GST Write-off","IGST Write-off","Miscellaneous Expense","Political Contributions","Reconcilation Discrepancies","SGST Write-off","Vehicles","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi kalyan Cess","Input Krishi kalyan Cess RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Krishi Kalyan Cess Payable","Input VAT 5%","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output SGST Tax RCM","Output Service Tax","Output Service Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","SGST Payable","Service Tax Payable","Srvice Tax Suspense","Swachh Barath Cess Payable","TDS Payable","VAT Payable","VAT Suspense","Deferred CGST","Deferred GST Input credit","Deferred IGST","Deferred SGST","Deferred Service Tax Input Credit","Deferred VAT Input Credit","GST Refund","Inventory Asset","Krishi Kalyan Cess Refund","Prepaid Insurance","Sevice Tax Refund","TDS Receivable","Uncategorised Asset","Undeposited Fund","Billable Expense Income","Consulting Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and maintanance","Sales Discount","Sales of Product Income","Uncategorised Income","accumulated Depreciation","Building and Improvements","Furniture and Equipments","Land","Leasehold Improvements","Vehicles","Retained Earnings","Cost of Sales","Equipment Rental for Jobs","Freight and Shipping Costs","Merchant Account Fees","Purchases-Hardware for Resales","Purchases-Software for Resales","Subcontracted Services","Tools and Craft Suppliers",)
+                        comb_eser_item_6.current(0)
+                        window_comb_eser_item_6 = p_canvas_edit_3.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_eser_item_6,tags=('sepcombo4'),state=HIDDEN)
+                        comb_eser_item_6.delete(0,'end')
+                        comb_eser_item_6.insert(0, edit_pser[9])
+
+                        label_1 = Label(p_canvas_edit_3,width=10,height=1,text="Abatement %", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel23'),state=HIDDEN)
+
+                        def pa_e1(event):
+                            if edit_ser_iitem_11.get()==edit_pser[11]:
+                                edit_ser_iitem_11.delete(0,END)
+                            else:
+                                pass
+
+                        edit_ser_iitem_11=Entry(p_canvas_edit_3,width=50,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_ser_iitem_11 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=30,window=edit_ser_iitem_11,tags=('sepentry12'),state=HIDDEN)
+                        edit_ser_iitem_11.insert(0,"0")
+                        edit_ser_iitem_11.bind("<Button-1>",pa_e1)
+                        edit_ser_iitem_11.delete(0,'end')
+                        edit_ser_iitem_11.insert(0, edit_pser[11])
+
+                        label_1 = Label(p_canvas_edit_3,width=14,height=1,text="Service Type", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel24'),state=HIDDEN)
+
+                        comb_eser_iitem_7 = ttk.Combobox(p_canvas_edit_3, font=('arial 10'))
+                        comb_eser_iitem_7['values'] = ("Choose...","Stock Broking","Genral Insurance","Courier","Advertsing Agency","Consulting Engineer","Custom House Agent","Steamer Agent","Clearing and Forwarding","Man power Recruiting","Air Travel Agent","Tour operator","Rent a Cab","Architect","Interior Director","Management Consultment","Chartered Accountant","Cost Accountant","Company Scretary","Real Estate Agent","Security Agency","Credit Rating Agency","Market Research Agency","Underwriter","Beauty Parlor","Cargo Handling","Cable Operators","Dry Cleaning","Event Management","Fashion Designer","Life Insurance","Scientific and Technical Consultancy","Photography","Convention Services","Video Tape Production","Sound Recording","Broadcating","Insurance Auxilary Service","banking and Other Financial","Port Services","Authorised Service Station","Health Club and Fitness Centres","Rail Travel Agent","Storage and Warehousing","Business Auxilary","Commercial Coaching","Erection or Installation","Franchise Service","Internet Cafe","Maintanance or Repair","Technical Testing","Technical Inspection","Foreign Exchange Broking","Port","Airport Services","Air Transport","Business Exhibition","Goods Transport","Construction of Commerce Complex","Intellectual Property Service","Opinion Poll Service","Outdoor Catering","Television and Radio Program Production","Survey and Exploration of Minerals","Pandal and Shamiana","Travel Agent","Forward Contract Brokerage","Transport Through Pipeline","Site Preparation","Dredging","Survey and Map Making","Cleaning Service","Clubs and Association Service","Packaging Service","Mailing List Compilation","Residential Complex Construction","Share Transfer Agent","ATM Maintanance","Recovery Agent","Sale of Space for Advertisement","Sponsorship","International Air Travel","Containerised Rail Transport","Business Support Service","Action Service","Public Relation Management","Ship Management","Internet Telephony","Cruise Ship Tour","Credit Card","Telecommunication Service","Mining of Minerals, Oil or Gas","Recting Immovable Property","Works Contract","Development of Consent","Asset Management","Design Services","Information Technology Services","ULIP Management","Stock Exchange Service","Service for Transaction in Goods","Clearing House Services","Supply of Tangiable","Online Inforamtion Retrieval","Mandap keeper",)
+                        comb_eser_iitem_7.current(0)
+                        window_comb_eser_iitem_7 = p_canvas_edit_3.create_window(0, 0, anchor="nw", width=345, height=30,window=comb_eser_iitem_7,tags=('sepcombo8'),state=HIDDEN)
+                        comb_eser_iitem_7.delete(0,'end')
+                        comb_eser_iitem_7.insert(0, edit_pser[12])
+
+                        p_canvas_edit_3.create_line(0, 0, 0, 0, fill='gray',width=1, tags=('sephline1'))
+
+                        label_1 = Label(p_canvas_edit_3,width=25,height=1,text="Purchasing information", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel17'))
+
+                        def p_eser_check():
+
+                            if chk_str_eser_pitem.get() == True:
+                                p_canvas_edit_3.itemconfig('seplabel18',state='normal')
+                                p_canvas_edit_3.itemconfig('sepentry10',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel9',state='normal')
+                                p_canvas_edit_3.itemconfig('sepcentry2',state='normal')
+                                p_canvas_edit_3.itemconfig('sepcbutton2',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel10',state='normal')
+                                p_canvas_edit_3.itemconfig('sepcentry3',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel20',state='normal')
+                                p_canvas_edit_3.itemconfig('sepcombo6',state='normal')
+                                p_canvas_edit_3.itemconfig('sepbutton4',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel21',state='normal')
+                                p_canvas_edit_3.itemconfig('sepentry11',state='normal')
+                                p_canvas_edit_3.itemconfig('seplabel22',state='normal')
+                                p_canvas_edit_3.itemconfig('sepcombo7',state='normal')
+                            else:
+                                pass
+
+                        chk_str_eser_pitem = BooleanVar()
+                        chkbtn_eser_pitem = Checkbutton(p_canvas_edit_3, text = "I Purchase this product/service from Supplier.", variable = chk_str_eser_pitem, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=p_eser_check)
+                        window_chkbtn_eser_pitem = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=chkbtn_eser_pitem,tags=('sepentry9'))
+
+
+                        label_1 = Label(p_canvas_edit_3,width=10,height=1,text="Description", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel18'),state=HIDDEN)
+
+                        edit_ser_item_9=scrolledtext.ScrolledText(p_canvas_edit_3,width=145,background='#2f516f',foreground="white")
+                        window_edit_ser_item_9 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=60,window=edit_ser_item_9,tags=('sepentry10'),state=HIDDEN)
+                        edit_ser_item_9.insert(1.0,edit_pser[13])
+
+                        label_1 = Label(p_canvas_edit_3,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel9'),state=HIDDEN)
+                        
+                        edit_ser_item_10=Entry(p_canvas_edit_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_ser_item_10 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=30,window=edit_ser_item_10,tags=('sepcentry2'),state=HIDDEN)
+                        edit_ser_item_10.delete(0,'end')
+                        edit_ser_item_10.insert(0, edit_pser[14])
+
+                        chk_str_esser_item_2 = BooleanVar()
+                        chkbtn_esser_item_2 = Checkbutton(p_canvas_edit_3, text = "Inclusive of Tax", variable = chk_str_esser_item_2, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
+                        chkbtn_esser_item_2.select()
+                        window_chkbtn_esser_item_2 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=chkbtn_esser_item_2,tags=('sepcbutton2'),state=HIDDEN)
+
+                        label_1 = Label(p_canvas_edit_3,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel10'),state=HIDDEN)
+
+                        comb_eser_item_5 = ttk.Combobox(p_canvas_edit_3, font=('arial 10'))
+                        comb_eser_item_5['values'] = ("Choose...","28.0% GST (28%)","28.0% IGST (28%)","18.0% GST (18%)","18.0% IGST (18%)","15.0% ST (100%)","14.5% ST (100%)","14.00% ST (100%)","14.0% VAT (100%)","12.36% ST (100%)","12.0% GST (12%)","12.0% IGST (12%)","6.0% GST (6%)","6.0% IGST (6%)","5.0% GST (5%)","5.0% IGST (5%)","5.0% VAT (100%)","4.0% VAT (100%)","3.0% GST (3%)","3.0% IGST (3%)","2.0% CST (100%)","0.25% GST (O.25%)","0.25% IGST (0.25%)","0% GST (0%)","0% IGST (0%)","Exempt GST (0%)","Exempt IGST (0%)","Out of Scope(0%)",)
+                        comb_eser_item_5.current(0)
+                        window_comb_eser_item_5 = p_canvas_edit_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_eser_item_5,tags=('sepcentry3'),state=HIDDEN)
+                        comb_eser_item_5.delete(0,'end')
+                        comb_eser_item_5.insert(0, edit_pser[16])
+
+                        label_1 = Label(p_canvas_edit_3,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel20'),state=HIDDEN)
+
+                        comb_eser_item_e6 = ttk.Combobox(p_canvas_edit_3, font=('arial 10'))
+                        comb_eser_item_e6['values'] = ("Choose","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Continuing Education","Depreciation Expense","Dues and Subscriptions","House Keeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Interest Expenses","Meals and Entertainment","Office Supplies","Postage and Delivery","Printing and Reproduction","Professional Fees","Purchases","Rent Expense","Repair and Maintanance","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities",)
+                        comb_eser_item_e6.current(0)
+                        window_comb_eser_item_e6 = p_canvas_edit_3.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_eser_item_e6,tags=('sepcombo6'),state=HIDDEN)
+                        comb_eser_item_e6.delete(0,'end')
+                        comb_eser_item_e6.insert(0, edit_pser[15])
+
+                        label_1 = Label(p_canvas_edit_3,width=15,height=1,text="Reverse Charge %", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel21'),state=HIDDEN)
+
+                        def pr_e3(event):
+                            if edit_sser_item_11.get()=="0":
+                                edit_sser_item_11.delete(0,END)
+                            else:
+                                pass
+
+                        edit_sser_item_11=Entry(p_canvas_edit_3,width=50,justify=LEFT,background='#2f516f',foreground="white")
+                        window_edit_sser_item_11 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=30,window=edit_sser_item_11,tags=('sepentry11'),state=HIDDEN)
+                        edit_sser_item_11.insert(0,"0")
+                        edit_sser_item_11.bind("<Button-1>",pr_e3)
+                        edit_sser_item_11.delete(0,'end')
+                        edit_sser_item_11.insert(0, edit_pser[17])
+
+                        label_1 = Label(p_canvas_edit_3,width=15,height=1,text="Preferred Supplier", font=('arial 12'),background="#1b3857",fg="white") 
+                        window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel22'),state=HIDDEN)
+
+                        comb_eser_item_ps7 = ttk.Combobox(p_canvas_edit_3, font=('arial 10'))
+                        comb_eser_item_ps7['values'] = ("Select Supplier",)
+                        comb_eser_item_ps7.current(0)
+                        window_comb_eser_item_ps7 = p_canvas_edit_3.create_window(0, 0, anchor="nw", width=345, height=30,window=comb_eser_item_ps7,tags=('sepcombo7'),state=HIDDEN)
+                        comb_eser_item_ps7.delete(0,'end')
+                        comb_eser_item_ps7.insert(0, edit_pser[18])
+
+                        eser_sub_btn1=Button(p_canvas_edit_3,text='SUBMIT', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=edit_new_pro_ser)
+                        window_eser_sub_btn1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=eser_sub_btn1,tags=('sepbutton5'))
+
+                        def s_eback_1_():
+                            pro_frame_edit_3.grid_forget()
+                            pro_frame.grid(row=0,column=0,sticky='nsew')
+
+                        bck_esbtn1=Button(p_canvas_edit_3,text='← Back', bd=0, foreground="white",background="#2f516f",font='arial 10 bold',activebackground="#1b3857",command=s_eback_1_)
+                        window_bck_esbtn1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=bck_esbtn1,tags=('sepbuttn1'))
+
+
+                pebtn1=Button(pro_canvas,text='Edit', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=pro_edit_item)
                 window_pebtn1 = pro_canvas.create_window(0, 0, anchor="nw", window=pebtn1,tags=('pbutton2'))
 
                 pdbtn1=Button(pro_canvas,text='Delete', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
                 window_pdbtn1 = pro_canvas.create_window(0, 0, anchor="nw", window=pdbtn1,tags=('pbutton3'))
 
                 fgth = ttk.Style()
-                fgth.configure('mystyle105.Treeview.Heading', background='#2f516f',State='DISABLE')
+                fgth.theme_use("default")
+                fgth.configure("Treeview", background="#2f516f", foreground="white",fieldbackground="#2f516f",rowheight=25,font=(None,11))
+                fgth.configure("Treeview.Heading",background="#1b3857",activeforeground="black",foreground="white",font=(None,11))  
 
-                pro_tree = ttk.Treeview(pro_canvas, columns = (1,2,3,4,5,6), height = 10, show = "headings",style='mystyle105.Treeview')
-                pro_tree.pack(side = 'top')
+                pro_tree = ttk.Treeview(pro_canvas, columns = (1,2,3,4,5,6),show = "headings")
+                # pro_tree.pack(side = 'top')
                 pro_tree.heading(1)
                 pro_tree.heading(2, text="TYPE")
                 pro_tree.heading(3, text="NAME")
