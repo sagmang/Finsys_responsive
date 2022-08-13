@@ -1762,6 +1762,18 @@ def main_sign_in():
                     label_2 = Label(inv_canvas_1,width=15,height=1,text="Select Customer", font=('arial 12'),background="#1b3857",fg="white") 
                     window_label_2 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("ailabel5"))
 
+                    def inv_c_details(event):
+                        inv_to_str = aicomb_1.get()
+                        sql = "select * from app1_customer where firstname=%s and cid_id=%s"
+                        val = (inv_to_str,cmp_dtl[0],)
+                        fbcursor.execute(sql,val)
+                        inv_c_sel = fbcursor.fetchone()
+                        aientry_1.delete(0,END)
+                        aientry_1.insert(0,inv_c_sel[9])
+                        ai_b_entry_1.delete('1.0',END)
+                        ai_b_entry_1.insert('1.0',inv_c_sel[2]+" "+inv_c_sel[3]+ '\n' +inv_c_sel[4]+ '\n' +inv_c_sel[12]+ '\n' +inv_c_sel[13]+ '\n' +inv_c_sel[14]+ '\n' +inv_c_sel[15]+ '\n' +inv_c_sel[16])
+                        
+
                     sql_pr="select * from auth_user where username=%s"
                     sql_pr_val=(nm_ent.get(),)
                     fbcursor.execute(sql_pr,sql_pr_val,)
@@ -1790,10 +1802,13 @@ def main_sign_in():
 
                     # for i in pr_cmp_dtl_1:
                     #     p_i2.append(i[0])
-
-                    aicomb_1 = ttk.Combobox(inv_canvas_1, font=('arial 10'),values=p_i1)
-                    aicomb_1.bind("<<ComboboxSelected>>")
+                    
+                    
+                    aicomb_1 = ttk.Combobox(inv_canvas_1, font=('arial 10'))
+                    aicomb_1["values"] = p_i1
+                    aicomb_1.bind("<<ComboboxSelected>>",inv_c_details)
                     window_aicomb_1 = inv_canvas_1.create_window(0, 0, anchor="nw", width=200, height=30,window=aicomb_1, tags=("aicombo1"))
+
                     
 
                     def add_inv_customer():
@@ -2295,13 +2310,72 @@ def main_sign_in():
                     label_4 = Label(inv_canvas_1,width=7,height=1,text="TAX (%)", font=('arial 10'),background="#1b3857",fg="white") 
                     window_label_4 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_4,tags=('ailabel18'))
 
+                    def i_details_1(event):
+                        inv_to_str_1 = ai_comb_p_1.get()
+                        try:
+                            sql = "select * from app1_inventory where name=%s and cid_id=%s"
+                            val = (inv_to_str_1,cmp_dtl_i[0],)
+                            fbcursor.execute(sql,val)
+                            inv_sel_1 = fbcursor.fetchone()
+                            ai_entry_p_1.delete(0,END)
+                            ai_entry_p_1.insert(0,inv_sel_1[4])
+                        except:
+                            sql = "select * from app1_noninventory where name=%s and cid_id=%s"
+                            val = (inv_to_str_1,cmp_dtl_i[0],)
+                            fbcursor.execute(sql,val)
+                            inv_sel_1 = fbcursor.fetchone()
+                            ai_entry_p_1.delete(0,END)
+                            ai_entry_p_1.insert(0,inv_sel_1[4])
+                        
+                            # sql = "select * from app1_bundle where name=%s and cid_id=%s"
+                            # val = (inv_to_str_1,cmp_dtl_i[0],)
+                            # fbcursor.execute(sql,val)
+                            # inv_sel_1 = fbcursor.fetchone()
+                            # ai_entry_p_1.delete(0,END)
+                            # ai_entry_p_1.insert(0,inv_sel_1[3])
+                        
+
+                    sql_i="select * from auth_user where username=%s"
+                    val_i=(nm_ent.get(),)
+                    fbcursor.execute(sql_i,val_i,)
+                    p_dtl=fbcursor.fetchone()
+
+                    sql = "select * from app1_company where id_id=%s"
+                    val = (p_dtl[0],)
+                    fbcursor.execute(sql, val,)
+                    cmp_dtl_i=fbcursor.fetchone()
+                    
+
+                    i_sql = "SELECT name FROM app1_inventory where cid_id=%s"
+                    i_val = (cmp_dtl_i[0],)
+                    fbcursor.execute(i_sql,i_val)
+                    i_data = fbcursor.fetchall()
+                    
+                    ii_sql = "SELECT name FROM app1_noninventory where cid_id=%s"
+                    ii_val = (cmp_dtl_i[0],)
+                    fbcursor.execute(ii_sql,ii_val)
+                    ii_data = fbcursor.fetchall()
+
+                    iii_sql = "SELECT name FROM app1_bundle where cid_id=%s"
+                    iii_val = (cmp_dtl_i[0],)
+                    fbcursor.execute(iii_sql,iii_val)
+                    iii_data = fbcursor.fetchall()
+
+                    inv_data = []   
+                    
+                    for i in i_data:
+                        inv_data.append(i[0])
+                    for i in ii_data:
+                        inv_data.append(i[0])
+                    for i in iii_data:
+                        inv_data.append(i[0])
+
                     label_2 = Label(inv_canvas_1,width=2,height=1,text="1", font=('arial 10'),background="#1b3857",fg="white") 
                     window_label_2 = inv_canvas_1.create_window(90, 1020, anchor="nw", window=label_2,tags=('ailabel19'))
 
-                    ai_comb_p_1 = ttk.Combobox(inv_canvas_1, font=('arial 10'),foreground="white")
-                    ai_comb_p_1['values'] = ("Select Product",)
-                    ai_comb_p_1.current(0)
+                    ai_comb_p_1 = ttk.Combobox(inv_canvas_1, font=('arial 10'),values=inv_data)
                     window_ai_comb_p_1 = inv_canvas_1.create_window(0, 0, anchor="nw", width=180, height=30,window=ai_comb_p_1,tags=('aicombo4'))
+                    ai_comb_p_1.bind("<<ComboboxSelected>>",i_details_1)
 
                     ai_entry_p_1=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_p_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1,tags=('aientry3'))
@@ -2318,7 +2392,7 @@ def main_sign_in():
                     ai_entry_p_1_5=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_p_1_5 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1_5,tags=('aientry7'))
 
-                    ai_comb_p_1_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'),foreground="white")
+                    ai_comb_p_1_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'))
                     ai_comb_p_1_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
                     ai_comb_p_1_2.current(0)
                     window_ai_comb_p_1_2 = inv_canvas_1.create_window(0, 0, anchor="nw", width=150, height=30,window=ai_comb_p_1_2,tags=('aicombo5'))
@@ -2327,10 +2401,9 @@ def main_sign_in():
                     label_2 = Label(inv_canvas_1,width=2,height=1,text="2", font=('arial 10'),background="#1b3857",fg="white") 
                     window_label_2 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel20'))
 
-                    ai_comb_P_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'),foreground="white")
-                    ai_comb_P_2['values'] = ("Select Product",)
-                    ai_comb_P_2.current(0)
-                    window_ai_comb_P_2 = inv_canvas_1.create_window(0, 0, anchor="nw", width=180, height=30,window=ai_comb_P_2,tags=('aicombo6'))
+                    ai_comb_p_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'),values=inv_data)
+                    window_ai_comb_p_2 = inv_canvas_1.create_window(0, 0, anchor="nw", width=180, height=30,window=ai_comb_p_2,tags=('aicombo6'))
+                    ai_comb_p_2.bind("<<ComboboxSelected>>")
 
                     ai_entry_p_2=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_p_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_2,tags=('aientry8'))
@@ -2347,7 +2420,7 @@ def main_sign_in():
                     ai_entry_2_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_2_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_2_4,tags=('aientry20'))
 
-                    ai_comb_P_2_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'),foreground="white")
+                    ai_comb_P_2_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'))
                     ai_comb_P_2_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
                     ai_comb_P_2_2.current(0)
                     window_ai_comb_P_2_2 = inv_canvas_1.create_window(0, 0, anchor="nw", width=150, height=30,window=ai_comb_P_2_2,tags=('aicombo9'))
@@ -2356,10 +2429,9 @@ def main_sign_in():
                     label_2 = Label(inv_canvas_1,width=2,height=1,text="3", font=('arial 10'),background="#1b3857",fg="white") 
                     window_label_2 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel21'))
 
-                    ai_comb_p_3 = ttk.Combobox(inv_canvas_1, font=('arial 10'),foreground="white")
-                    ai_comb_p_3['values'] = ("Select Product",)
-                    ai_comb_p_3.current(0)
+                    ai_comb_p_3 = ttk.Combobox(inv_canvas_1, font=('arial 10'),values=inv_data)
                     window_ai_comb_p_3 = inv_canvas_1.create_window(0, 0, anchor="nw", width=180, height=30,window=ai_comb_p_3,tags=('aicombo7'))
+                    ai_comb_p_3.bind("<<ComboboxSelected>>")
 
                     ai_entry_3=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3,tags=('aientry9'))
@@ -2376,7 +2448,7 @@ def main_sign_in():
                     ai_entry_3_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_3_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3_4,tags=('aientry21'))
 
-                    ai_comb_P_3_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'),foreground="white")
+                    ai_comb_P_3_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'))
                     ai_comb_P_3_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
                     ai_comb_P_3_2.current(0)
                     window_ai_comb_P_3_2 = inv_canvas_1.create_window(0, 0, anchor="nw", width=150, height=30,window=ai_comb_P_3_2,tags=('aicombo10'))
@@ -2384,10 +2456,9 @@ def main_sign_in():
                     label_2 = Label(inv_canvas_1,width=2,height=1,text="4", font=('arial 10'),background="#1b3857",fg="white") 
                     window_label_2 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_2,tags=('ailabel22'))
 
-                    ai_comb_p_4 = ttk.Combobox(inv_canvas_1, font=('arial 10'),foreground="white")
-                    ai_comb_p_4['values'] = ("Select Product",)
-                    ai_comb_p_4.current(0)
+                    ai_comb_p_4 = ttk.Combobox(inv_canvas_1, font=('arial 10'),values=inv_data)
                     window_ai_comb_p_4 = inv_canvas_1.create_window(0, 0, anchor="nw", width=180, height=30,window=ai_comb_p_4,tags=('aicombo8'))
+                    ai_comb_p_4.bind("<<ComboboxSelected>>")
 
                     ai_entry_4=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4,tags=('aientry10'))
@@ -2404,7 +2475,7 @@ def main_sign_in():
                     ai_entry_4_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
                     window_ai_entry_4_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4_4,tags=('aientry22'))
 
-                    ai_comb_P_4_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'),foreground="white")
+                    ai_comb_P_4_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'))
                     ai_comb_P_4_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
                     ai_comb_P_4_2.current(0)
                     window_ai_comb_P_4_2 = inv_canvas_1.create_window(0, 0, anchor="nw", width=150, height=30,window=ai_comb_P_4_2,tags=('aicombo11'))
@@ -4991,6 +5062,20 @@ def main_sign_in():
                                     pass
                             count2 += 1
 
+                            p_sql_4 = "SELECT * FROM app1_bundle where cid_id=%s"
+                            p_val_4 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_4,p_val_4,)
+                            p_data_4 = fbcursor.fetchall()
+                            
+
+                            count3 = 0
+                            for i in p_data_4:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Bundle',i[2],i[3],'','')) 
+                                else:
+                                    pass
+                            count3 += 1
+
                             pro_frame_2.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
 
@@ -6028,6 +6113,20 @@ def main_sign_in():
                                     pass
                             count2 += 1
 
+                            p_sql_4 = "SELECT * FROM app1_bundle where cid_id=%s"
+                            p_val_4 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_4,p_val_4,)
+                            p_data_4 = fbcursor.fetchall()
+                            
+
+                            count3 = 0
+                            for i in p_data_4:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Bundle',i[2],i[3],'','')) 
+                                else:
+                                    pass
+                            count3 += 1
+
                             pro_frame_3.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
                             
@@ -6914,6 +7013,20 @@ def main_sign_in():
                                     pass
                             count2 += 1
 
+                            p_sql_4 = "SELECT * FROM app1_bundle where cid_id=%s"
+                            p_val_4 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_4,p_val_4,)
+                            p_data_4 = fbcursor.fetchall()
+                            
+
+                            count3 = 0
+                            for i in p_data_4:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Bundle',i[2],i[3],'','')) 
+                                else:
+                                    pass
+                            count3 += 1
+
                             pro_frame_4.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
 
@@ -7761,10 +7874,10 @@ def main_sign_in():
                             hsn2 = bun_entry_2.get()
                             hsn3 = bun_entry_3.get()
                             hsn4 = bun_entry_4.get()
-                            description1 = bun_entry_5.get()
-                            description2 = bun_entry_6.get()
-                            description3 = bun_entry_7.get()
-                            description4 = bun_entry_8.get()
+                            description1 = bun_entry_5.get('1.0', 'end-1c')
+                            description2 = bun_entry_6.get('1.0', 'end-1c')
+                            description3 = bun_entry_7.get('1.0', 'end-1c')
+                            description4 = bun_entry_8.get('1.0', 'end-1c')
                             qty1 = bun_entry_9.get()
                             qty2 = bun_entry_10.get()
                             qty3 = bun_entry_11.get()
@@ -7794,10 +7907,80 @@ def main_sign_in():
                             cmpp3_data = fbcursor.fetchone()
                             cid = cmpp3_data[0]
 
-                            b_p_sql = "INSERT INTO app1_noninventory(name,sku,description,product1,product2,product3,product4,hsn1,hsn2,hsn3,hsn4,description1,description2,description3,description4,qty1,qty2,qty3,qty4,price1,price2,price3,price4,total1,total2,total3,total4,tax1,tax2,tax3,tax4,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                            b_p_sql = "INSERT INTO app1_bundle(name,sku,description,product1,product2,product3,product4,hsn1,hsn2,hsn3,hsn4,description1,description2,description3,description4,qty1,qty2,qty3,qty4,price1,price2,price3,price4,total1,total2,total3,total4,tax1,tax2,tax3,tax4,cid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                             b_p_val = (name,sku,description,product1,product2,product3,product4,hsn1,hsn2,hsn3,hsn4,description1,description2,description3,description4,qty1,qty2,qty3,qty4,price1,price2,price3,price4,total1,total2,total3,total4,tax1,tax2,tax3,tax4,cid)
                             fbcursor.execute(b_p_sql,b_p_val)
                             finsysdb.commit()
+
+                            #_________Refresh insert tree________#
+
+                            for record in pro_tree.get_children():
+                                pro_tree.delete(record)
+
+     
+                            sql_p="select * from auth_user where username=%s"
+                            sql_p_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_p,sql_p_val,)
+                            pr_dt=fbcursor.fetchone()
+
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dt[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dt=fbcursor.fetchone()
+
+                            p_sql_1 = "SELECT * FROM app1_inventory where cid_id=%s"
+                            p_val_1 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_1,p_val_1,)
+                            p_data_1 = fbcursor.fetchall()
+                            
+                            count0 = 0
+                            for i in p_data_1:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Inventory',i[2],i[3],i[4],i[7])) 
+                                else:
+                                    pass
+                            count0 += 1
+
+                            p_sql_2 = "SELECT * FROM app1_noninventory where cid_id=%s"
+                            p_val_2 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_2,p_val_2,)
+                            p_data_2 = fbcursor.fetchall()
+
+                            count1 = 0
+                            for i in p_data_2:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Noninventory',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count1 += 1
+
+                            p_sql_3 = "SELECT * FROM app1_service where cid_id=%s"
+                            p_val_3 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_3,p_val_3,)
+                            p_data_3 = fbcursor.fetchall()
+                            
+
+                            count2 = 0
+                            for i in p_data_3:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Service',i[2],i[3],i[4],'')) 
+                                else:
+                                    pass
+                            count2 += 1
+
+                            p_sql_4 = "SELECT * FROM app1_bundle where cid_id=%s"
+                            p_val_4 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_4,p_val_4,)
+                            p_data_4 = fbcursor.fetchall()
+                            
+
+                            count3 = 0
+                            for i in p_data_4:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Bundle',i[2],i[3],'','')) 
+                                else:
+                                    pass
+                            count3 += 1
 
                             pro_frame_5.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
@@ -7887,12 +8070,142 @@ def main_sign_in():
                         label_4 = Label(p_canvas_5,width=8,height=1,text="TAX", font=('arial 10'),background="#1b3857",fg="white") 
                         window_label_4 = p_canvas_5.create_window(0, 0, anchor="nw", window=label_4,tags=('bplabel13'))
 
-                        bi_sql = "SELECT name FROM app1_inventory"
-                        fbcursor.execute(bi_sql,)
+                        def bun_details_1(event):
+                            bun_to_str_1 = bun_comb_1.get()
+                            try:
+                                sql = "select * from app1_inventory where name=%s and cid_id=%s"
+                                val = (bun_to_str_1,cmp_dtli[0],)
+                                fbcursor.execute(sql,val)
+                                bun_sel_1 = fbcursor.fetchone()
+                                bun_entry_1.delete(0,END)
+                                bun_entry_1.insert(0,bun_sel_1[4])
+                                bun_entry_5.delete('1.0',END)
+                                bun_entry_5.insert('1.0',bun_sel_1[11])
+                                bun_entry_13.delete(0,END)
+                                bun_entry_13.insert(0,bun_sel_1[12])
+                                bun_entry_21.delete(0,END)
+                                bun_entry_21.insert(0,bun_sel_1[14])
+                            except:
+                                sql = "select * from app1_noninventory where name=%s and cid_id=%s"
+                                val = (bun_to_str_1,cmp_dtli[0],)
+                                fbcursor.execute(sql,val)
+                                bun_sel_1 = fbcursor.fetchone()
+                                bun_entry_1.delete(0,END)
+                                bun_entry_1.insert(0,bun_sel_1[4])
+                                bun_entry_5.delete('1.0',END)
+                                bun_entry_5.insert('1.0',bun_sel_1[7])
+                                bun_entry_13.delete(0,END)
+                                bun_entry_13.insert(0,bun_sel_1[8])
+                                bun_entry_21.delete(0,END)
+                                bun_entry_21.insert(0,bun_sel_1[10])
+
+                        def bun_details_2(event):
+                            bun_to_str_2 = bun_comb_2.get()
+                            try:
+                                sql = "select * from app1_inventory where name=%s and cid_id=%s"
+                                val = (bun_to_str_2,cmp_dtli[0],)
+                                fbcursor.execute(sql,val)
+                                bun_sel_2 = fbcursor.fetchone()
+                                bun_entry_2.delete(0,END)
+                                bun_entry_2.insert(0,bun_sel_2[4])
+                                bun_entry_6.delete('1.0',END)
+                                bun_entry_6.insert('1.0',bun_sel_2[11])
+                                bun_entry_14.delete(0,END)
+                                bun_entry_14.insert(0,bun_sel_2[12])
+                                bun_entry_22.delete(0,END)
+                                bun_entry_22.insert(0,bun_sel_2[14])
+                            except:
+                                sql = "select * from app1_noninventory where name=%s and cid_id=%s"
+                                val = (bun_to_str_2,cmp_dtli[0],)
+                                fbcursor.execute(sql,val)
+                                bun_sel_2 = fbcursor.fetchone()
+                                bun_entry_2.delete(0,END)
+                                bun_entry_2.insert(0,bun_sel_2[4])
+                                bun_entry_6.delete('1.0',END)
+                                bun_entry_6.insert('1.0',bun_sel_2[7])
+                                bun_entry_14.delete(0,END)
+                                bun_entry_14.insert(0,bun_sel_2[8])
+                                bun_entry_22.delete(0,END)
+                                bun_entry_22.insert(0,bun_sel_2[10])
+
+                        def bun_details_3(event):
+                            bun_to_str_3 = bun_comb_3.get()
+                            try:
+                                sql = "select * from app1_inventory where name=%s and cid_id=%s"
+                                val = (bun_to_str_3,cmp_dtli[0],)
+                                fbcursor.execute(sql,val)
+                                bun_sel_3 = fbcursor.fetchone()
+                                bun_entry_3.delete(0,END)
+                                bun_entry_3.insert(0,bun_sel_3[4])
+                                bun_entry_7.delete('1.0',END)
+                                bun_entry_7.insert('1.0',bun_sel_3[11])
+                                bun_entry_15.delete(0,END)
+                                bun_entry_15.insert(0,bun_sel_3[12])
+                                bun_entry_23.delete(0,END)
+                                bun_entry_23.insert(0,bun_sel_3[14])
+                            except:
+                                sql = "select * from app1_noninventory where name=%s and cid_id=%s"
+                                val = (bun_to_str_3,cmp_dtli[0],)
+                                fbcursor.execute(sql,val)
+                                bun_sel_3 = fbcursor.fetchone()
+                                bun_entry_3.delete(0,END)
+                                bun_entry_3.insert(0,bun_sel_3[4])
+                                bun_entry_7.delete('1.0',END)
+                                bun_entry_7.insert('1.0',bun_sel_3[7])
+                                bun_entry_15.delete(0,END)
+                                bun_entry_15.insert(0,bun_sel_3[8])
+                                bun_entry_23.delete(0,END)
+                                bun_entry_23.insert(0,bun_sel_3[10])
+
+                        def bun_details_4(event):
+                            bun_to_str_4 = bun_comb_4.get()
+                            try:
+                                sql = "select * from app1_inventory where name=%s and cid_id=%s"
+                                val = (bun_to_str_4,cmp_dtli[0],)
+                                fbcursor.execute(sql,val)
+                                bun_sel_4 = fbcursor.fetchone()
+                                bun_entry_4.delete(0,END)
+                                bun_entry_4.insert(0,bun_sel_4[4])
+                                bun_entry_8.delete('1.0',END)
+                                bun_entry_8.insert('1.0',bun_sel_4[11])
+                                bun_entry_16.delete(0,END)
+                                bun_entry_16.insert(0,bun_sel_4[12])
+                                bun_entry_24.delete(0,END)
+                                bun_entry_24.insert(0,bun_sel_4[14])
+                            except:
+                                sql = "select * from app1_noninventory where name=%s and cid_id=%s"
+                                val = (bun_to_str_4,cmp_dtli[0],)
+                                fbcursor.execute(sql,val)
+                                bun_sel_4 = fbcursor.fetchone()
+                                bun_entry_4.delete(0,END)
+                                bun_entry_4.insert(0,bun_sel_4[4])
+                                bun_entry_8.delete('1.0',END)
+                                bun_entry_8.insert('1.0',bun_sel_4[7])
+                                bun_entry_16.delete(0,END)
+                                bun_entry_16.insert(0,bun_sel_4[8])
+                                bun_entry_24.delete(0,END)
+                                bun_entry_24.insert(0,bun_sel_4[10])
+                            
+
+                        sql_pi="select * from auth_user where username=%s"
+                        pi_val=(nm_ent.get(),)
+                        fbcursor.execute(sql_pi,pi_val,)
+                        pi_dtl=fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (pi_dtl[0],)
+                        fbcursor.execute(sql, val,)
+                        cmp_dtli=fbcursor.fetchone()
+                        print(cmp_dtli)
+
+                        bi_sql = "SELECT name FROM app1_inventory where cid_id=%s"
+                        bi_val = (cmp_dtli[0],)
+                        fbcursor.execute(bi_sql,bi_val)
                         bi_data = fbcursor.fetchall()
                        
-                        bii_sql = "SELECT name FROM app1_noninventory"
-                        fbcursor.execute(bii_sql,)
+                        bii_sql = "SELECT name FROM app1_noninventory where cid_id=%s"
+                        bii_val = (cmp_dtli[0],)
+                        fbcursor.execute(bii_sql,bii_val)
                         bii_data = fbcursor.fetchall()
 
                         b_data = []   
@@ -7906,47 +8219,39 @@ def main_sign_in():
 
                         bun_comb_1 = ttk.Combobox(p_canvas_5, font=('arial 10'),values=b_data)
                         # bun_comb_1['values'] = ("Choose",b_data,)
-                        bun_comb_1.bind("<<ComboboxSelected>>")
+                        bun_comb_1.bind("<<ComboboxSelected>>",bun_details_1)
                         window_bun_comb_1 = p_canvas_5.create_window(0, 0, anchor="nw", width=180, height=30,window=bun_comb_1,tags=('bpcombo1'))
 
                         bun_comb_2 = ttk.Combobox(p_canvas_5, font=('arial 10'),values=b_data)
                         # bun_comb_2['values'] = ("Choose",b_data,)
-                        bun_comb_2.bind("<<ComboboxSelected>>")
+                        bun_comb_2.bind("<<ComboboxSelected>>",bun_details_2)
                         window_bun_comb_2 = p_canvas_5.create_window(0, 0, anchor="nw", width=180, height=30,window=bun_comb_2,tags=('bpcombo2'))
 
                         bun_comb_3 = ttk.Combobox(p_canvas_5, font=('arial 10'),values=b_data)
                         # bun_comb_3['values'] = ("Choose",b_data,)
-                        bun_comb_3.bind("<<ComboboxSelected>>")
+                        bun_comb_3.bind("<<ComboboxSelected>>",bun_details_3)
                         window_bun_comb_3 = p_canvas_5.create_window(0, 0, anchor="nw", width=180, height=30,window=bun_comb_3,tags=('bpcombo3'))
 
                         bun_comb_4 = ttk.Combobox(p_canvas_5, font=('arial 10'),values=b_data)
                         # bun_comb_4['values'] = ("Choose",b_data,)
-                        bun_comb_4.bind("<<ComboboxSelected>>")
+                        bun_comb_4.bind("<<ComboboxSelected>>",bun_details_4)
                         window_bun_comb_4 = p_canvas_5.create_window(0, 0, anchor="nw", width=180, height=30,window=bun_comb_4,tags=('bpcombo4'))
 
-                        i_sql_1 = "SELECT * FROM app1_inventory"
-                        fbcursor.execute(i_sql_1)
-                        i_record = fbcursor.fetchone()
+                       
 
                         bun_entry_1=Entry(p_canvas_5,width=30,justify=LEFT,background='#2f516f',foreground="white")
                         window_bun_entry_1 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_1,tags=('bpentry4'))
-                        # bun_entry_1.delete(0,'end')
-                        # bun_entry_1.insert(0, i_record[4])
+                        
 
                         bun_entry_2=Entry(p_canvas_5,width=30,justify=LEFT,background='#2f516f',foreground="white")
                         window_bun_entry_2 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_2,tags=('bpentry5'))
-                        # bun_entry_2.delete(0,'end')
-                        # bun_entry_2.insert(0, i_record[4])
+                        
 
                         bun_entry_3=Entry(p_canvas_5,width=30,justify=LEFT,background='#2f516f',foreground="white")
                         window_bun_entry_3 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_3,tags=('bpentry6'))
-                        # bun_entry_3.delete(0,'end')
-                        # bun_entry_3.insert(0, i_record[4])
-
+                        
                         bun_entry_4=Entry(p_canvas_5,width=30,justify=LEFT,background='#2f516f',foreground="white")
                         window_bun_entry_4 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_4,tags=('bpentry7'))
-                        # bun_entry_4.delete(0,'end')
-                        # bun_entry_4.insert(0, i_record[4])
 
 
 
@@ -8004,26 +8309,50 @@ def main_sign_in():
                         bun_entry_16.delete(0, END)
                         bun_entry_16.insert(0, '0.0')
 
+                        def multiply_num_1(event):
+                            num1= float(bun_entry_9.get())
+                            num2= float(bun_entry_13.get())
+                            mul= round(num1 * num2)
+                            bun_entry_17.delete(0, END)
+                            bun_entry_17.insert(0,mul)
                         
-                        bun_entry_17=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        bun_entry_17=Entry(p_canvas_5,width=16,justify=LEFT,background='#2f516f',foreground='white')
                         window_bun_entry_17 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_17,tags=('bpspin9'))
-                        bun_entry_17.delete(0, END)
-                        bun_entry_17.insert(0, '0.0')
-    
-                        bun_entry_18=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
-                        window_bun_entry_18 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_18,tags=('bpspin10'))
-                        bun_entry_18.delete(0, END)
-                        bun_entry_18.insert(0, '0.0')
-                        
-                        bun_entry_19=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
-                        window_bun_entry_19 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_19,tags=('bpspin11'))
-                        bun_entry_19.delete(0, END)
-                        bun_entry_19.insert(0, '0.0')
+                        bun_entry_17.bind("<Button-1>",multiply_num_1)
+
+                        def multiply_num_2(event):
+                            num1= float(bun_entry_10.get())
+                            num2= float(bun_entry_14.get())
+                            mul= round(num1 * num2)
+                            bun_entry_18.delete(0, END)
+                            bun_entry_18.insert(0,mul)
                        
-                        bun_entry_20=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
+                        
+                        bun_entry_18=Entry(p_canvas_5,width=16,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_18 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_18,tags=('bpspin10'))
+                        bun_entry_18.bind("<Button-1>",multiply_num_2)
+
+                        def multiply_num_3(event):
+                            num1= float(bun_entry_11.get())
+                            num2= float(bun_entry_15.get())
+                            mul= round(num1 * num2)
+                            bun_entry_19.delete(0, END)
+                            bun_entry_19.insert(0,mul)
+                        
+                        bun_entry_19=Entry(p_canvas_5,width=16,justify=LEFT,background='#2f516f',foreground='white')
+                        window_bun_entry_19 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_19,tags=('bpspin11'))
+                        bun_entry_19.bind("<Button-1>",multiply_num_3)
+
+                        def multiply_num_4(event):
+                            num1= float(bun_entry_12.get())
+                            num2= float(bun_entry_16.get())
+                            mul= round(num1 * num2)
+                            bun_entry_20.delete(0, END)
+                            bun_entry_20.insert(0,mul)
+                       
+                        bun_entry_20=Entry(p_canvas_5,width=16,justify=LEFT,background='#2f516f',foreground='white')
                         window_bun_entry_20 = p_canvas_5.create_window(0, 0, anchor="nw", height=30, window=bun_entry_20,tags=('bpspin12'))
-                        bun_entry_20.delete(0, END)
-                        bun_entry_20.insert(0, '0.0')
+                        bun_entry_20.bind("<Button-1>",multiply_num_4)
 
                         
                         bun_entry_21=Spinbox(p_canvas_5,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
@@ -8362,6 +8691,20 @@ def main_sign_in():
                                 else:
                                     pass
                             count2 += 1
+
+                            p_sql_4 = "SELECT * FROM app1_bundle where cid_id=%s"
+                            p_val_4 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_4,p_val_4,)
+                            p_data_4 = fbcursor.fetchall()
+                            
+
+                            count3 = 0
+                            for i in p_data_4:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Bundle',i[2],i[3],'','')) 
+                                else:
+                                    pass
+                            count3 += 1
 
                             pro_frame_edit_1.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
@@ -8889,6 +9232,20 @@ def main_sign_in():
                                 else:
                                     pass
                             count2 += 1
+
+                            p_sql_4 = "SELECT * FROM app1_bundle where cid_id=%s"
+                            p_val_4 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_4,p_val_4,)
+                            p_data_4 = fbcursor.fetchall()
+                            
+
+                            count3 = 0
+                            for i in p_data_4:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Bundle',i[2],i[3],'','')) 
+                                else:
+                                    pass
+                            count3 += 1
 
                             pro_frame_edit_2.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
@@ -9442,6 +9799,20 @@ def main_sign_in():
                                     pass
                             count2 += 1
 
+                            p_sql_4 = "SELECT * FROM app1_bundle where cid_id=%s"
+                            p_val_4 = (cmp_dt[0],)
+                            fbcursor.execute(p_sql_4,p_val_4,)
+                            p_data_4 = fbcursor.fetchall()
+                            
+
+                            count3 = 0
+                            for i in p_data_4:
+                                if True:
+                                    pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Bundle',i[2],i[3],'','')) 
+                                else:
+                                    pass
+                            count3 += 1
+
                             pro_frame_edit_3.destroy()
                             pro_frame.grid(row=0,column=0,sticky='nsew')
 
@@ -9799,6 +10170,20 @@ def main_sign_in():
                     else:
                         pass
                 count2 += 1
+
+                p_sql_4 = "SELECT * FROM app1_bundle where cid_id=%s"
+                p_val_4 = (cmp_dt[0],)
+                fbcursor.execute(p_sql_4,p_val_4,)
+                p_data_4 = fbcursor.fetchall()
+                
+
+                count3 = 0
+                for i in p_data_4:
+                    if True:
+                       pro_tree.insert(parent='',index='end',iid=i,text='',values=('','Bundle',i[2],i[3],'','')) 
+                    else:
+                        pass
+                count3 += 1
 
 
 
