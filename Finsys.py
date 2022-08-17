@@ -55,6 +55,7 @@ from datetime import date,datetime, timedelta
 import webbrowser
 
 import datetime
+from datetime import datetime
 
 finsysdb = mysql.connector.connect(
     host="localhost", user="root", password="", database="newfinsys", port="3306"
@@ -1883,8 +1884,9 @@ def main_sign_in():
 
                     def inv_c_details(event):
                         inv_to_str = aicomb_1.get()
+                        x = inv_to_str.split(" ", 1)
                         sql = "select * from app1_customer where firstname=%s  and cid_id=%s"
-                        val = (inv_to_str,cmp_dtl[0],)
+                        val = (x[0],cmp_dtl[0],)
                         fbcursor.execute(sql,val)
                         inv_c_sel = fbcursor.fetchone()
                         aientry_1.delete(0,END)
@@ -1904,16 +1906,16 @@ def main_sign_in():
                     cmp_dtl=fbcursor.fetchone()
                     
 
-                    sql_pr_cmp="select firstname from app1_customer where cid_id=%s"
+                    sql_pr_cmp="select firstname,lastname from app1_customer where cid_id=%s"
                     sql_pr_cmp_val=(cmp_dtl[0],)
                     fbcursor.execute(sql_pr_cmp,sql_pr_cmp_val,)
                     pr_cmp_dtl=fbcursor.fetchall()
                     p_i1 = []
 
                     for i in pr_cmp_dtl:
-                        # p_i1.append(str(i[0])+" "+str(i[1]))
-                        # print(p_i1)
-                        p_i1.append(i[0])
+                        p_i1.append(str(i[0])+" "+str(i[1]))
+                        #print(p_i1)
+                        #p_i1.append(i[0])
 
                     
                     
@@ -2334,7 +2336,6 @@ def main_sign_in():
 
                         ic_chk_str_1 = BooleanVar()
                         ic_chkbtn2 = Checkbutton(inv_canvas_2, text = "Agree to terms and conditions", variable = ic_chk_str_1, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                        ic_chkbtn2.select()
                         window_ic_chkbtn_2 = inv_canvas_2.create_window(0, 0, anchor="nw", window=ic_chkbtn2,tags=("accheck2"))
 
                         ic_cus_btn2=Button(inv_canvas_2,text='Submit Form', width=25,height=2,foreground="white",background="#1b3857",font='arial 12',command=sales_add_inv_cus)
@@ -4283,7 +4284,6 @@ def main_sign_in():
 
                     chk_str_1 = BooleanVar()
                     chkbtn2 = Checkbutton(cus_canvas_1, text = "Agree to terms and conditions", variable = chk_str_1, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                    chkbtn2.select()
                     window_chkbtn_2 = cus_canvas_1.create_window(0, 0, anchor="nw", window=chkbtn2,tags=("accheck2"))
 
                     def ac_back_1_():
@@ -4744,7 +4744,6 @@ def main_sign_in():
 
                         echk_str_1 = BooleanVar()
                         echkbtn2 = Checkbutton(cus_ecanvas_1, text = "Agree to terms and conditions", variable = echk_str_1, font=("arial", 10),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                        echkbtn2.select()
                         window_echkbtn_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=echkbtn2,tags=("accheck2"))
 
                         def ec_back_1_():
@@ -5678,6 +5677,91 @@ def main_sign_in():
                             p_canvas_2_1.config(yscrollcommand=vertibar.set)
                             p_canvas_2_1.grid(row=0,column=0,sticky='nsew')
 
+                            def inv_ass_acc_create_1():
+                                acctype = comb_inv_1_1.get()
+                                detype = comb_inv_1_2.get()
+                                name = entry_inv_1_2.get()
+                                description = entry_inv_1_4.get()
+                                gst = comb_inv_1_3.get()
+                                deftaxcode = comb_inv_1_4.get()
+                                balance = 0
+                                today = datetime.today()
+                                asof = today.strftime("%Y-%m-%d")
+                                balfordisp = 0
+
+                                #----------------------
+                                usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
+                                usrp_val = (nm_ent.get(),)
+                                fbcursor.execute(usrp_sql,usrp_val)
+                                usrp_data = fbcursor.fetchone()
+
+                                cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                                cmpp_val = (usrp_data[0],)
+                                fbcursor.execute(cmpp_sql,cmpp_val)
+                                cmpp_data = fbcursor.fetchone()
+                                cid = cmpp_data[0]
+
+                                #product id --------------
+                                if acctype == "Current Assets":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (2,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data = fbcursor.fetchone()
+                                else:
+                                    pass
+                                
+                                productid = product_data[0]
+
+                                #-------------------------
+                                acctype_sql = "SELECT accountname FROM app1_accountype WHERE accountname=%s"
+                                acctype_val = (comb_inv_1_1.get(),)
+                                fbcursor.execute(acctype_sql,acctype_val)
+                                acctype_data = fbcursor.fetchone()
+
+                                acct_sql = "SELECT name,cid_id FROM app1_accounts WHERE name=%s AND cid_id=%s"
+                                acct_val = (entry_inv_1_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct_sql,acct_val)
+                                acct_data = fbcursor.fetchone()
+
+                                acct1_sql = "SELECT name,cid_id FROM app1_accounts1 WHERE name=%s AND cid_id=%s"
+                                acct1_val = (entry_inv_1_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct1_sql,acct1_val)
+                                acct1_data = fbcursor.fetchone()
+
+                                if not acctype_data and not acct_data or not acct1_data:
+                                    ins_acctype_sql = "INSERT INTO app1_accountype(cid_id,accountname,accountbal) VALUES(%s,%s,%s)"
+                                    ins_acctype_val= (cmpp_data[0],detype,balance)
+                                    fbcursor.execute(ins_acctype_sql,ins_acctype_val)
+                                    finsysdb.commit()
+
+                                    if acctype == "Current Assets":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (2,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+
+                                        #--------------------------
+                                        i_ac_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        i_ac_val = (2,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid,pro_data[0],productid)
+                                        fbcursor.execute(i_ac_sql,i_ac_val)
+                                        finsysdb.commit()
+                                    else:
+                                        pass
+
+                                    sel_accts1_sql = "SELECT * FROM app1_accounts1 WHERE cid_id=%s and name=%s"
+                                    sel_accts1_val = (cid,'Opening Balance Equity',)
+                                    fbcursor.execute(sel_accts1_sql,sel_accts1_val)
+                                    sel_accts1_data = fbcursor.fetchone()
+
+                                    bal = sel_accts1_data[7] + float(balance)
+                                    upd_accts1_sql = "UPDATE app1_accounts1 SET balance=%s WHERE cid_id=%s and name=%s"
+                                    upd_accts1_val = (bal,cid,'Opening Balance Equity',)
+                                    fbcursor.execute(upd_accts1_sql,upd_accts1_val)
+                                    finsysdb.commit()
+
+                                    pro_frame_2_1.destroy()
+                                    pro_frame_2.grid(row=0,column=0,sticky='nsew')
 
                             p_canvas_2_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('iapoly1'))
 
@@ -5741,7 +5825,7 @@ def main_sign_in():
                             window_comb_inv_1_4 = p_canvas_2_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_1_4,tags=('iacombo4'))
 
 
-                            inv_sub_btn_1_1=Button(p_canvas_2_1,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                            inv_sub_btn_1_1=Button(p_canvas_2_1,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=inv_ass_acc_create_1)
                             window_inv_sub_btn_1_1 = p_canvas_2_1.create_window(0, 0, anchor="nw", window=inv_sub_btn_1_1,tags=('iabutton1'))
 
                             def i_back_1_():
@@ -5766,18 +5850,320 @@ def main_sign_in():
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel14'))
 
                         def inv_tax_check():
-
-                            if chk_str_inv_item.get() == True:
+                            if comb_inv_item_t3.get() == '28.0% GST (28%)':
                                 gst = 0.0
                                 np = 0.0
-                                gst = entry_inv_item_8.get()-[float(entry_inv_item_8.get())*(100/(100+28))]
-                                np = entry_inv_item_8.get()-gst
-                                print(np)
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '28.0% IGST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '18.0% GST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '18.0% IGST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '15.0% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+15)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '14.5% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+14.5)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '14.00% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '14.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '12.36% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+12.36)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '12.0% GST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '12.0% IGST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '6.0% GST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '5.0% GST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '5.0% IGST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '5.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '4.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+4)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '3.0% GST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '3.0% IGST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '2.0% CST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+2)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '0.25% GST (O.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '0.25% IGST (0.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '0% GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == '0% IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == 'Exempt GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == 'Exempt IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_t3.get() == 'Out of Scope(0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item.get() == True:
+                                    entry_inv_item_8.delete(0,'end')
+                                    entry_inv_item_8.insert(0, np)
+                                else:
+                                    pass
                             else:
                                 pass
                         
                         entry_inv_item_8=Entry(p_canvas_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_entry_inv_item_8 = p_canvas_2.create_window(0, 0, anchor="nw", height=30,window=entry_inv_item_8,tags=('ipentry8'))
+                        
 
                         chk_str_inv_item = BooleanVar()
                         chkbtn_inv_item_1 = Checkbutton(p_canvas_2, text = "Inclusive of tax", variable = chk_str_inv_item,  font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=inv_tax_check)
@@ -5993,13 +6379,325 @@ def main_sign_in():
 
                         label_1 = Label(p_canvas_2,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel18'))
+
+                        def inv_tax_check_1():
+                            if comb_inv_item_pu5.get() == '28.0% GST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '28.0% IGST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '18.0% GST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '18.0% IGST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '15.0% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+15)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '14.5% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+14.5)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '14.00% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '14.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '12.36% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+12.36)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '12.0% GST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '12.0% IGST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '6.0% GST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '5.0% GST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                print(gst)
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '5.0% IGST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '5.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '4.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+4)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '3.0% GST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '3.0% IGST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '2.0% CST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+2)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '0.25% GST (O.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '0.25% IGST (0.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '0% GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == '0% IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == 'Exempt GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == 'Exempt IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_inv_item_pu5.get() == 'Out of Scope(0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_inv_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_inv_item_1.get() == True:
+                                    entry_inv_item_10.delete(0,'end')
+                                    entry_inv_item_10.insert(0, np)
+                                else:
+                                    pass
+                            else:
+                                pass
                         
                         entry_inv_item_10=Entry(p_canvas_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_entry_inv_item_10 = p_canvas_2.create_window(0, 0, anchor="nw", height=30,window=entry_inv_item_10,tags=('ipentry10'))
 
-                        chk_str_inv_item_1 = StringVar()
-                        chkbtn_inv_item_2 = Checkbutton(p_canvas_2, text = "Inclusive of purchase tax", variable = chk_str_inv_item_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                        chkbtn_inv_item_2.select()
+                        chk_str_inv_item_1 = BooleanVar()
+                        chkbtn_inv_item_2 = Checkbutton(p_canvas_2, text = "Inclusive of purchase tax", variable = chk_str_inv_item_1,font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=inv_tax_check_1)
                         window_chkbtn_inv_item_2 = p_canvas_2.create_window(0, 0, anchor="nw", window=chkbtn_inv_item_2,tags=('ipcbutton2'))
 
                         label_1 = Label(p_canvas_2,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
@@ -6642,13 +7340,324 @@ def main_sign_in():
 
                         label_1 = Label(p_canvas_3,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel14'),state=HIDDEN)
+
+                        def non_tax_check():
+                            if comb_non_item_3.get() == '28.0% GST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '28.0% IGST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '18.0% GST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '18.0% IGST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '15.0% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+15)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '14.5% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+14.5)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '14.00% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '14.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '12.36% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+12.36)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '12.0% GST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '12.0% IGST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '6.0% GST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '5.0% GST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '5.0% IGST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '5.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '4.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+4)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '3.0% GST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '3.0% IGST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '2.0% CST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+2)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '0.25% GST (O.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '0.25% IGST (0.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '0% GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == '0% IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == 'Exempt GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == 'Exempt IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_3.get() == 'Out of Scope(0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_1.get() == True:
+                                    entry_non_item_8.delete(0,'end')
+                                    entry_non_item_8.insert(0, np)
+                                else:
+                                    pass
+                            else:
+                                pass
                         
                         entry_non_item_8=Entry(p_canvas_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_non_item_8 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_8,tags=('npentry8'),state=HIDDEN)
 
-                        chk_str_non_item_1 = StringVar()
-                        chkbtn_non_item_1 = Checkbutton(p_canvas_3, text = "Inclusive of tax", variable = chk_str_non_item_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                        chkbtn_non_item_1.select()
+                        chk_str_non_item_1 = BooleanVar()
+                        chkbtn_non_item_1 = Checkbutton(p_canvas_3, text = "Inclusive of tax", variable = chk_str_non_item_1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=non_tax_check)
                         window_chkbtn_non_item_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=chkbtn_non_item_1,tags=('npcbutton1'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_3,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
@@ -6888,13 +7897,324 @@ def main_sign_in():
 
                         label_1 = Label(p_canvas_3,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel9'),state=HIDDEN)
+
+                        def non_tax_check_1():
+                            if comb_non_item_5.get() == '28.0% GST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '28.0% IGST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '18.0% GST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '18.0% IGST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '15.0% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+15)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '14.5% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+14.5)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '14.00% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '14.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '12.36% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+12.36)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '12.0% GST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '12.0% IGST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '6.0% GST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '5.0% GST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '5.0% IGST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '5.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '4.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+4)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '3.0% GST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '3.0% IGST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '2.0% CST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+2)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '0.25% GST (O.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '0.25% IGST (0.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '0% GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == '0% IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == 'Exempt GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == 'Exempt IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_non_item_5.get() == 'Out of Scope(0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_non_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_non_item_2.get() == True:
+                                    entry_non_item_10.delete(0,'end')
+                                    entry_non_item_10.insert(0, np)
+                                else:
+                                    pass
+                            else:
+                                pass
                         
                         entry_non_item_10=Entry(p_canvas_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_non_item_10 = p_canvas_3.create_window(0, 0, anchor="nw", height=30,window=entry_non_item_10,tags=('npcentry2'),state=HIDDEN)
 
-                        chk_str_non_item_2 = StringVar()
-                        chkbtn_non_item_2 = Checkbutton(p_canvas_3, text = "Inclusive of purchase tax", variable = chk_str_non_item_2, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                        chkbtn_non_item_2.select()
+                        chk_str_non_item_2 = BooleanVar()
+                        chkbtn_non_item_2 = Checkbutton(p_canvas_3, text = "Inclusive of purchase tax", variable = chk_str_non_item_2, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=non_tax_check_1)
                         window_chkbtn_non_item_2 = p_canvas_3.create_window(0, 0, anchor="nw", window=chkbtn_non_item_2,tags=('npcbutton2'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_3,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
@@ -7543,13 +8863,324 @@ def main_sign_in():
 
                         label_1 = Label(p_canvas_4,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel14'),state=HIDDEN)
+
+                        def ser_tax_check():
+                            if comb_ser_item_3.get() == '28.0% GST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '28.0% IGST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '18.0% GST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '18.0% IGST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '15.0% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+15)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '14.5% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+14.5)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '14.00% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '14.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '12.36% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+12.36)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '12.0% GST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '12.0% IGST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '6.0% GST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '5.0% GST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '5.0% IGST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '5.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '4.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+4)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '3.0% GST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '3.0% IGST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '2.0% CST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+2)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '0.25% GST (O.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '0.25% IGST (0.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '0% GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == '0% IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == 'Exempt GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == 'Exempt IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_3.get() == 'Out of Scope(0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_s8.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_ser_item_1.get() == True:
+                                    entry_ser_item_s8.delete(0,'end')
+                                    entry_ser_item_s8.insert(0, np)
+                                else:
+                                    pass
+                            else:
+                                pass
                         
                         entry_ser_item_s8=Entry(p_canvas_4,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_ser_item_s8 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_ser_item_s8,tags=('spentry8'),state=HIDDEN)
 
-                        chk_str_ser_item_1 = IntVar()
-                        chkbtn_ser_item_1 = Checkbutton(p_canvas_4, text = "Inclusive of tax", variable = chk_str_ser_item_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                        chkbtn_ser_item_1.select()
+                        chk_str_ser_item_1 = BooleanVar()
+                        chkbtn_ser_item_1 = Checkbutton(p_canvas_4, text = "Inclusive of tax", variable = chk_str_ser_item_1,  font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=ser_tax_check)
                         window_chkbtn_ser_item_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=chkbtn_ser_item_1,tags=('spcbutton1'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_4,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
@@ -7812,13 +9443,325 @@ def main_sign_in():
 
                         label_1 = Label(p_canvas_4,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel9'),state=HIDDEN)
+
+                        def ser_tax_check_1():
+                            if comb_ser_item_5.get() == '28.0% GST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '28.0% IGST (28%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+28)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '18.0% GST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '18.0% IGST (18%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+18)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '15.0% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+15)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '14.5% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+14.5)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '14.00% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '14.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+14)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '12.36% ST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+12.36)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '12.0% GST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '12.0% IGST (12%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+12)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '6.0% GST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '6.0% IGST (6%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+6)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '5.0% GST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '5.0% IGST (5%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '5.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+5)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '4.0% VAT (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+4)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '3.0% GST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '3.0% IGST (3%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+3)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '2.0% CST (100%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+2)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '0.25% GST (O.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '0.25% IGST (0.25%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+0.25)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '0% GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == '0% IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == 'Exempt GST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == 'Exempt IGST (0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            elif comb_ser_item_5.get() == 'Out of Scope(0%)':
+                                gst = 0.0
+                                np = 0.0
+                                n1 = float(entry_ser_item_10.get())
+                                gst = n1-(n1*(100/(100+0)))
+                                np = n1-gst
+                                if chk_str_sser_item_2.get() == True:
+                                    entry_ser_item_10.delete(0,'end')
+                                    entry_ser_item_10.insert(0, np)
+                                else:
+                                    pass
+                            else:
+                                pass
+                        
                         
                         entry_ser_item_10=Entry(p_canvas_4,width=90,justify=LEFT,background='#2f516f',foreground="white")
                         window_entry_ser_item_10 = p_canvas_4.create_window(0, 0, anchor="nw", height=30,window=entry_ser_item_10,tags=('spcentry2'),state=HIDDEN)
 
-                        chk_str_sser_item_2 = StringVar()
-                        chkbtn_sser_item_2 = Checkbutton(p_canvas_4, text = "Inclusive of Tax", variable = chk_str_sser_item_2, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                        chkbtn_sser_item_2.select()
+                        chk_str_sser_item_2 = BooleanVar()
+                        chkbtn_sser_item_2 = Checkbutton(p_canvas_4, text = "Inclusive of Tax", variable = chk_str_sser_item_2,font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=ser_tax_check_1)
                         window_chkbtn_sser_item_2 = p_canvas_4.create_window(0, 0, anchor="nw", window=chkbtn_sser_item_2,tags=('spcbutton2'),state=HIDDEN)
 
                         label_1 = Label(p_canvas_4,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
@@ -9235,15 +11178,327 @@ def main_sign_in():
 
                             label_1 = Label(p_canvas_edit_1,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel14'))
+
+                            def edit_inv_tax_check_1():
+                                if comb_inv_edit_t3.get() == '28.0% GST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '28.0% IGST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '18.0% GST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '18.0% IGST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '15.0% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+15)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '14.5% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+14.5)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '14.00% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '14.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '12.36% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+12.36)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '12.0% GST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '12.0% IGST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '6.0% GST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '5.0% GST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    print(gst)
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '5.0% IGST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '5.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '4.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+4)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '3.0% GST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '3.0% IGST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '2.0% CST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+2)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '0.25% GST (O.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '0.25% IGST (0.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '0% GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == '0% IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == 'Exempt GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == 'Exempt IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_t3.get() == 'Out of Scope(0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_einv_item.get() == True:
+                                        edit_inv_pitem_8.delete(0,'end')
+                                        edit_inv_pitem_8.insert(0, np)
+                                    else:
+                                        pass
+                                else:
+                                    pass
                             
                             edit_inv_pitem_8=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
                             window_edit_inv_pitem_8 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_8,tags=('iepentry8'))
                             edit_inv_pitem_8.delete(0,'end')
                             edit_inv_pitem_8.insert(0, edit_pinv[12])
 
-                            chk_str_einv_item = StringVar()
-                            chkbtn_inv_pitem_1 = Checkbutton(p_canvas_edit_1, text = "Inclusive of tax", variable = chk_str_einv_item, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_inv_pitem_1.select()
+                            chk_str_einv_item = BooleanVar()
+                            chkbtn_inv_pitem_1 = Checkbutton(p_canvas_edit_1, text = "Inclusive of tax", variable = chk_str_einv_item,font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=edit_inv_tax_check_1)
                             window_chkbtn_inv_pitem_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=chkbtn_inv_pitem_1,tags=('iepcbutton1'))
 
                             label_1 = Label(p_canvas_edit_1,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
@@ -9278,6 +11533,319 @@ def main_sign_in():
 
                             label_1 = Label(p_canvas_edit_1,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_1,tags=('ieplabel18'))
+
+                            def edit_inv_tax_check_2():
+                                if comb_inv_edit_pu5.get() == '28.0% GST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '28.0% IGST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '18.0% GST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '18.0% IGST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '15.0% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+15)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '14.5% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+14.5)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '14.00% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '14.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '12.36% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+12.36)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '12.0% GST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '12.0% IGST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '6.0% GST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '5.0% GST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    print(gst)
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '5.0% IGST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '5.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '4.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+4)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '3.0% GST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '3.0% IGST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '2.0% CST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+2)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '0.25% GST (O.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '0.25% IGST (0.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '0% GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == '0% IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == 'Exempt GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == 'Exempt IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_inv_edit_pu5.get() == 'Out of Scope(0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_inv_pitem_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_inv_pitem_1.get() == True:
+                                        edit_inv_pitem_10.delete(0,'end')
+                                        edit_inv_pitem_10.insert(0, np)
+                                    else:
+                                        pass
+                                else:
+                                    pass
                             
                             edit_inv_pitem_10=Entry(p_canvas_edit_1,width=90,justify=LEFT,background='#2f516f',foreground="white")
                             window_edit_inv_pitem_10 = p_canvas_edit_1.create_window(0, 0, anchor="nw", height=30,window=edit_inv_pitem_10,tags=('iepentry10'))
@@ -9285,9 +11853,8 @@ def main_sign_in():
                             edit_inv_pitem_10.insert(0, edit_pinv[16])
 
 
-                            chk_str_inv_pitem_1 = StringVar()
-                            chkbtn_inv_pitem_2 = Checkbutton(p_canvas_edit_1, text = "Inclusive of purchase tax", variable = chk_str_inv_pitem_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_inv_pitem_2.select()
+                            chk_str_inv_pitem_1 = BooleanVar()
+                            chkbtn_inv_pitem_2 = Checkbutton(p_canvas_edit_1, text = "Inclusive of purchase tax", variable = chk_str_inv_pitem_1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=edit_inv_tax_check_2)
                             window_chkbtn_inv_pitem_2 = p_canvas_edit_1.create_window(0, 0, anchor="nw", window=chkbtn_inv_pitem_2,tags=('iepcbutton2'))
 
                             label_1 = Label(p_canvas_edit_1,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
@@ -9771,6 +12338,319 @@ def main_sign_in():
 
                             label_1 = Label(p_canvas_edit_2,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel14'),state=HIDDEN)
+
+                            def edit_non_tax_check_1():
+                                if comb_enon_item_3.get() == '28.0% GST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '28.0% IGST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '18.0% GST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '18.0% IGST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '15.0% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+15)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '14.5% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+14.5)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '14.00% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '14.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '12.36% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+12.36)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '12.0% GST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '12.0% IGST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '6.0% GST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '5.0% GST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    print(gst)
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '5.0% IGST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '5.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '4.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+4)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '3.0% GST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '3.0% IGST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '2.0% CST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+2)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '0.25% GST (O.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '0.25% IGST (0.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '0% GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == '0% IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == 'Exempt GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == 'Exempt IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_3.get() == 'Out of Scope(0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_non_item_e1.get() == True:
+                                        edit_non_item_8.delete(0,'end')
+                                        edit_non_item_8.insert(0, np)
+                                    else:
+                                        pass
+                                else:
+                                    pass
                             
                             edit_non_item_8=Entry(p_canvas_edit_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
                             window_edit_non_item_8 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=30,window=edit_non_item_8,tags=('nepentry8'),state=HIDDEN)
@@ -9778,8 +12658,7 @@ def main_sign_in():
                             edit_non_item_8.insert(0, edit_pnon[8])
 
                             chk_str_non_item_e1 = BooleanVar()
-                            chkbtn_non_item_e1 = Checkbutton(p_canvas_edit_2, text = "Inclusive of tax", variable = chk_str_non_item_e1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_non_item_e1.select()
+                            chkbtn_non_item_e1 = Checkbutton(p_canvas_edit_2, text = "Inclusive of tax", variable = chk_str_non_item_e1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=edit_non_tax_check_1)
                             window_chkbtn_non_item_e1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=chkbtn_non_item_e1,tags=('nepcbutton1'),state=HIDDEN)
 
                             label_1 = Label(p_canvas_edit_2,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
@@ -9841,6 +12720,319 @@ def main_sign_in():
 
                             label_1 = Label(p_canvas_edit_2,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=label_1,tags=('neplabel9'),state=HIDDEN)
+
+                            def edit_non_tax_check_2():
+                                if comb_enon_item_5.get() == '28.0% GST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '28.0% IGST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '18.0% GST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '18.0% IGST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '15.0% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+15)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '14.5% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+14.5)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '14.00% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '14.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '12.36% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+12.36)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '12.0% GST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '12.0% IGST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '6.0% GST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '5.0% GST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    print(gst)
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '5.0% IGST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '5.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '4.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+4)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '3.0% GST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '3.0% IGST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '2.0% CST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+2)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '0.25% GST (O.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '0.25% IGST (0.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '0% GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == '0% IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == 'Exempt GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == 'Exempt IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_enon_item_5.get() == 'Out of Scope(0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_non_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_enon_item_2.get() == True:
+                                        edit_non_item_10.delete(0,'end')
+                                        edit_non_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                else:
+                                    pass
                             
                             edit_non_item_10=Entry(p_canvas_edit_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
                             window_edit_non_item_10 = p_canvas_edit_2.create_window(0, 0, anchor="nw", height=30,window=edit_non_item_10,tags=('nepcentry2'),state=HIDDEN)
@@ -9848,8 +13040,7 @@ def main_sign_in():
                             edit_non_item_10.insert(0, edit_pnon[12])
 
                             chk_str_enon_item_2 = BooleanVar()
-                            chkbtn_enon_item_2 = Checkbutton(p_canvas_edit_2, text = "Inclusive of purchase tax", variable = chk_str_enon_item_2, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_enon_item_2.select()
+                            chkbtn_enon_item_2 = Checkbutton(p_canvas_edit_2, text = "Inclusive of purchase tax", variable = chk_str_enon_item_2, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=edit_non_tax_check_2)
                             window_chkbtn_enon_item_2 = p_canvas_edit_2.create_window(0, 0, anchor="nw", window=chkbtn_enon_item_2,tags=('nepcbutton2'),state=HIDDEN)
 
                             label_1 = Label(p_canvas_edit_2,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
