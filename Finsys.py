@@ -1819,8 +1819,8 @@ def main_sign_in():
 
                         #----------Refresh Insert Tree--------#
 
-                        for record in cus_tree.get_children():
-                                cus_tree.delete(record)
+                        for record in inv_tree.get_children():
+                                inv_tree.delete(record)
 
                         sql_pr="select * from auth_user where username=%s"
                         sql_pr_val=(nm_ent.get(),)
@@ -1832,7 +1832,7 @@ def main_sign_in():
                         fbcursor.execute(sql, val,)
                         cmp_dtl=fbcursor.fetchone()
 
-                        c_sql_1 = "SELECT * FROM app1_customer where cid_id=%s"
+                        c_sql_1 = "SELECT * FROM app1_invoice where cid_id=%s"
                         c_val_1 = (cmp_dtl[0],)
                         fbcursor.execute(c_sql_1,c_val_1,)
                         i_data_1 = fbcursor.fetchall()
@@ -4299,7 +4299,7 @@ def main_sign_in():
                 btn1=Button(cus_canvas,text='Add Customer', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=add_customer)
                 window_btn1 = cus_canvas.create_window(0, 0, anchor="nw", window=btn1, tags=("cbutton2"))
 
-                def edit_customer(event):
+                def edit_delete_customer(event):
                     if cus_comb_1.get() == 'Edit':
                         cus_frame.grid_forget()
                         cus_eframe_1 = Frame(tab3_3)
@@ -4755,20 +4755,71 @@ def main_sign_in():
 
                         ecus_btn2=Button(cus_ecanvas_1,text='Submit Form', width=25,height=2,foreground="white",background="#1b3857",font='arial 12',command=sales_edit_new_cus)
                         window_ecus_btn2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=ecus_btn2,tags=("acbutton1"))
+
+                    if cus_comb_1.get() == 'Delete':
+                        cus_del = messagebox.askyesno("Delete Customer","Are you sure to delete this customer?")
+
+                        if cus_del == True:
+                            cus_id_1 = cus_tree.item(cus_tree.focus())["values"][4]
+                            cus_id_2 = cus_tree.item(cus_tree.focus())["values"][5]
+
+                            sql_u = 'select * from auth_user where username=%s'
+                            val_u = (nm_ent.get(),)
+                            fbcursor.execute(sql_u,val_u)
+                            u_dtl = fbcursor.fetchone()
+
+                            sql_c = 'select * from app1_company where id_id=%s'
+                            val_c = (u_dtl[0],)
+                            fbcursor.execute(sql_c,val_c)
+                            c_dtl = fbcursor.fetchone()
+
+                            sql = 'delete from app1_customer where panno=%s and email=%s and cid_id=%s'
+                            val = (cus_id_1,cus_id_2,c_dtl[0],)
+                            fbcursor.execute(sql,val)
+                            finsysdb.commit()
+
+                            #----------Refresh Insert Tree--------#
+
+                            for record in cus_tree.get_children():
+                                    cus_tree.delete(record)
+
+                            sql_pr="select * from auth_user where username=%s"
+                            sql_pr_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_pr,sql_pr_val,)
+                            pr_dtl=fbcursor.fetchone()
+
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dtl[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dtl=fbcursor.fetchone()
+
+                            c_sql_1 = "SELECT * FROM app1_customer where cid_id=%s"
+                            c_val_1 = (cmp_dtl[0],)
+                            fbcursor.execute(c_sql_1,c_val_1,)
+                            c_data_1 = fbcursor.fetchall()
+
+                            count0 = 0
+                            for i in c_data_1:
+                                if True:
+                                    cus_tree.insert(parent='',index='end',iid=i,text='',values=('',i[2]+" "+i[3],i[6],i[7],i[8],i[9],i[11])) 
+                                else:
+                                    pass
+                            count0 += 1
+
+                        else:
+                            pass
                     else:  
                         pass
 
-                # ecbtn1=Button(cus_canvas,text='Edit', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=lambda:edit_customer())
-                # window_ecbtn1 = cus_canvas.create_window(0, 0, anchor="nw", window=ecbtn1, tags=("cbutton2"))
+                
 
                 cus_comb_1 = ttk.Combobox(cus_canvas,font=('arial 10'))
                 cus_comb_1['values'] = ("Actions","Edit","Delete")
                 cus_comb_1.current(0)
                 window_cus_comb_1 = cus_canvas.create_window(0, 0, anchor="nw", width=110,height=30,window=cus_comb_1,tags=('cbutton3'))
-                cus_comb_1.bind("<<ComboboxSelected>>",edit_customer)
+                cus_comb_1.bind("<<ComboboxSelected>>",edit_delete_customer)
 
-                # dcbtn1=Button(cus_canvas,text='Delete', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
-                # window_dcbtn1 = cus_canvas.create_window(0, 0, anchor="nw", window=dcbtn1, tags=("cbutton3"))
+                
 
                 #---------------------------Product & Services------------------------#
                 tab3_4.grid_columnconfigure(0,weight=1)
@@ -5563,8 +5614,28 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=22,height=1,text="Inventory asset account", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(35, 910, anchor="nw", window=label_1,tags=('iplabel12'))
 
+                        sql = "select * from auth_user where username=%s"
+                        val = (nm_ent.get(),)
+                        fbcursor.execute(sql,val,)
+                        udtl = fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (udtl[0],)
+                        fbcursor.execute(sql,val,)
+                        cdtl = fbcursor.fetchone()
+
+                        sql = "select name from app1_accounts where acctype=%s and cid_id=%s"
+                        val = (2,cdtl[0],)
+                        fbcursor.execute(sql,val,)
+                        is_ac_data = fbcursor.fetchall()
+                        ac_data_1 = []
+                        for i in is_ac_data:
+                            ac_data_1.append(i[0])
+                        ac_data_1.insert(0,"Inventory Asset")
+
+
                         comb_inv_item_i2 = ttk.Combobox(p_canvas_2, font=('arial 10'))
-                        comb_inv_item_i2['values'] = ("Inventory Asset",)
+                        comb_inv_item_i2['values'] =(ac_data_1)
                         comb_inv_item_i2.current(0)
                         window_comb_inv_item_i2 = p_canvas_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_item_i2,tags=('ipcombo2'))
 
@@ -5714,7 +5785,7 @@ def main_sign_in():
 
                                 #-------------------------
                                 acctype_sql = "SELECT accountname FROM app1_accountype WHERE accountname=%s"
-                                acctype_val = (comb_inv_1_1.get(),)
+                                acctype_val = (comb_inv_1_2.get(),)
                                 fbcursor.execute(acctype_sql,acctype_val)
                                 acctype_data = fbcursor.fetchone()
 
@@ -5727,6 +5798,7 @@ def main_sign_in():
                                 acct1_val = (entry_inv_1_2.get(),cmpp_data[0])
                                 fbcursor.execute(acct1_sql,acct1_val)
                                 acct1_data = fbcursor.fetchone()
+                                print(acct1_data)
 
                                 if not acctype_data and not acct_data or not acct1_data:
                                     ins_acctype_sql = "INSERT INTO app1_accountype(cid_id,accountname,accountbal) VALUES(%s,%s,%s)"
@@ -5749,14 +5821,14 @@ def main_sign_in():
                                     else:
                                         pass
 
-                                    sel_accts1_sql = "SELECT * FROM app1_accounts1 WHERE cid_id=%s and name=%s"
-                                    sel_accts1_val = (cid,'Opening Balance Equity',)
+                                    sel_accts1_sql = "SELECT * FROM app1_accounts1 WHERE cid_id=%s"
+                                    sel_accts1_val = (cid,)
                                     fbcursor.execute(sel_accts1_sql,sel_accts1_val)
                                     sel_accts1_data = fbcursor.fetchone()
 
                                     bal = sel_accts1_data[7] + float(balance)
-                                    upd_accts1_sql = "UPDATE app1_accounts1 SET balance=%s WHERE cid_id=%s and name=%s"
-                                    upd_accts1_val = (bal,cid,'Opening Balance Equity',)
+                                    upd_accts1_sql = "UPDATE app1_accounts1 SET balance=%s WHERE cid_id=%s"
+                                    upd_accts1_val = (bal,cid,)
                                     fbcursor.execute(upd_accts1_sql,upd_accts1_val)
                                     finsysdb.commit()
 
@@ -6180,8 +6252,29 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel16'))
 
+                        sql = "select * from auth_user where username=%s"
+                        val = (nm_ent.get(),)
+                        fbcursor.execute(sql,val,)
+                        udtl = fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (udtl[0],)
+                        fbcursor.execute(sql,val,)
+                        cdtl = fbcursor.fetchone()
+
+
+                        sql = "select name from app1_accounts where acctype=%s and detype=%s and cid_id=%s"
+                        val = (11,'Sales of Product Income',cdtl[0],)
+                        fbcursor.execute(sql,val,)
+                        in_ac_data = fbcursor.fetchall()
+                        ac_data_2 = []
+                        for i in in_ac_data:
+                            ac_data_2.append(i[0])
+                        ac_data_2.insert(0,"Choose...")
+
                         comb_inv_item_in4 = ttk.Combobox(p_canvas_2, font=('arial 10'))
-                        comb_inv_item_in4['values'] = ("Choose...","Billable Expense Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales of Product Income","Uncategorised Income",)
+                        comb_inv_item_in4['values'] = (ac_data_2)
+                        #comb_inv_item_in4['values'] = ("Choose...","Billable Expense Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales of Product Income","Uncategorised Income",ac_data_2,)
                         comb_inv_item_in4.current(0)
                         window_comb_inv_item_in4 = p_canvas_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_item_in4,tags=('ipcombo4'))
 
@@ -6295,6 +6388,93 @@ def main_sign_in():
                             p_canvas_2_2.config(yscrollcommand=vertibar.set)
                             p_canvas_2_2.grid(row=0,column=0,sticky='nsew')
 
+                            def inv_inc_acc_create_2():
+                                acctype = comb_inv_2_1.get()
+                                detype = comb_inv_2_2.get()
+                                name = entry_inv_2_2.get()
+                                description = entry_inv_2_4.get()
+                                gst = comb_inv_2_3.get()
+                                deftaxcode = comb_inv_2_4.get()
+                                balance = 0
+                                today = datetime.today()
+                                asof = today.strftime("%Y-%m-%d")
+                                balfordisp = 0
+
+                                #----------------------
+                                usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
+                                usrp_val = (nm_ent.get(),)
+                                fbcursor.execute(usrp_sql,usrp_val)
+                                usrp_data_1 = fbcursor.fetchone()
+
+                                cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                                cmpp_val = (usrp_data_1[0],)
+                                fbcursor.execute(cmpp_sql,cmpp_val)
+                                cmpp_data = fbcursor.fetchone()
+                                cid = cmpp_data[0]
+
+                                #product id --------------
+                                if acctype == "Income":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (11,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_1 = fbcursor.fetchone()
+                                else:
+                                    pass
+                                
+                                productid = product_data_1[0]
+
+                                #-------------------------
+                                acctype_sql = "SELECT accountname FROM app1_accountype WHERE accountname=%s"
+                                acctype_val = (comb_inv_2_2.get(),)
+                                fbcursor.execute(acctype_sql,acctype_val)
+                                acctype_data = fbcursor.fetchone()
+
+                                acct_sql = "SELECT name,cid_id FROM app1_accounts WHERE name=%s AND cid_id=%s"
+                                acct_val = (entry_inv_2_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct_sql,acct_val)
+                                acct_data = fbcursor.fetchone()
+
+                                acct1_sql = "SELECT name,cid_id FROM app1_accounts1 WHERE name=%s AND cid_id=%s"
+                                acct1_val = (entry_inv_2_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct1_sql,acct1_val)
+                                acct1_data = fbcursor.fetchone()
+                                print(acct1_data)
+
+                                if not acctype_data and not acct_data or not acct1_data:
+                                    ins_acctype_sql = "INSERT INTO app1_accountype(cid_id,accountname,accountbal) VALUES(%s,%s,%s)"
+                                    ins_acctype_val= (cmpp_data[0],detype,balance)
+                                    fbcursor.execute(ins_acctype_sql,ins_acctype_val)
+                                    finsysdb.commit()
+
+                                    if acctype == "Income":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (11,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+
+                                        #--------------------------
+                                        i_ac_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        i_ac_val = (11,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid,pro_data[0],productid)
+                                        fbcursor.execute(i_ac_sql,i_ac_val)
+                                        finsysdb.commit()
+                                    else:
+                                        pass
+
+                                    sel_accts1_sql = "SELECT * FROM app1_accounts1 WHERE cid_id=%s"
+                                    sel_accts1_val = (cid,)
+                                    fbcursor.execute(sel_accts1_sql,sel_accts1_val)
+                                    sel_accts1_data = fbcursor.fetchone()
+
+                                    bal = sel_accts1_data[7] + float(balance)
+                                    upd_accts1_sql = "UPDATE app1_accounts1 SET balance=%s WHERE cid_id=%s"
+                                    upd_accts1_val = (bal,cid,)
+                                    fbcursor.execute(upd_accts1_sql,upd_accts1_val)
+                                    finsysdb.commit()
+
+                                    pro_frame_2_2.destroy()
+                                    pro_frame_2.grid(row=0,column=0,sticky='nsew')
+
 
                             p_canvas_2_2.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('iapoly1'))
 
@@ -6355,7 +6535,7 @@ def main_sign_in():
                             comb_inv_2_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
                             window_comb_inv_2_4 = p_canvas_2_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_2_4,tags=('iacombo4'))
 
-                            inv_sub_btn_2_1=Button(p_canvas_2_2,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                            inv_sub_btn_2_1=Button(p_canvas_2_2,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=inv_inc_acc_create_2)
                             window_inv_sub_btn_2_1 = p_canvas_2_2.create_window(0, 0, anchor="nw", window=inv_sub_btn_2_1,tags=('iabutton1'))
 
                             def i_back_2_():
@@ -6711,8 +6891,27 @@ def main_sign_in():
                         label_1 = Label(p_canvas_2,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_2.create_window(0, 0, anchor="nw", window=label_1,tags=('iplabel20'))
 
+                        sql = "select * from auth_user where username=%s"
+                        val = (nm_ent.get(),)
+                        fbcursor.execute(sql,val,)
+                        udtl = fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (udtl[0],)
+                        fbcursor.execute(sql,val,)
+                        cdtl = fbcursor.fetchone()
+
+                        sql = "select name from app1_accounts where acctype=%s and cid_id=%s"
+                        val = (13,cdtl[0],)
+                        fbcursor.execute(sql,val,)
+                        in_ac_data = fbcursor.fetchall()
+                        ac_data_3 = []
+                        for i in in_ac_data:
+                            ac_data_3.append(i[0])
+                        ac_data_3.insert(0,"Cost of sales")
+
                         comb_inv_item_ex6 = ttk.Combobox(p_canvas_2, font=('arial 10'))
-                        comb_inv_item_ex6['values'] = ("Cost of sales",)
+                        comb_inv_item_ex6['values'] = (ac_data_3)
                         comb_inv_item_ex6.current(0)
                         window_comb_inv_item_ex6 = p_canvas_2.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_inv_item_ex6,tags=('ipcombo6'))
 
@@ -6826,6 +7025,93 @@ def main_sign_in():
                             p_canvas_2_3.config(yscrollcommand=vertibar.set)
                             p_canvas_2_3.grid(row=0,column=0,sticky='nsew')
 
+                            def inv_exp_acc_create_3():
+                                acctype = comb_inv_3_1.get()
+                                detype = comb_inv_3_2.get()
+                                name = entry_inv_3_2.get()
+                                description = entry_inv_3_4.get()
+                                gst = comb_inv_3_3.get()
+                                deftaxcode = comb_inv_3_4.get()
+                                balance = 0
+                                today = datetime.today()
+                                asof = today.strftime("%Y-%m-%d")
+                                balfordisp = 0
+
+                                #----------------------
+                                usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
+                                usrp_val = (nm_ent.get(),)
+                                fbcursor.execute(usrp_sql,usrp_val)
+                                usrp_data_1 = fbcursor.fetchone()
+
+                                cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                                cmpp_val = (usrp_data_1[0],)
+                                fbcursor.execute(cmpp_sql,cmpp_val)
+                                cmpp_data = fbcursor.fetchone()
+                                cid = cmpp_data[0]
+
+                                #product id --------------
+                                if acctype == "Cost of Goods Sold":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (13,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_1 = fbcursor.fetchone()
+                                else:
+                                    pass
+                                
+                                productid = product_data_1[0]
+
+                                #-------------------------
+                                acctype_sql = "SELECT accountname FROM app1_accountype WHERE accountname=%s"
+                                acctype_val = (comb_inv_3_2.get(),)
+                                fbcursor.execute(acctype_sql,acctype_val)
+                                acctype_data = fbcursor.fetchone()
+
+                                acct_sql = "SELECT name,cid_id FROM app1_accounts WHERE name=%s AND cid_id=%s"
+                                acct_val = (entry_inv_3_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct_sql,acct_val)
+                                acct_data = fbcursor.fetchone()
+
+                                acct1_sql = "SELECT name,cid_id FROM app1_accounts1 WHERE name=%s AND cid_id=%s"
+                                acct1_val = (entry_inv_3_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct1_sql,acct1_val)
+                                acct1_data = fbcursor.fetchone()
+                                print(acct1_data)
+
+                                if not acctype_data and not acct_data or not acct1_data:
+                                    ins_acctype_sql = "INSERT INTO app1_accountype(cid_id,accountname,accountbal) VALUES(%s,%s,%s)"
+                                    ins_acctype_val= (cmpp_data[0],detype,balance)
+                                    fbcursor.execute(ins_acctype_sql,ins_acctype_val)
+                                    finsysdb.commit()
+
+                                    if acctype == "Cost of Goods Sold":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (13,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+
+                                        #--------------------------
+                                        i_ac_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        i_ac_val = (13,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid,pro_data[0],productid)
+                                        fbcursor.execute(i_ac_sql,i_ac_val)
+                                        finsysdb.commit()
+                                    else:
+                                        pass
+
+                                    sel_accts1_sql = "SELECT * FROM app1_accounts1 WHERE cid_id=%s"
+                                    sel_accts1_val = (cid,)
+                                    fbcursor.execute(sel_accts1_sql,sel_accts1_val)
+                                    sel_accts1_data = fbcursor.fetchone()
+
+                                    bal = sel_accts1_data[7] + float(balance)
+                                    upd_accts1_sql = "UPDATE app1_accounts1 SET balance=%s WHERE cid_id=%s"
+                                    upd_accts1_val = (bal,cid,)
+                                    fbcursor.execute(upd_accts1_sql,upd_accts1_val)
+                                    finsysdb.commit()
+
+                                    pro_frame_2_3.destroy()
+                                    pro_frame_2.grid(row=0,column=0,sticky='nsew')
+
 
                             p_canvas_2_3.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('iapoly1'))
 
@@ -6871,8 +7157,7 @@ def main_sign_in():
                                 
 
                             chk_str_inv_3_1 = IntVar()
-                            chkbtn_inv_3_1 = Checkbutton(p_canvas_2_3, text = "Is sub-account", variable = chk_str_inv_3_1,  font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_inv_3_1.select()
+                            chkbtn_inv_3_1 = Checkbutton(p_canvas_2_3, text = "Is sub-account", variable = chk_str_inv_3_1,  font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=sub_check_3)
                             window_chkbtn_inv_3_1 = p_canvas_2_3.create_window(0, 0, anchor="nw", window=chkbtn_inv_3_1,tags=('iacheck1'))
 
                             comb_inv_3_3 = ttk.Combobox(p_canvas_2_3, font=('arial 10'),state=DISABLED)
@@ -6886,7 +7171,7 @@ def main_sign_in():
                             comb_inv_3_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
                             window_comb_inv_3_4 = p_canvas_2_3.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_inv_3_4,tags=('iacombo4'))
 
-                            inv_sub_btn_3_1=Button(p_canvas_2_3,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                            inv_sub_btn_3_1=Button(p_canvas_2_3,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=inv_exp_acc_create_3)
                             window_inv_sub_btn_3_1 = p_canvas_2_3.create_window(0, 0, anchor="nw", window=inv_sub_btn_3_1,tags=('iabutton1'))
 
                             def i_back_3_():
@@ -7671,8 +7956,29 @@ def main_sign_in():
                         label_1 = Label(p_canvas_3,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel16'),state=HIDDEN)
 
+                        sql = "select * from auth_user where username=%s"
+                        val = (nm_ent.get(),)
+                        fbcursor.execute(sql,val,)
+                        udtl = fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (udtl[0],)
+                        fbcursor.execute(sql,val,)
+                        cdtl = fbcursor.fetchone()
+
+
+                        sql = "select name from app1_accounts where acctype=%s and detype=%s and cid_id=%s"
+                        val = (11,'Discounts/Refunds Given',cdtl[0],)
+                        fbcursor.execute(sql,val,)
+                        non_in_ac_data = fbcursor.fetchall()
+                        ac_data_4 = []
+                        for i in non_in_ac_data:
+                            ac_data_4.append(i[0])
+                        ac_data_4.insert(0,"Choose...")
+
                         comb_non_item_4 = ttk.Combobox(p_canvas_3, font=('arial 10'))
-                        comb_non_item_4['values'] = ("Billable Expense Income","Consulting Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales Discount","Sales of Product Income","Services","Unapplied Cash Payment Income","Uncategorised Income",)
+                        comb_non_item_4['values'] = (ac_data_4)
+                        # comb_non_item_4['values'] = ("Billable Expense Income","Consulting Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales Discount","Sales of Product Income","Services","Unapplied Cash Payment Income","Uncategorised Income",)
                         #comb_non_item_4.current(0)
                         window_comb_non_item_4 = p_canvas_3.create_window(0, 0, anchor="nw", width=480, height=30,window=comb_non_item_4,tags=('npcombo4'),state=HIDDEN)
 
@@ -7786,6 +8092,95 @@ def main_sign_in():
                             p_canvas_3_1.config(yscrollcommand=vertibar.set)
                             p_canvas_3_1.grid(row=0,column=0,sticky='nsew')
 
+
+                            def non_inc_acc_create_1():
+                                acctype = comb_non_2_1.get()
+                                detype = comb_non_2_2.get()
+                                name = entry_non_2_2.get()
+                                description = entry_non_2_4.get()
+                                gst = comb_non_2_3.get()
+                                deftaxcode = comb_non_2_4.get()
+                                balance = 0
+                                today = datetime.today()
+                                asof = today.strftime("%Y-%m-%d")
+                                balfordisp = 0
+
+                                #----------------------
+                                usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
+                                usrp_val = (nm_ent.get(),)
+                                fbcursor.execute(usrp_sql,usrp_val)
+                                usrp_data_1 = fbcursor.fetchone()
+
+                                cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                                cmpp_val = (usrp_data_1[0],)
+                                fbcursor.execute(cmpp_sql,cmpp_val)
+                                cmpp_data = fbcursor.fetchone()
+                                cid = cmpp_data[0]
+
+                                #product id --------------
+                                if acctype == "Income":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (11,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_1 = fbcursor.fetchone()
+                                else:
+                                    pass
+                                
+                                productid = product_data_1[0]
+
+                                #-------------------------
+                                acctype_sql = "SELECT accountname FROM app1_accountype WHERE accountname=%s"
+                                acctype_val = (comb_non_2_2.get(),)
+                                fbcursor.execute(acctype_sql,acctype_val)
+                                acctype_data = fbcursor.fetchone()
+
+                                acct_sql = "SELECT name,cid_id FROM app1_accounts WHERE name=%s AND cid_id=%s"
+                                acct_val = (entry_non_2_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct_sql,acct_val)
+                                acct_data = fbcursor.fetchone()
+
+                                acct1_sql = "SELECT name,cid_id FROM app1_accounts1 WHERE name=%s AND cid_id=%s"
+                                acct1_val = (entry_non_2_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct1_sql,acct1_val)
+                                acct1_data = fbcursor.fetchone()
+                                print(acct1_data)
+
+                                if not acctype_data and not acct_data or not acct1_data:
+                                    ins_acctype_sql = "INSERT INTO app1_accountype(cid_id,accountname,accountbal) VALUES(%s,%s,%s)"
+                                    ins_acctype_val= (cmpp_data[0],detype,balance)
+                                    fbcursor.execute(ins_acctype_sql,ins_acctype_val)
+                                    finsysdb.commit()
+
+                                    if acctype == "Income":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (11,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+
+                                        #--------------------------
+                                        i_ac_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        i_ac_val = (11,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid,pro_data[0],productid)
+                                        fbcursor.execute(i_ac_sql,i_ac_val)
+                                        finsysdb.commit()
+                                    else:
+                                        pass
+
+                                    sel_accts1_sql = "SELECT * FROM app1_accounts1 WHERE cid_id=%s"
+                                    sel_accts1_val = (cid,)
+                                    fbcursor.execute(sel_accts1_sql,sel_accts1_val)
+                                    sel_accts1_data = fbcursor.fetchone()
+
+                                    bal = sel_accts1_data[7] + float(balance)
+                                    upd_accts1_sql = "UPDATE app1_accounts1 SET balance=%s WHERE cid_id=%s"
+                                    upd_accts1_val = (bal,cid,)
+                                    fbcursor.execute(upd_accts1_sql,upd_accts1_val)
+                                    finsysdb.commit()
+
+                                    pro_frame_3_1.destroy()
+                                    pro_frame_3.grid(row=0,column=0,sticky='nsew')
+
+
                             
                             p_canvas_3_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('napoly1'))
 
@@ -7813,7 +8208,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_3_1,width=10,height=1,text="*Detail Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_3_1.create_window(0, 0, anchor="nw", window=label_1,tags=('nalabel4'))
 
-                            comb_non_2_2 = ttk.Combobox(p_canvas_3_1, font=('arial 10'),foreground="white")
+                            comb_non_2_2 = ttk.Combobox(p_canvas_3_1, font=('arial 10'))
                             comb_non_2_2['values'] = ("Discounts/Refunds Given","Non-Profit Income","Other Primary Income","Revenue-General","Sales-Retail","Sales-Wholesale","Sales of Product Income","Service/Fee Income","Unapplied Cash Payment Inncome",)
                             comb_non_2_2.current(0)
                             window_comb_non_2_2 = p_canvas_3_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_2_2,tags=('nacombo2'))
@@ -7828,14 +8223,15 @@ def main_sign_in():
                             non_text_2.insert(END, 'Use Cash and Cash Equivalents to track cash or assets that can be converted into cash immediately. For example, marketable securities and Treasury bills.')
                             window_non_text_2 = p_canvas_3_1.create_window(0, 0, anchor="nw",window=non_text_2,tags=('natext1'))
 
-                            chk_str_non_2_1 = StringVar()
-                            chkbtn_non_2_1 = Checkbutton(p_canvas_3_1, text = "Is sub-account", variable = chk_str_non_2_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_non_2_1.select()
+                            def sub_check_4():
+                                comb_non_2_3.config(state=NORMAL if chk_str_non_2_1.get() else DISABLED)
+
+                            chk_str_non_2_1 = IntVar()
+                            chkbtn_non_2_1 = Checkbutton(p_canvas_3_1, text = "Is sub-account", variable = chk_str_non_2_1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=sub_check_4)
                             window_chkbtn_non_2_1 = p_canvas_3_1.create_window(0, 0, anchor="nw", window=chkbtn_non_2_1,tags=('nacheck1'))
 
-                            comb_non_2_3 = ttk.Combobox(p_canvas_3_1, font=('arial 10'))
+                            comb_non_2_3 = ttk.Combobox(p_canvas_3_1, font=('arial 10'),state=DISABLED)
                             comb_non_2_3['values'] = ("Deferred CGST","Deferred GST Input Credit","Deferred IGST","Deferred Krishi Kalyan Cess Input Credit","Deferred Service Tax Input Credit","Deferred SGST","Deferred VAT Input Credit","GST Refund","Inventory Asset","Paid Insurance","Service Tax Refund","TDS Receivable","Uncategorised Asset","Accumulated Depreciation","Building and Improvements","Furniture and Equipment","Land","Leasehold Improvements","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi Kalyan Cess","Input Krishi Kalyan Cess RCM","Input Service Tax","Input Service Tax RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Input VAT 5%","Krishi Kalyan Cess Payable","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output Service Tax","Output Sevice Tax RCM","Output SGST","Output SGST Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","Service Tax Payable","service Tax Suspense","SGST Payable","SGST Suspense","Swachh Barath Cess Payable" ,"Swachh Barath Cess Suspense" ,"TDS Payable" ,"VAT Payable","VAT Suspense","Opening Balance","Equity",)
-                            comb_non_2_3.current(0)
                             window_comb_non_2_3 = p_canvas_3_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_2_3,tags=('nacombo3'))
 
                             label_1 = Label(p_canvas_3_1,width=15,height=1,text="Default Tax Code", font=('arial 12'),background="#1b3857",fg="white") 
@@ -7843,10 +8239,9 @@ def main_sign_in():
 
                             comb_non_2_4 = ttk.Combobox(p_canvas_3_1, font=('arial 10'))
                             comb_non_2_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
-                            comb_non_2_4.current(0)
                             window_comb_non_2_4 = p_canvas_3_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_2_4,tags=('nacombo4'))
 
-                            non_sub_btn_2_1=Button(p_canvas_3_1,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                            non_sub_btn_2_1=Button(p_canvas_3_1,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=non_inc_acc_create_1)
                             window_non_sub_btn_2_1 = p_canvas_3_1.create_window(0, 0, anchor="nw", window=non_sub_btn_2_1,tags=('nabutton1'))
 
                             def n_back_1_():
@@ -8228,8 +8623,28 @@ def main_sign_in():
                         label_1 = Label(p_canvas_3,width=15,height=1,text="Expense account", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_3.create_window(0, 0, anchor="nw", window=label_1,tags=('nplabel20'),state=HIDDEN)
 
+                        sql = "select * from auth_user where username=%s"
+                        val = (nm_ent.get(),)
+                        fbcursor.execute(sql,val,)
+                        udtl = fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (udtl[0],)
+                        fbcursor.execute(sql,val,)
+                        cdtl = fbcursor.fetchone()
+
+                        sql = "select name from app1_accounts where acctype=%s and cid_id=%s"
+                        val = (14,cdtl[0],)
+                        fbcursor.execute(sql,val,)
+                        ex_ac_data = fbcursor.fetchall()
+                        ac_data_5 = []
+                        for i in ex_ac_data:
+                            ac_data_5.append(i[0])
+                        ac_data_5.insert(0,"Choose")
+
                         comb_non_item_6 = ttk.Combobox(p_canvas_3, font=('arial 10'))
-                        comb_non_item_6['values'] = ("Choose","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Continuing Education","Depreciation Expense","Dues and Subscriptions","House Keeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Interest Expenses","Meals and Entertainment","Office Supplies","Postage and Delivery","Printing and Reproduction","Professional Fees","Purchases","Rent Expense","Repair and Maintanance","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities",)
+                        comb_non_item_6['values'] = (ac_data_5)
+                        # comb_non_item_6['values'] = ("Choose","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Continuing Education","Depreciation Expense","Dues and Subscriptions","House Keeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Interest Expenses","Meals and Entertainment","Office Supplies","Postage and Delivery","Printing and Reproduction","Professional Fees","Purchases","Rent Expense","Repair and Maintanance","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities",)
                         #comb_non_item_6.current(0)
                         window_comb_non_item_6 = p_canvas_3.create_window(0, 0, anchor="nw", width=330, height=30,window=comb_non_item_6,tags=('npcombo6'),state=HIDDEN)
 
@@ -8343,6 +8758,93 @@ def main_sign_in():
                             p_canvas_3_2.config(yscrollcommand=vertibar.set)
                             p_canvas_3_2.grid(row=0,column=0,sticky='nsew')
 
+                            def non_exp_acc_create_2():
+                                acctype = comb_non_3_1.get()
+                                detype = comb_non_3_2.get()
+                                name = entry_non_3_2.get()
+                                description = entry_non_3_4.get()
+                                gst = comb_non_3_3.get()
+                                deftaxcode = comb_non_3_4.get()
+                                balance = 0
+                                today = datetime.today()
+                                asof = today.strftime("%Y-%m-%d")
+                                balfordisp = 0
+
+                                #----------------------
+                                usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
+                                usrp_val = (nm_ent.get(),)
+                                fbcursor.execute(usrp_sql,usrp_val)
+                                usrp_data_1 = fbcursor.fetchone()
+
+                                cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                                cmpp_val = (usrp_data_1[0],)
+                                fbcursor.execute(cmpp_sql,cmpp_val)
+                                cmpp_data = fbcursor.fetchone()
+                                cid = cmpp_data[0]
+
+                                #product id --------------
+                                if acctype == "Expenses":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (14,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_2 = fbcursor.fetchone()
+                                else:
+                                    pass
+                                
+                                productid = product_data_2[0]
+
+                                #-------------------------
+                                acctype_sql = "SELECT accountname FROM app1_accountype WHERE accountname=%s"
+                                acctype_val = (comb_non_3_2.get(),)
+                                fbcursor.execute(acctype_sql,acctype_val)
+                                acctype_data = fbcursor.fetchone()
+
+                                acct_sql = "SELECT name,cid_id FROM app1_accounts WHERE name=%s AND cid_id=%s"
+                                acct_val = (entry_non_3_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct_sql,acct_val)
+                                acct_data = fbcursor.fetchone()
+
+                                acct1_sql = "SELECT name,cid_id FROM app1_accounts1 WHERE name=%s AND cid_id=%s"
+                                acct1_val = (entry_non_3_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct1_sql,acct1_val)
+                                acct1_data = fbcursor.fetchone()
+                                print(acct1_data)
+
+                                if not acctype_data and not acct_data or not acct1_data:
+                                    ins_acctype_sql = "INSERT INTO app1_accountype(cid_id,accountname,accountbal) VALUES(%s,%s,%s)"
+                                    ins_acctype_val= (cmpp_data[0],detype,balance)
+                                    fbcursor.execute(ins_acctype_sql,ins_acctype_val)
+                                    finsysdb.commit()
+
+                                    if acctype == "Expenses":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (14,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+
+                                        #--------------------------
+                                        i_ac_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        i_ac_val = (14,detype,name,description,gst,deftaxcode,balance,asof,balfordisp,cid,pro_data[0],productid)
+                                        fbcursor.execute(i_ac_sql,i_ac_val)
+                                        finsysdb.commit()
+                                    else:
+                                        pass
+
+                                    sel_accts1_sql = "SELECT * FROM app1_accounts1 WHERE cid_id=%s"
+                                    sel_accts1_val = (cid,)
+                                    fbcursor.execute(sel_accts1_sql,sel_accts1_val)
+                                    sel_accts1_data = fbcursor.fetchone()
+
+                                    bal = sel_accts1_data[7] + float(balance)
+                                    upd_accts1_sql = "UPDATE app1_accounts1 SET balance=%s WHERE cid_id=%s"
+                                    upd_accts1_val = (bal,cid,)
+                                    fbcursor.execute(upd_accts1_sql,upd_accts1_val)
+                                    finsysdb.commit()
+
+                                    pro_frame_3_2.destroy()
+                                    pro_frame_3.grid(row=0,column=0,sticky='nsew')
+
 
                             p_canvas_3_2.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('eapoly1'))
 
@@ -8357,14 +8859,14 @@ def main_sign_in():
                             window_label_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=label_1,tags=('ealabel2'))
 
                             comb_non_3_1 = ttk.Combobox(p_canvas_3_2, font=('arial 10'))
-                            comb_non_3_1['values'] = ("Expense",)
+                            comb_non_3_1['values'] = ("Expenses",)
                             comb_non_3_1.current(0)
                             window_comb_non_3_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_3_1,tags=('eacombo1'))
 
                             label_1 = Label(p_canvas_3_2,width=5,height=1,text="*Name", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=label_1,tags=('ealabel3'))
 
-                            entry_non_3_2=Entry(p_canvas_3_2,width=90,justify=LEFT,background='#2f516f')
+                            entry_non_3_2=Entry(p_canvas_3_2,width=90,justify=LEFT,background='#2f516f',foreground="white")
                             window_entry_non_3_2 = p_canvas_3_2.create_window(0, 0, anchor="nw", height=30,window=entry_non_3_2,tags=('eaentry1'))
 
                             label_1 = Label(p_canvas_3_2,width=10,height=1,text="*Detail Type", font=('arial 12'),background="#1b3857",fg="white") 
@@ -8385,14 +8887,15 @@ def main_sign_in():
                             non_text_3.insert(END, 'Use Cash and Cash Equivalents to track cash or assets that can be converted into cash immediately. For example, marketable securities and Treasury bills.')
                             window_non_text_3 = p_canvas_3_2.create_window(0, 0, anchor="nw",window=non_text_3,tags=('eatext1'))
 
-                            chk_str_non_3_1 = StringVar()
-                            chkbtn_non_3_1 = Checkbutton(p_canvas_3_2, text = "Is sub-account", variable = chk_str_non_3_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_non_3_1.select()
+                            def sub_check_5():
+                                comb_non_3_3.config(state=NORMAL if chk_str_non_3_1.get() else DISABLED)
+
+                            chk_str_non_3_1 = IntVar()
+                            chkbtn_non_3_1 = Checkbutton(p_canvas_3_2, text = "Is sub-account", variable = chk_str_non_3_1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=sub_check_5)
                             window_chkbtn_non_3_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=chkbtn_non_3_1,tags=('eacheck1'))
 
-                            comb_non_3_3 = ttk.Combobox(p_canvas_3_2, font=('arial 10'))
+                            comb_non_3_3 = ttk.Combobox(p_canvas_3_2, font=('arial 10'),state=DISABLED)
                             comb_non_3_3['values'] = ("Deferred CGST","Deferred GST Input Credit","Deferred IGST","Deferred Krishi Kalyan Cess Input Credit","Deferred Service Tax Input Credit","Deferred SGST","Deferred VAT Input Credit","GST Refund","Inventory Asset","Paid Insurance","Service Tax Refund","TDS Receivable","Uncategorised Asset","Accumulated Depreciation","Building and Improvements","Furniture and Equipment","Land","Leasehold Improvements","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi Kalyan Cess","Input Krishi Kalyan Cess RCM","Input Service Tax","Input Service Tax RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Input VAT 5%","Krishi Kalyan Cess Payable","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output Service Tax","Output Sevice Tax RCM","Output SGST","Output SGST Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","Service Tax Payable","service Tax Suspense","SGST Payable","SGST Suspense","Swachh Barath Cess Payable" ,"Swachh Barath Cess Suspense" ,"TDS Payable" ,"VAT Payable","VAT Suspense","Opening Balance","Equity",)
-                            comb_non_3_3.current(0)
                             window_comb_non_3_3 = p_canvas_3_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_3_3,tags=('eacombo3'))
 
                             label_1 = Label(p_canvas_3_2,width=15,height=1,text="Default Tax Code", font=('arial 12'),background="#1b3857",fg="white") 
@@ -8400,10 +8903,9 @@ def main_sign_in():
 
                             comb_non_3_4 = ttk.Combobox(p_canvas_3_2, font=('arial 10'))
                             comb_non_3_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
-                            comb_non_3_4.current(0)
                             window_comb_non_3_4 = p_canvas_3_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_non_3_4,tags=('eacombo4'))
 
-                            non_sub_btn_3_1=Button(p_canvas_3_2,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                            non_sub_btn_3_1=Button(p_canvas_3_2,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=non_exp_acc_create_2)
                             window_non_sub_btn_3_1 = p_canvas_3_2.create_window(0, 0, anchor="nw", window=non_sub_btn_3_1,tags=('eabutton1'))
 
                             def n_back_2_():
@@ -9194,6 +9696,26 @@ def main_sign_in():
                         label_1 = Label(p_canvas_4,width=15,height=1,text="Income account", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_1 = p_canvas_4.create_window(0, 0, anchor="nw", window=label_1,tags=('splabel16'),state=HIDDEN)
 
+                        sql = "select * from auth_user where username=%s"
+                        val = (nm_ent.get(),)
+                        fbcursor.execute(sql,val,)
+                        udtl = fbcursor.fetchone()
+
+                        sql = "select * from app1_company where id_id=%s"
+                        val = (udtl[0],)
+                        fbcursor.execute(sql,val,)
+                        cdtl = fbcursor.fetchone()
+
+
+                        sql = "select name from app1_accounts where detype=%s and cid_id=%s"
+                        val = ('Account Receivable(Debtors)',cdtl[0],)
+                        fbcursor.execute(sql,val,)
+                        ser_in_ac_data = fbcursor.fetchall()
+                        ac_data_6 = []
+                        for i in ser_in_ac_data:
+                            ac_data_6.append(i[0])
+                        ac_data_6.insert(0,"Choose...")
+
                         
                         comb_ser_item_6 = ttk.Combobox(p_canvas_4, font=('arial 10'))
                         comb_ser_item_6['values'] = ("Choose...","Billable Expense income","Product Sales","Sales-Hardware","Sales-Software","Sales-Support and Maintanance","Sales Discounts","Sales of Product Income","Cost of sales","Equipment Rental for Jobs","Uncategorised Income","Advertising/Promotional","Bank Charges","Business Licenses and Permitts","Charitable Contributions","Computer and Internet Expense","Depreciation Expense","Dues and Subscriptions","Housekeeping Charges","Insurance Expenses","Insurance Expenses-General Liability Insurance","Insurance Expenses-Health Insurance","Insurance Expenses-Life and Disability Insurance","Insurance Expenses-Professional Liability","Internet Expenses","Meals and Enetrtainments","Office Suppliers","Postage and Delivery","Printing and Reprooduction","Professional Fees","Purchases","Rent Expense","Repair and Maintananace","Small Tools and Equipments","Swachh Barath Cess Expense","Taxes-Property","Telephone Expense","Travel Expense","Uncategorised Expense","Utilities","Finance charge Income","Insurance Proceeds Received","Interest Income","Proceeds From Sale os Assets","Shipping and delivery Income","Ask My Accountant","CGST Write-off","GST Write-off","IGST Write-off","Miscellaneous Expense","Political Contributions","Reconcilation Discrepancies","SGST Write-off","Vehicles","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi kalyan Cess","Input Krishi kalyan Cess RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Krishi Kalyan Cess Payable","Input VAT 5%","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output SGST Tax RCM","Output Service Tax","Output Service Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","SGST Payable","Service Tax Payable","Srvice Tax Suspense","Swachh Barath Cess Payable","TDS Payable","VAT Payable","VAT Suspense","Deferred CGST","Deferred GST Input credit","Deferred IGST","Deferred SGST","Deferred Service Tax Input Credit","Deferred VAT Input Credit","GST Refund","Inventory Asset","Krishi Kalyan Cess Refund","Prepaid Insurance","Sevice Tax Refund","TDS Receivable","Uncategorised Asset","Undeposited Fund","Billable Expense Income","Consulting Income","Product Sales","Sales","Sales-Hardware","Sales-Software","Sales-Support and maintanance","Sales Discount","Sales of Product Income","Uncategorised Income","accumulated Depreciation","Building and Improvements","Furniture and Equipments","Land","Leasehold Improvements","Vehicles","Retained Earnings","Cost of Sales","Equipment Rental for Jobs","Freight and Shipping Costs","Merchant Account Fees","Purchases-Hardware for Resales","Purchases-Software for Resales","Subcontracted Services","Tools and Craft Suppliers",)
@@ -9310,6 +9832,318 @@ def main_sign_in():
                             p_canvas_4_1.config(yscrollcommand=vertibar.set)
                             p_canvas_4_1.grid(row=0,column=0,sticky='nsew')
 
+                            def ser_inc_acc_create_1():
+                                acctype = comb_ser_2_1.get()
+                                detype = comb_ser_2_2.get()
+                                name = entry_ser_2_2.get()
+                                description = entry_ser_2_4.get()
+                                gst = comb_ser_2_3.get()
+                                deftaxcode = comb_ser_2_4.get()
+                                balance = 0
+                                today = datetime.today()
+                                asof = today.strftime("%Y-%m-%d")
+                                balfordisp = 0
+
+                                #----------------------
+                                usrp_sql = "SELECT id FROM auth_user WHERE username=%s"
+                                usrp_val = (nm_ent.get(),)
+                                fbcursor.execute(usrp_sql,usrp_val)
+                                usrp_data_1 = fbcursor.fetchone()
+
+                                cmpp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                                cmpp_val = (usrp_data_1[0],)
+                                fbcursor.execute(cmpp_sql,cmpp_val)
+                                cmpp_data = fbcursor.fetchone()
+                                cid = cmpp_data[0]
+
+                                #product id --------------
+                                if acctype == "Account Receivable(Debtors)":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (1,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Current Assets":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (2,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Bank":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (3,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Fixed Assets":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (4,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Non-Current Assets":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (5,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Accounts Payable(Creditors)":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (6,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Credit Card":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (7,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Current Liabilities":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (8,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Non-Current Liabilities":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (9,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Equity":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (10,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Income":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (11,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Other Income":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (12,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Cost of Goods Sold":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (13,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Expenses":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (14,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                elif acctype == "Other Expenses":
+                                    pro_sql = "SELECT * FROM producttable WHERE Pid=%s"
+                                    pro_val = (15,)
+                                    fbcursor.execute(pro_sql,pro_val)
+                                    product_data_3 = fbcursor.fetchone()
+                                else:
+                                    pass
+                                
+                                productid = product_data_3[0]
+                                #-----------------
+
+                                acctype_sql = "SELECT accountname FROM app1_accountype WHERE accountname=%s"
+                                acctype_val = (comb_ser_2_2.get(),)
+                                fbcursor.execute(acctype_sql,acctype_val)
+                                acctype_data = fbcursor.fetchone()
+
+                                acct_sql = "SELECT name,cid_id FROM app1_accounts WHERE name=%s AND cid_id=%s"
+                                acct_val = (entry_ser_2_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct_sql,acct_val)
+                                acct_data = fbcursor.fetchone()
+
+                                acct1_sql = "SELECT name,cid_id FROM app1_accounts1 WHERE name=%s AND cid_id=%s"
+                                acct1_val = (entry_ser_2_2.get(),cmpp_data[0])
+                                fbcursor.execute(acct1_sql,acct1_val)
+                                acct1_data = fbcursor.fetchone()
+                                
+
+                                if not acctype_data and not acct_data or not acct1_data:
+                                    ins_acctype_sql = "INSERT INTO app1_accountype(cid_id,accountname,accountbal) VALUES(%s,%s,%s)"
+                                    ins_acctype_val= (cmpp_data[0],detype,balance)
+                                    fbcursor.execute(ins_acctype_sql,ins_acctype_val)
+                                    finsysdb.commit()
+
+                                    if acctype == "Account Receivable(Debtors)":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (1,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (1,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Current Assets":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (2,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (2,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Bank":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (3,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (3,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Fixed Assets":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (4,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (4,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Non-Current Assets":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (5,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (5,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Accounts Payable(Creditors)":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (6,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (6,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Credit Card":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (7,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (7,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Current Liabilities":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (8,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (8,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Non-Current Liabilities":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (9,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (9,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Equity":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (10,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (10,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Income":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (11,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (11,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Other Income":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (12,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (12,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Cost of Goods Sold":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (13,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (13,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Expenses":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (14,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (14,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    elif acctype == "Other Expenses":
+                                        #pro id ------------
+                                        pro_sql = "SELECT * FROM app1_accountype WHERE accountypeid=%s"
+                                        pro_val = (15,)
+                                        fbcursor.execute(pro_sql,pro_val)
+                                        pro_data = fbcursor.fetchone()
+                                        #--------------------
+                                        ins_accts_sql = "INSERT INTO app1_accounts(acctype,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid_id,proid_id,productid_id) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                                        ins_accts_val = (15,detype,name,description,gst,balfordisp,deftaxcode,balance,asof,cid,pro_data[0],productid)
+                                        fbcursor.execute(ins_accts_sql,ins_accts_val)
+                                        finsysdb.commit()
+                                    else:
+                                        pass
+
+                                    sel_accts1_sql = "SELECT * FROM app1_accounts1 WHERE cid_id=%s"
+                                    sel_accts1_val = (cid,)
+                                    fbcursor.execute(sel_accts1_sql,sel_accts1_val)
+                                    sel_accts1_data = fbcursor.fetchone()
+
+                                    bal = sel_accts1_data[7] + float(balance)
+                                    upd_accts1_sql = "UPDATE app1_accounts1 SET balance=%s WHERE cid_id=%s"
+                                    upd_accts1_val = (bal,cid,)
+                                    fbcursor.execute(upd_accts1_sql,upd_accts1_val)
+                                    finsysdb.commit()
+
+                                    pro_frame_4_1.destroy()
+                                    pro_frame_4.grid(row=0,column=0,sticky='nsew')
+
+
 
                             p_canvas_4_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=('sapoly1'))
 
@@ -9323,7 +10157,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_4_1,width=10,height=1,text="Account Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_4_1.create_window(0, 0, anchor="nw", window=label_1,tags=('salabel2'))
 
-                            comb_ser_2_1 = ttk.Combobox(p_canvas_4_1, font=('arial 10'),foreground="white")
+                            comb_ser_2_1 = ttk.Combobox(p_canvas_4_1, font=('arial 10'))
                             comb_ser_2_1['values'] = ("Account Receivable(Debtors)","Current Assets","Bank","Fixed Assets","Non-Current Assets","Accounts Payable(Creditors)","Credit Card","Current Liabilities","Non-Current Liabilities","Equity","Income","Other Income","Cost of Goods Sold","Expenses","Other Expenses",)
                             comb_ser_2_1.current(0)
                             window_comb_ser_2_1 = p_canvas_4_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_2_1,tags=('sacombo1'))
@@ -9337,7 +10171,7 @@ def main_sign_in():
                             label_1 = Label(p_canvas_4_1,width=10,height=1,text="*Detail Type", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_4_1.create_window(0, 0, anchor="nw", window=label_1,tags=('salabel4'))
 
-                            comb_ser_2_2 = ttk.Combobox(p_canvas_4_1, font=('arial 10'),foreground="white")
+                            comb_ser_2_2 = ttk.Combobox(p_canvas_4_1, font=('arial 10'))
                             comb_ser_2_2['values'] = ("Account Receivable(Debtors)",)
                             comb_ser_2_2.current(0)
                             window_comb_ser_2_2 = p_canvas_4_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_2_2,tags=('sacombo2'))
@@ -9352,25 +10186,25 @@ def main_sign_in():
                             ser_text_2.insert(END, 'Use Cash and Cash Equivalents to track cash or assets that can be converted into cash immediately. For example, marketable securities and Treasury bills.')
                             window_ser_text_2 = p_canvas_4_1.create_window(0, 0, anchor="nw",window=ser_text_2,tags=('satext1'))
 
-                            chk_str_ser_2_1 = StringVar()
-                            chkbtn_ser_2_1 = Checkbutton(p_canvas_4_1, text = "Is sub-account", variable = chk_str_ser_2_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_ser_2_1.select()
+                            def sub_check_6():
+                                comb_ser_2_3.config(state=NORMAL if chk_str_ser_2_1.get() else DISABLED)
+
+                            chk_str_ser_2_1 = IntVar()
+                            chkbtn_ser_2_1 = Checkbutton(p_canvas_4_1, text = "Is sub-account", variable = chk_str_ser_2_1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=sub_check_6)
                             window_chkbtn_ser_2_1 = p_canvas_4_1.create_window(0, 0, anchor="nw", window=chkbtn_ser_2_1,tags=('sacheck1'))
 
-                            comb_ser_2_3 = ttk.Combobox(p_canvas_4_1, font=('arial 10'),foreground="white")
+                            comb_ser_2_3 = ttk.Combobox(p_canvas_4_1, font=('arial 10'),state=DISABLED)
                             comb_ser_2_3['values'] = ("Deferred CGST","Deferred GST Input Credit","Deferred IGST","Deferred Krishi Kalyan Cess Input Credit","Deferred Service Tax Input Credit","Deferred SGST","Deferred VAT Input Credit","GST Refund","Inventory Asset","Paid Insurance","Service Tax Refund","TDS Receivable","Uncategorised Asset","Accumulated Depreciation","Building and Improvements","Furniture and Equipment","Land","Leasehold Improvements","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi Kalyan Cess","Input Krishi Kalyan Cess RCM","Input Service Tax","Input Service Tax RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Input VAT 5%","Krishi Kalyan Cess Payable","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output Service Tax","Output Sevice Tax RCM","Output SGST","Output SGST Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","Service Tax Payable","service Tax Suspense","SGST Payable","SGST Suspense","Swachh Barath Cess Payable" ,"Swachh Barath Cess Suspense" ,"TDS Payable" ,"VAT Payable","VAT Suspense","Opening Balance","Equity",)
-                            comb_ser_2_3.current(0)
                             window_comb_ser_2_3 = p_canvas_4_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_2_3,tags=('sacombo3'))
 
                             label_1 = Label(p_canvas_4_1,width=15,height=1,text="Default Tax Code", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_4_1.create_window(0, 0, anchor="nw", window=label_1,tags=('salabel6'))
 
-                            comb_ser_2_4 = ttk.Combobox(p_canvas_4_1, font=('arial 10'),foreground="white")
+                            comb_ser_2_4 = ttk.Combobox(p_canvas_4_1, font=('arial 10'))
                             comb_ser_2_4['values'] = ("18.0% IGST","14.00% ST","0% IGST","Out of Scope","0% GST","14.5% ST","14.0% VAT","6.0% IGST","28.0% IGST","15.0% ST","28.0% GST","12.0% GST","18.0% GST","3.0% GST","0.2% IGST","5.0% GST","6.0% GST","0.2% GST","Exempt IGST","3.0% IGST","4.0% VAT","5.0% IGST","12.36% ST","5.0% VAT","Exempt GST","12.0% IGST","2.0% CST",)
-                            comb_ser_2_4.current(0)
                             window_comb_ser_2_4 = p_canvas_4_1.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_2_4,tags=('sacombo4'))
 
-                            ser_sub_btn_2_1=Button(p_canvas_4_1,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12')
+                            ser_sub_btn_2_1=Button(p_canvas_4_1,text='Create', width=20,height=2,foreground="white",background="#1b3857",font='arial 12',command=ser_inc_acc_create_1)
                             window_ser_sub_btn_2_1 = p_canvas_4_1.create_window(0, 0, anchor="nw", window=ser_sub_btn_2_1,tags=('sabutton1'))
 
                             def s_back_1_():
@@ -9932,14 +10766,15 @@ def main_sign_in():
                             ser_text_3.insert(END, 'Use Cash and Cash Equivalents to track cash or assets that can be converted into cash immediately. For example, marketable securities and Treasury bills.')
                             window_ser_text_3 = p_canvas_4_2.create_window(0, 0, anchor="nw",window=ser_text_3,tags=('xatext1'))
 
-                            chk_str_ser_3_1 = StringVar()
-                            chkbtn_ser_3_1 = Checkbutton(p_canvas_4_2, text = "Is sub-account", variable = chk_str_ser_3_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_ser_3_1.select()
+                            def sub_check_7():
+                                comb_ser_3_3.config(state=NORMAL if chk_str_ser_3_1.get() else DISABLED)
+
+                            chk_str_ser_3_1 = IntVar()
+                            chkbtn_ser_3_1 = Checkbutton(p_canvas_4_2, text = "Is sub-account", variable = chk_str_ser_3_1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
                             window_chkbtn_ser_3_1 = p_canvas_4_2.create_window(0, 0, anchor="nw", window=chkbtn_ser_3_1,tags=('xacheck1'))
 
-                            comb_ser_3_3 = ttk.Combobox(p_canvas_4_2, font=('arial 10'),foreground="white")
+                            comb_ser_3_3 = ttk.Combobox(p_canvas_4_2, font=('arial 10'),state=DISABLED)
                             comb_ser_3_3['values'] = ("Deferred CGST","Deferred GST Input Credit","Deferred IGST","Deferred Krishi Kalyan Cess Input Credit","Deferred Service Tax Input Credit","Deferred SGST","Deferred VAT Input Credit","GST Refund","Inventory Asset","Paid Insurance","Service Tax Refund","TDS Receivable","Uncategorised Asset","Accumulated Depreciation","Building and Improvements","Furniture and Equipment","Land","Leasehold Improvements","CGST Payable","CST Payable","CST Suspense","GST Payable","GST Suspense","IGST Payable","Input CGST","Input CGST Tax RCM","Input IGST","Input IGST Tax RCM","Input Krishi Kalyan Cess","Input Krishi Kalyan Cess RCM","Input Service Tax","Input Service Tax RCM","Input SGST","Input SGST Tax RCM","Input VAT 14%","Input VAT 4%","Input VAT 5%","Krishi Kalyan Cess Payable","Krishi Kalyan Cess Suspense","Output CGST","Output CGST Tax RCM","Output CST 2%","Output IGST","Output IGST Tax RCM","Output Krishi Kalyan Cess","Output Krishi Kalyan Cess RCM","Output Service Tax","Output Sevice Tax RCM","Output SGST","Output SGST Tax RCM","Output VAT 14%","Output VAT 4%","Output VAT 5%","Service Tax Payable","service Tax Suspense","SGST Payable","SGST Suspense","Swachh Barath Cess Payable" ,"Swachh Barath Cess Suspense" ,"TDS Payable" ,"VAT Payable","VAT Suspense","Opening Balance","Equity",)
-                            comb_ser_3_3.current(0)
                             window_comb_ser_3_3 = p_canvas_4_2.create_window(0, 0, anchor="nw", width=540, height=30,window=comb_ser_3_3,tags=('xacombo3'))
 
                             label_1 = Label(p_canvas_4_2,width=15,height=1,text="Default Tax Code", font=('arial 12'),background="#1b3857",fg="white") 
@@ -11160,6 +11995,7 @@ def main_sign_in():
 
                             label_1 = Label(p_canvas_edit_1,width=22,height=1,text="Inventory asset account", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_edit_1.create_window(35, 910, anchor="nw", window=label_1,tags=('ieplabel12'))
+
 
                             comb_inv_edit_i2 = ttk.Combobox(p_canvas_edit_1, font=('arial 10'))
                             comb_inv_edit_i2['values'] = ("Inventory Asset",)
@@ -13528,6 +14364,319 @@ def main_sign_in():
 
                             label_1 = Label(p_canvas_edit_3,width=15,height=1,text="Sales price/rate", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel14'),state=HIDDEN)
+
+                            def edit_ser_tax_check_1():
+                                if comb_eser_item_3.get() == '28.0% GST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '28.0% IGST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '18.0% GST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '18.0% IGST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '15.0% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+15)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '14.5% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+14.5)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '14.00% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '14.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '12.36% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+12.36)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '12.0% GST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '12.0% IGST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '6.0% GST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '5.0% GST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    print(gst)
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '5.0% IGST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '5.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '4.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+4)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '3.0% GST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '3.0% IGST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '2.0% CST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+2)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '0.25% GST (O.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '0.25% IGST (0.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '0% GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == '0% IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == 'Exempt GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == 'Exempt IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_3.get() == 'Out of Scope(0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_s8.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_eser_item_1.get() == True:
+                                        edit_ser_item_s8.delete(0,'end')
+                                        edit_ser_item_s8.insert(0, np)
+                                    else:
+                                        pass
+                                else:
+                                    pass
                             
                             edit_ser_item_s8=Entry(p_canvas_edit_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
                             window_edit_ser_item_s8 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=30,window=edit_ser_item_s8,tags=('sepentry8'),state=HIDDEN)
@@ -13535,8 +14684,7 @@ def main_sign_in():
                             edit_ser_item_s8.insert(0, edit_pser[8])
 
                             chk_str_eser_item_1 = BooleanVar()
-                            chkbtn_eser_item_1 = Checkbutton(p_canvas_edit_3, text = "Inclusive of tax", variable = chk_str_eser_item_1, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_eser_item_1.select()
+                            chkbtn_eser_item_1 = Checkbutton(p_canvas_edit_3, text = "Inclusive of tax", variable = chk_str_eser_item_1, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=edit_ser_tax_check_1)
                             window_chkbtn_eser_item_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=chkbtn_eser_item_1,tags=('sepcbutton1'),state=HIDDEN)
 
                             label_1 = Label(p_canvas_edit_3,width=4,height=1,text="Tax", font=('arial 12'),background="#1b3857",fg="white") 
@@ -13625,6 +14773,319 @@ def main_sign_in():
 
                             label_1 = Label(p_canvas_edit_3,width=5,height=1,text="Cost", font=('arial 12'),background="#1b3857",fg="white") 
                             window_label_1 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=label_1,tags=('seplabel9'),state=HIDDEN)
+
+                            def edit_ser_tax_check_2():
+                                if comb_eser_item_5.get() == '28.0% GST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '28.0% IGST (28%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+28)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '18.0% GST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '18.0% IGST (18%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+18)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '15.0% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+15)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '14.5% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+14.5)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '14.00% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '14.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+14)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '12.36% ST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+12.36)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '12.0% GST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '12.0% IGST (12%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+12)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '6.0% GST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '6.0% IGST (6%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+6)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '5.0% GST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    print(gst)
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '5.0% IGST (5%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '5.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+5)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '4.0% VAT (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+4)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '3.0% GST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '3.0% IGST (3%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+3)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '2.0% CST (100%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+2)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '0.25% GST (O.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '0.25% IGST (0.25%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+0.25)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '0% GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == '0% IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == 'Exempt GST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == 'Exempt IGST (0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                elif comb_eser_item_5.get() == 'Out of Scope(0%)':
+                                    gst = 0.0
+                                    np = 0.0
+                                    n1 = float(edit_ser_item_10.get())
+                                    gst = n1-(n1*(100/(100+0)))
+                                    np = n1-gst
+                                    if chk_str_esser_item_2.get() == True:
+                                        edit_ser_item_10.delete(0,'end')
+                                        edit_ser_item_10.insert(0, np)
+                                    else:
+                                        pass
+                                else:
+                                    pass
                             
                             edit_ser_item_10=Entry(p_canvas_edit_3,width=90,justify=LEFT,background='#2f516f',foreground="white")
                             window_edit_ser_item_10 = p_canvas_edit_3.create_window(0, 0, anchor="nw", height=30,window=edit_ser_item_10,tags=('sepcentry2'),state=HIDDEN)
@@ -13632,8 +15093,7 @@ def main_sign_in():
                             edit_ser_item_10.insert(0, edit_pser[14])
 
                             chk_str_esser_item_2 = BooleanVar()
-                            chkbtn_esser_item_2 = Checkbutton(p_canvas_edit_3, text = "Inclusive of Tax", variable = chk_str_esser_item_2, onvalue = 1, offvalue = 0, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f")
-                            chkbtn_esser_item_2.select()
+                            chkbtn_esser_item_2 = Checkbutton(p_canvas_edit_3, text = "Inclusive of Tax", variable = chk_str_esser_item_2, font=("arial", 12),background="#1b3857",foreground="white",selectcolor="#2f516f",command=edit_ser_tax_check_2)
                             window_chkbtn_esser_item_2 = p_canvas_edit_3.create_window(0, 0, anchor="nw", window=chkbtn_esser_item_2,tags=('sepcbutton2'),state=HIDDEN)
 
                             label_1 = Label(p_canvas_edit_3,width=12,height=1,text="Purchase tax", font=('arial 12'),background="#1b3857",fg="white") 
