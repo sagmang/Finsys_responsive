@@ -51,11 +51,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
 import re
-#from datetime import date,datetime, timedelta
 import webbrowser
-#from datetime import datetime, timedelta
 import datetime
-# from datetime import datetime
+import re
 
 finsysdb = mysql.connector.connect(
     host="localhost", user="root", password="", database="newfinsys", port="3306"
@@ -1511,8 +1509,9 @@ def main_sign_in():
                 fgthdi = ttk.Style()
                 fgthdi.configure('mystyle105.Treeview.Heading', background='#2f516f',State='DISABLE')
 
-                inv_tree = ttk.Treeview(inv_canvas, columns = (1,2,3,4,5,6,7), height = 10, show = "headings",style='mystyle105.Treeview')
-                inv_tree.pack(side = 'top')
+                inv_scrollbar = Scrollbar(inv_frame,orient="vertical")
+                
+                inv_tree = ttk.Treeview(inv_canvas, columns = (1,2,3,4,5,6,7), height = 10, show = "headings",style='mystyle105.Treeview',yscrollcommand=inv_scrollbar.set)
                 inv_tree.heading(1, text="INVOICE NO")
                 inv_tree.heading(2, text="INVOICE DATE")
                 inv_tree.heading(3, text="CUSTOMER")
@@ -1530,6 +1529,9 @@ def main_sign_in():
                 inv_tree.column(7, width = 150)
 
                 window_label_4 = inv_canvas.create_window(0, 0, anchor="nw", window=inv_tree,tags=('itree1'))
+
+                inv_scrollbar.config(command=inv_tree.yview)
+                inv_scrollbar.grid(row=0,column=2,sticky='ns')
 
                 inv_sql="select * from auth_user where username=%s"
                 inv_val=(nm_ent.get(),)
@@ -2206,6 +2208,24 @@ def main_sign_in():
                         label_2 = Label(inv_canvas_2,width=10,height=1,text="GSTIN", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = inv_canvas_2.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel9"))
 
+                        def igst_validate(value):
+        
+                            """
+                            Validat the email entry
+                            :param value:
+                            :return:
+                            """
+                            pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                            if re.fullmatch(pattern, value) is None:
+                                
+                                return False
+
+                            ic_entry_cus_5.config(fg="white")
+                            return True
+
+                        def igst_invalidate():
+                            ic_entry_cus_5.config(fg="red")
+
 
                         def ic_gst_in(event):
                             if ic_entry_cus_5.get()=="29APPCK7465F1Z1":
@@ -2213,7 +2233,10 @@ def main_sign_in():
                             else:
                                 pass
                         
-                        ic_entry_cus_5=Entry(inv_canvas_2,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
+                        ic_entry_cus_5=Entry(inv_canvas_2,width=34,justify=LEFT,background='#2f516f',font=('arial 10'))
+                        ival_gst = (inv_canvas_2.register(igst_validate), '%P')
+                        iival_gst = (inv_canvas_2.register(igst_invalidate),)
+                        ic_entry_cus_5.config(validate='focusout', validatecommand=ival_gst, invalidcommand=iival_gst)
                         window_ic_entry_cus_5 = inv_canvas_2.create_window(0, 0, anchor="nw", height=30,window=ic_entry_cus_5, tags=("acentry5"))
                         ic_entry_cus_5.insert(0,"29APPCK7465F1Z1")
                         ic_entry_cus_5.bind("<Button-1>",ic_gst_in)
@@ -2227,7 +2250,28 @@ def main_sign_in():
                             else:
                                 pass
 
-                        ic_entry_cus_6=Entry(inv_canvas_2,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
+                        def ipan_validate(value):
+        
+                            """
+                            Validat the email entry
+                            :param value:
+                            :return:
+                            """
+                            pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                            if re.fullmatch(pattern, value) is None:
+                                
+                                return False
+
+                            ic_entry_cus_6.config(fg="white")
+                            return True
+
+                        def ipan_invalidate():
+                            ic_entry_cus_6.config(fg="red")
+
+                        ic_entry_cus_6=Entry(inv_canvas_2,width=34,justify=LEFT,background='#2f516f',font=('arial 10'))
+                        ival_pan = (inv_canvas_2.register(ipan_validate), '%P')
+                        iival_pan = (inv_canvas_2.register(ipan_invalidate),)
+                        ic_entry_cus_6.config(validate='focusout', validatecommand=ival_pan, invalidcommand=iival_pan)
                         window_ic_entry_cus_6 = inv_canvas_2.create_window(0, 0, anchor="nw", height=30,window=ic_entry_cus_6, tags=("acentry6"))
                         ic_entry_cus_6.insert(0,"APPCK7465F")
                         ic_entry_cus_6.bind("<Button-1>",ic_pan_no)
@@ -2235,7 +2279,28 @@ def main_sign_in():
                         label_2 = Label(inv_canvas_2,width=5,height=1,text="Email", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = inv_canvas_2.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel11"))
 
-                        ic_entry_cus_7=Entry(inv_canvas_2,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                        def iemail_validate(value):
+        
+                            """
+                            Validat the email entry
+                            :param value:
+                            :return:
+                            """
+                            pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                            if re.fullmatch(pattern, value) is None:
+                                
+                                return False
+
+                            ic_entry_cus_7.config(fg="white")
+                            return True
+
+                        def iemail_invalidate():
+                            ic_entry_cus_7.config(fg="red")
+
+                        ic_entry_cus_7=Entry(inv_canvas_2,width=40,justify=LEFT,background='#2f516f')
+                        ival_email = (inv_canvas_2.register(iemail_validate), '%P')
+                        iival_email = (inv_canvas_2.register(iemail_invalidate),)
+                        ic_entry_cus_7.config(validate='focusout', validatecommand=ival_email, invalidcommand=iival_email)
                         window_ic_entry_cus_7 = inv_canvas_2.create_window(0, 0, anchor="nw", height=30,window=ic_entry_cus_7, tags=("acentry7"))
 
                         label_2 = Label(inv_canvas_2,width=10,height=1,text="Website", font=('arial 12'),background="#1b3857",fg="white") 
@@ -2706,8 +2771,7 @@ def main_sign_in():
                     ai_entry_p_1_2=scrolledtext.ScrolledText(inv_canvas_1,width=21,background='#2f516f',foreground="white")
                     window_ai_entry_p_1_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1_2,tags=('aientry4'))
 
-                    ai_entry_p_1_3=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
-                    window_ai_entry_p_1_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1_3,tags=('aientry5'))
+                    
 
                     ai_entry_p_1_4=Spinbox(inv_canvas_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_p_1_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1_4,tags=('aientry6'))
@@ -2719,21 +2783,168 @@ def main_sign_in():
                         ai_entry_p_1_5.delete(0, END)
                         ai_entry_p_1_5.insert(0,mul_i)
 
-                        n1 = ai_entry_p_1_5.get()
-                        n2 = ai_entry_2_4.get()
-                        n3 = ai_entry_3_4.get()
-                        n4 = ai_entry_4_4.get()
-                        sum_i = sum(n1,n2)
-                        sum_ii = sum(n3,n4)
-                        sum_iii = sum(sum_i,sum_ii)
+                        try:
+                            n1 = float(en_str_1.get())
+                        except:
+                            n1=0.0
+                        try:
+                            n2 = float(en_str_2.get())
+                        except:
+                            n2 = 0.0
+                        try:
+                            n3 = float(en_str_3.get())
+                        except:
+                            n3 = 0.0
+                        try:
+                            n4 = float(en_str_4.get())
+                        except:
+                            n4 = 0.0
+                        sum_i = n1+n2+n3+n4
                         sub_entry_1.delete(0, END)
-                        sub_entry_1.insert(0,sum_iii)
+                        sub_entry_1.insert(0,round(sum_i,2))
+
+                        global t1,t2,t3,t4
+                        if ai_comb_p_1_2.get() == '28.0% GST (28%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(28/100)
+                        elif ai_comb_p_1_2.get() == '28.0% IGST (28%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(28/100)
+                        elif ai_comb_p_1_2.get() == '18.0% GST (18%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(18/100)
+                        elif ai_comb_p_1_2.get() == '18.0% IGST (18%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(18/100)
+                        elif ai_comb_p_1_2.get() == '15.0% ST (100%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(15/100)
+                        elif ai_comb_p_1_2.get() == '14.5% ST (100%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(14.5/100)
+                        elif ai_comb_p_1_2.get() == '14.00% ST (100%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(14/100)
+                        elif ai_comb_p_1_2.get() == '14.0% VAT (100%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(14/100)
+                        elif ai_comb_p_1_2.get() == '12.36% ST (100%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(12.36/100)
+                        elif ai_comb_p_1_2.get() == '12.0% GST (12%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(12/100)
+                        elif ai_comb_p_1_2.get() == '12.0% IGST (12%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(12/100)
+                        elif ai_comb_p_1_2.get() == '6.0% GST (6%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(6/100)
+                        elif ai_comb_p_1_2.get() == '6.0% IGST (6%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(6/100)
+                        elif ai_comb_p_1_2.get() == '5.0% GST (5%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(5/100)
+                        elif ai_comb_p_1_2.get() == '5.0% IGST (5%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(5/100)
+                        elif ai_comb_p_1_2.get() == '5.0% VAT (100%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(5/100)
+                        elif ai_comb_p_1_2.get() == '4.0% VAT (100%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(4/100)
+                        elif ai_comb_p_1_2.get() == '3.0% GST (3%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(3/100)
+                        elif ai_comb_p_1_2.get() == '3.0% IGST (3%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(3/100)
+                        elif ai_comb_p_1_2.get() == '2.0% CST (100%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(2/100)
+                        elif ai_comb_p_1_2.get() == '0.25% GST (O.25%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(0.25/100)
+                        elif ai_comb_p_1_2.get() == '0.25% IGST (0.25%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(0.25/100)
+                        elif ai_comb_p_1_2.get() == '0% GST (0%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(0/100)
+                        elif ai_comb_p_1_2.get() == '0% IGST (0%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(0/100)
+                        elif ai_comb_p_1_2.get() == 'Exempt GST (0%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(0/100)
+                        elif ai_comb_p_1_2.get() == 'Exempt IGST (0%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(0/100)
+                        elif ai_comb_p_1_2.get() == 'Out of Scope(0%)':
+                            y1 = float(en_str_1.get())
+                            t1 = y1*(0/100)
+                        else:
+                            pass
+
+                        try:
+                            tm1  = t1
+                        except:
+                            pass
+                        try:
+                            tm2 = t2
+                        except:
+                            tm2 = 0.0
+                        try:
+                            tm3 = t3
+                        except:
+                            tm3 = 0.0
+                        try:
+                            tm4  = t4
+                        except:
+                            tm4 = 0.0
+                        
+                        
+                        sum_ii = tm1+tm2+tm3+tm4
+                        tax_entry_1.delete(0, END)
+                        tax_entry_1.insert(0,round(sum_ii,2))
+
+                        try:
+                            m1 = float(sub_str.get())
+                        except:
+                            m1 =0.0
+                        try:
+                            m2 = float(tax_str.get())
+                        except:
+                            m2 =0.0
+
+                        sum_iii = m1+m2
+                        grand_entry_1.delete(0, END)
+                        grand_entry_1.insert(0,round(sum_iii,2))
+
+
+                        try:
+                            x1 = float(grd_str.get())
+                        except:
+                            x1 = 0.0
+                        try:
+                            x2 = float(amount_entry_1.get())
+                        except:
+                            x2 = 0.0
+                        sum_iv = x1-x2
+                        bal_entry_1.delete(0, END)
+                        bal_entry_1.insert(0,round(sum_iv,2))
 
                         
-
-                    ai_entry_p_1_5=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                    ai_entry_p_1_3=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_ai_entry_p_1_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1_3,tags=('aientry5'))
+                    ai_entry_p_1_3.bind("<Button-1>",multiply_num_i1)
+                        
+                    en_str_1 = StringVar()
+                    ai_entry_p_1_5=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white",textvariable=en_str_1)
                     window_ai_entry_p_1_5 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_1_5,tags=('aientry7'))
-                    ai_entry_p_1_5.bind("<Button-1>",multiply_num_i1)
+                    
 
 
                     ai_comb_p_1_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'))
@@ -2755,8 +2966,7 @@ def main_sign_in():
                     ai_entry_p_2_1=scrolledtext.ScrolledText(inv_canvas_1,width=21,background='#2f516f',foreground="white")
                     window_ai_entry_p_2_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_p_2_1,tags=('aientry11'))
 
-                    ai_entry_2_2=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
-                    window_ai_entry_2_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_2_2,tags=('aientry14'))
+                    
 
                     ai_entry_2_3=Spinbox(inv_canvas_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_2_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_2_3,tags=('aientry17'))
@@ -2768,21 +2978,166 @@ def main_sign_in():
                         ai_entry_2_4.delete(0, END)
                         ai_entry_2_4.insert(0,mul_i)
 
-                        n1 = ai_entry_p_1_5.get()
-                        n2 = ai_entry_2_4.get()
-                        n3 = ai_entry_3_4.get()
-                        n4 = ai_entry_4_4.get()
-                        sum_i = sum(n1,n2)
-                        sum_ii = sum(n3,n4)
-                        sum_iii = sum(sum_i,sum_ii)
+                        try:
+                            n1 = float(en_str_1.get())
+                        except:
+                            n1=0.0
+                        try:
+                            n2 = float(en_str_2.get())
+                        except:
+                            n2 = 0.0
+                        try:
+                            n3 = float(en_str_3.get())
+                        except:
+                            n3 = 0.0
+                        try:
+                            n4 = float(en_str_4.get())
+                        except:
+                            n4 = 0.0
+                        sum_i = n1+n2+n3+n4
                         sub_entry_1.delete(0, END)
-                        sub_entry_1.insert(0,sum_iii)
+                        sub_entry_1.insert(0,round(sum_i,2))
 
+                        global t1,t2,t3,t4
+                        if ai_comb_P_2_2.get() == '28.0% GST (28%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(28/100)
+                        elif ai_comb_P_2_2.get() == '28.0% IGST (28%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(28/100)
+                        elif ai_comb_P_2_2.get() == '18.0% GST (18%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(18/100)
+                        elif ai_comb_P_2_2.get() == '18.0% IGST (18%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(18/100)
+                        elif ai_comb_P_2_2.get() == '15.0% ST (100%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(15/100)
+                        elif ai_comb_P_2_2.get() == '14.5% ST (100%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(14.5/100)
+                        elif ai_comb_P_2_2.get() == '14.00% ST (100%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(14/100)
+                        elif ai_comb_P_2_2.get() == '14.0% VAT (100%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(14/100)
+                        elif ai_comb_P_2_2.get() == '12.36% ST (100%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(12.36/100)
+                        elif ai_comb_P_2_2.get() == '12.0% GST (12%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(12/100)
+                        elif ai_comb_P_2_2.get() == '12.0% IGST (12%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(12/100)
+                        elif ai_comb_P_2_2.get() == '6.0% GST (6%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(6/100)
+                        elif ai_comb_P_2_2.get() == '6.0% IGST (6%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(6/100)
+                        elif ai_comb_P_2_2.get() == '5.0% GST (5%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(5/100)
+                        elif ai_comb_P_2_2.get() == '5.0% IGST (5%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(5/100)
+                        elif ai_comb_P_2_2.get() == '5.0% VAT (100%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(5/100)
+                        elif ai_comb_P_2_2.get() == '4.0% VAT (100%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(4/100)
+                        elif ai_comb_P_2_2.get() == '3.0% GST (3%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(3/100)
+                        elif ai_comb_P_2_2.get() == '3.0% IGST (3%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(3/100)
+                        elif ai_comb_P_2_2.get() == '2.0% CST (100%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(2/100)
+                        elif ai_comb_P_2_2.get() == '0.25% GST (O.25%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(0.25/100)
+                        elif ai_comb_P_2_2.get() == '0.25% IGST (0.25%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(0.25/100)
+                        elif ai_comb_P_2_2.get() == '0% GST (0%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(0/100)
+                        elif ai_comb_P_2_2.get() == '0% IGST (0%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(0/100)
+                        elif ai_comb_P_2_2.get() == 'Exempt GST (0%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(0/100)
+                        elif ai_comb_P_2_2.get() == 'Exempt IGST (0%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(0/100)
+                        elif ai_comb_P_2_2.get() == 'Out of Scope(0%)':
+                            y2 = float(en_str_2.get())
+                            t2 = y2*(0/100)
+                        else:
+                            pass
+
+                        try:
+                            tm1  = t1
+                        except:
+                            pass
+                        try:
+                            tm2 = t2
+                        except:
+                            pass
+                        try:
+                            tm3 = t3
+                        except:
+                            tm3 = 0.0
+                        try:
+                            tm4  = t4
+                        except:
+                            tm4 = 0.0
                         
+                        
+                        sum_ii = tm1+tm2+tm3+tm4
+                        tax_entry_1.delete(0, END)
+                        tax_entry_1.insert(0,round(sum_ii,2))
 
-                    ai_entry_2_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                        try:
+                            m1 = float(sub_str.get())
+                        except:
+                            m1 =0.0
+                        try:
+                            m2 = float(tax_str.get())
+                        except:
+                            m2 =0.0
+
+                        sum_iii = m1+m2
+                        grand_entry_1.delete(0, END)
+                        grand_entry_1.insert(0,round(sum_iii,2))
+
+                        try:
+                            x1 = float(grd_str.get())
+                        except:
+                            x1 = 0.0
+                        try:
+                            x2 = float(amount_entry_1.get())
+                        except:
+                            x2 = 0.0
+                        sum_iv = x1-x2
+                        bal_entry_1.delete(0, END)
+                        bal_entry_1.insert(0,round(sum_iv,2))
+
+                    ai_entry_2_2=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_ai_entry_2_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_2_2,tags=('aientry14'))
+                    ai_entry_2_2.bind("<Button-1>",multiply_num_i2)
+       
+                    en_str_2 = StringVar()
+                    ai_entry_2_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white",textvariable=en_str_2)
                     window_ai_entry_2_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_2_4,tags=('aientry20'))
-                    ai_entry_2_4.bind("<Button-1>",multiply_num_i2)
+                    
 
                     ai_comb_P_2_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'))
                     ai_comb_P_2_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
@@ -2803,8 +3158,7 @@ def main_sign_in():
                     ai_entry_3_1=scrolledtext.ScrolledText(inv_canvas_1,width=21,background='#2f516f',foreground="white")
                     window_ai_entry_3_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3_1,tags=('aientry12'))
 
-                    ai_entry_3_2=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
-                    window_ai_entry_3_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3_2,tags=('aientry15'))
+                    
 
                     ai_entry_3_3=Spinbox(inv_canvas_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_3_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3_3,tags=('aientry18'))
@@ -2816,20 +3170,167 @@ def main_sign_in():
                         ai_entry_3_4.delete(0, END)
                         ai_entry_3_4.insert(0,mul_i)
 
-                        n1 = ai_entry_p_1_5.get()
-                        n2 = ai_entry_2_4.get()
-                        n3 = ai_entry_3_4.get()
-                        n4 = ai_entry_4_4.get()
-                        sum_i = sum(n1,n2)
-                        sum_ii = sum(n3,n4)
-                        sum_iii = sum(sum_i,sum_ii)
+                        try:
+                            n1 = float(en_str_1.get())
+                        except:
+                            n1=0.0
+                        try:
+                            n2 = float(en_str_2.get())
+                        except:
+                            n2 = 0.0
+                        try:
+                            n3 = float(en_str_3.get())
+                        except:
+                            n3 = 0.0
+                        try:
+                            n4 = float(en_str_4.get())
+                        except:
+                            n4 = 0.0
+                        sum_i = n1+n2+n3+n4
                         sub_entry_1.delete(0, END)
-                        sub_entry_1.insert(0,sum_iii)
-                        
+                        sub_entry_1.insert(0,round(sum_i,2))
 
-                    ai_entry_3_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                        global t1,t2,t3,t4
+                        if ai_comb_P_3_2.get() == '28.0% GST (28%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(28/100)
+                        elif ai_comb_P_3_2.get() == '28.0% IGST (28%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(28/100)
+                        elif ai_comb_P_3_2.get() == '18.0% GST (18%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(18/100)
+                        elif ai_comb_P_3_2.get() == '18.0% IGST (18%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(18/100)
+                        elif ai_comb_P_3_2.get() == '15.0% ST (100%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(15/100)
+                        elif ai_comb_P_3_2.get() == '14.5% ST (100%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(14.5/100)
+                        elif ai_comb_P_3_2.get() == '14.00% ST (100%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(14/100)
+                        elif ai_comb_P_3_2.get() == '14.0% VAT (100%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(14/100)
+                        elif ai_comb_P_3_2.get() == '12.36% ST (100%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(12.36/100)
+                        elif ai_comb_P_3_2.get() == '12.0% GST (12%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(12/100)
+                        elif ai_comb_P_3_2.get() == '12.0% IGST (12%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(12/100)
+                        elif ai_comb_P_3_2.get() == '6.0% GST (6%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(6/100)
+                        elif ai_comb_P_3_2.get() == '6.0% IGST (6%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(6/100)
+                        elif ai_comb_P_3_2.get() == '5.0% GST (5%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(5/100)
+                        elif ai_comb_P_3_2.get() == '5.0% IGST (5%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(5/100)
+                        elif ai_comb_P_3_2.get() == '5.0% VAT (100%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(5/100)
+                        elif ai_comb_P_3_2.get() == '4.0% VAT (100%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(4/100)
+                        elif ai_comb_P_3_2.get() == '3.0% GST (3%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(3/100)
+                        elif ai_comb_P_3_2.get() == '3.0% IGST (3%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(3/100)
+                        elif ai_comb_P_3_2.get() == '2.0% CST (100%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(2/100)
+                        elif ai_comb_P_3_2.get() == '0.25% GST (O.25%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(0.25/100)
+                        elif ai_comb_P_3_2.get() == '0.25% IGST (0.25%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(0.25/100)
+                        elif ai_comb_P_3_2.get() == '0% GST (0%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(0/100)
+                        elif ai_comb_P_3_2.get() == '0% IGST (0%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(0/100)
+                        elif ai_comb_P_3_2.get() == 'Exempt GST (0%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(0/100)
+                        elif ai_comb_P_3_2.get() == 'Exempt IGST (0%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(0/100)
+                        elif ai_comb_P_3_2.get() == 'Out of Scope(0%)':
+                            y3 = float(en_str_3.get())
+                            t3 = y3*(0/100)
+                        else:
+                            pass
+
+                        try:
+                            tm1  = t1
+                        except:
+                            pass
+                        try:
+                            tm2 = t2
+                        except:
+                            pass
+                        try:
+                            tm3 = t3
+                        except:
+                            pass
+                        try:
+                            tm4  = t4
+                        except:
+                            tm4 = 0.0
+                        
+                        
+                        sum_ii = tm1+tm2+tm3+tm4
+                        tax_entry_1.delete(0, END)
+                        tax_entry_1.insert(0,round(sum_ii,2))
+
+                        try:
+                            m1 = float(sub_str.get())
+                        except:
+                            m1 =0.0
+                        try:
+                            m2 = float(tax_str.get())
+                        except:
+                            m2 =0.0
+
+                        sum_iii = m1+m2
+                        grand_entry_1.delete(0, END)
+                        grand_entry_1.insert(0,round(sum_iii,2))
+
+                        try:
+                            x1 = float(grd_str.get())
+                        except:
+                            x1 = 0.0
+                        try:
+                            x2 = float(amount_entry_1.get())
+                        except:
+                            x2 = 0.0
+                        sum_iv = x1-x2
+                        bal_entry_1.delete(0, END)
+                        bal_entry_1.insert(0,round(sum_iv,2))
+
+                        
+                    en_str_3 = StringVar()
+                    ai_entry_3_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white",textvariable=en_str_3)
                     window_ai_entry_3_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3_4,tags=('aientry21'))
-                    ai_entry_3_4.bind("<Button-1>",multiply_num_i3)
+
+                    ai_entry_3_2=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_ai_entry_3_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_3_2,tags=('aientry15'))
+                    ai_entry_3_2.bind("<Button-1>",multiply_num_i3)
+                    
 
                     ai_comb_P_3_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'))
                     ai_comb_P_3_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
@@ -2849,8 +3350,7 @@ def main_sign_in():
                     ai_entry_4_1=scrolledtext.ScrolledText(inv_canvas_1,width=21,background='#2f516f',foreground="white")
                     window_ai_entry_4_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4_1,tags=('aientry13'))
 
-                    ai_entry_4_2=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
-                    window_ai_entry_4_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4_2,tags=('aientry16'))
+                    
 
                     ai_entry_4_3=Spinbox(inv_canvas_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                     window_ai_entry_4_3 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4_3,tags=('aientry19'))
@@ -2862,21 +3362,167 @@ def main_sign_in():
                         ai_entry_4_4.delete(0, END)
                         ai_entry_4_4.insert(0,mul_i)
 
-                        n1 = ai_entry_p_1_5.get()
-                        n2 = ai_entry_2_4.get()
-                        n3 = ai_entry_3_4.get()
-                        n4 = ai_entry_4_4.get()
-                        sum_i = sum(n1,n2)
-                        sum_ii = sum(n3,n4)
-                        sum_iii = sum(sum_i,sum_ii)
+                        
+                        try:
+                            n1 = float(en_str_1.get())
+                        except:
+                            n1=0.0
+                        try:
+                            n2 = float(en_str_2.get())
+                        except:
+                            n2 = 0.0
+                        try:
+                            n3 = float(en_str_3.get())
+                        except:
+                            n3 = 0.0
+                        try:
+                            n4 = float(en_str_4.get())
+                        except:
+                            n4 = 0.0
+                        sum_i = n1+n2+n3+n4
                         sub_entry_1.delete(0, END)
-                        sub_entry_1.insert(0,sum_iii)
+                        sub_entry_1.insert(0,round(sum_i,2))
 
+                        global t1,t2,t3,t4
+                        if ai_comb_P_4_2.get() == '28.0% GST (28%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(28/100)
+                        elif ai_comb_P_4_2.get() == '28.0% IGST (28%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(28/100)
+                        elif ai_comb_P_4_2.get() == '18.0% GST (18%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(18/100)
+                        elif ai_comb_P_4_2.get() == '18.0% IGST (18%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(18/100)
+                        elif ai_comb_P_4_2.get() == '15.0% ST (100%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(15/100)
+                        elif ai_comb_P_4_2.get() == '14.5% ST (100%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(14.5/100)
+                        elif ai_comb_P_4_2.get() == '14.00% ST (100%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(14/100)
+                        elif ai_comb_P_4_2.get() == '14.0% VAT (100%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(14/100)
+                        elif ai_comb_P_4_2.get() == '12.36% ST (100%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(12.36/100)
+                        elif ai_comb_P_4_2.get() == '12.0% GST (12%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(12/100)
+                        elif ai_comb_P_4_2.get() == '12.0% IGST (12%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(12/100)
+                        elif ai_comb_P_4_2.get() == '6.0% GST (6%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y1*(6/100)
+                        elif ai_comb_P_4_2.get() == '6.0% IGST (6%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(6/100)
+                        elif ai_comb_P_4_2.get() == '5.0% GST (5%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(5/100)
+                        elif ai_comb_P_4_2.get() == '5.0% IGST (5%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(5/100)
+                        elif ai_comb_P_4_2.get() == '5.0% VAT (100%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(5/100)
+                        elif ai_comb_P_4_2.get() == '4.0% VAT (100%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(4/100)
+                        elif ai_comb_P_4_2.get() == '3.0% GST (3%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(3/100)
+                        elif ai_comb_P_4_2.get() == '3.0% IGST (3%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(3/100)
+                        elif ai_comb_P_4_2.get() == '2.0% CST (100%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(2/100)
+                        elif ai_comb_P_4_2.get() == '0.25% GST (O.25%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(0.25/100)
+                        elif ai_comb_P_4_2.get() == '0.25% IGST (0.25%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(0.25/100)
+                        elif ai_comb_P_4_2.get() == '0% GST (0%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(0/100)
+                        elif ai_comb_P_4_2.get() == '0% IGST (0%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(0/100)
+                        elif ai_comb_P_4_2.get() == 'Exempt GST (0%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(0/100)
+                        elif ai_comb_P_4_2.get() == 'Exempt IGST (0%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(0/100)
+                        elif ai_comb_P_4_2.get() == 'Out of Scope(0%)':
+                            y4 = float(en_str_4.get())
+                            t4 = y4*(0/100)
+                        else:
+                            pass
+
+                        try:
+                            tm1  = t1
+                        except:
+                            pass
+                        try:
+                            tm2 = t2
+                        except:
+                            pass
+                        try:
+                            tm3 = t3
+                        except:
+                            pass
+                        try:
+                            tm4  = t4
+                        except:
+                            pass
+                        
+                        
+                        sum_ii = tm1+tm2+tm3+tm4
+                        tax_entry_1.delete(0, END)
+                        tax_entry_1.insert(0,round(sum_ii,2))
+
+                        try:
+                            m1 = float(sub_str.get())
+                        except:
+                            m1 =0.0
+                        try:
+                            m2 = float(tax_str.get())
+                        except:
+                            m2 =0.0
+
+                        sum_iii = m1+m2
+                        grand_entry_1.delete(0, END)
+                        grand_entry_1.insert(0,round(sum_iii,2))
+
+                        try:
+                            x1 = float(grd_str.get())
+                        except:
+                            x1 = 0.0
+                        try:
+                            x2 = float(amount_entry_1.get())
+                        except:
+                            x2 = 0.0
+                        sum_iv = x1-x2
+                        bal_entry_1.delete(0, END)
+                        bal_entry_1.insert(0,round(sum_iv,2))
+
+                    ai_entry_4_2=Spinbox(inv_canvas_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                    window_ai_entry_4_2 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4_2,tags=('aientry16'))
+                    ai_entry_4_2.bind("<Button-1>",multiply_num_i4)
     
-
-                    ai_entry_4_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                    en_str_4 = StringVar()
+                    ai_entry_4_4=Entry(inv_canvas_1,width=16,justify=LEFT,background='#2f516f',foreground="white",textvariable=en_str_4)
                     window_ai_entry_4_4 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=ai_entry_4_4,tags=('aientry22'))
-                    ai_entry_4_4.bind("<Button-1>",multiply_num_i4)
+                    
 
                     ai_comb_P_4_2 = ttk.Combobox(inv_canvas_1, font=('arial 10'))
                     ai_comb_P_4_2['values'] = ("Choose","28.0%\n GST(28%)","18.0%\n GST(18%)","12.0%\n GST(12%)","06.0%\n GST(06%)","05.0%\n GST(05%)","03.0%\n GST(03%)","0.25%\n GST(0.25%)","0.0%\n GST(0%)","Exempt GST(0%)","Out of Scope(0%)",)
@@ -2910,21 +3556,24 @@ def main_sign_in():
                     window_label_5 = inv_canvas_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel27'))
 
                     
-                    mytext=StringVar()
-                    sub_entry_1=Entry(inv_canvas_1,width=30,justify=RIGHT,background='#2f516f',foreground="white")
+                    sub_str=StringVar()
+                    sub_entry_1=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white",textvariable=sub_str)
                     window_sub_entry_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=sub_entry_1,tags=('aientry23'))
                     
-
-                    tax_entry_1=Entry(inv_canvas_1,width=30,justify=RIGHT,background='#2f516f',foreground="white")
+                    tax_str=StringVar()
+                    tax_entry_1=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white",textvariable=tax_str)
                     window_tax_entry_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=tax_entry_1,tags=('aientry24'))
 
-                    grand_entry_1=Entry(inv_canvas_1,width=30,justify=RIGHT,background='#2f516f',foreground="white")
+                    grd_str=StringVar()
+                    grand_entry_1=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white",textvariable=grd_str)
                     window_grand_entry_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=grand_entry_1,tags=('aientry25'))
 
-                    amount_entry_1=Entry(inv_canvas_1,width=30,justify=RIGHT,background='#2f516f',foreground="white")
+                    
+                    amount_entry_1=Entry(inv_canvas_1,width=30,justify=LEFT,background='#2f516f',foreground="white")
                     window_amount_entry_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=amount_entry_1,tags=('aientry26'))
 
-                    bal_entry_1=Entry(inv_canvas_1,width=30,justify=RIGHT, background='#2f516f',foreground="white")
+                    bal_str=StringVar()
+                    bal_entry_1=Entry(inv_canvas_1,width=30,justify=LEFT, background='#2f516f',foreground="white",textvariable=bal_str)
                     window_bal_entry_1 = inv_canvas_1.create_window(0, 0, anchor="nw", height=30, window=bal_entry_1,tags=('aientry27'))
                     
 
@@ -3211,6 +3860,99 @@ def main_sign_in():
                         val =  (inv_edit_id_1,inv_edit_id_2,cmp_dtl[0],)
                         fbcursor.execute(sql,val)
                         edit_invo = fbcursor.fetchone()
+
+                        def sales_edit_new_inv():
+
+                            customername = eientry_1.get()
+                            email = eaientry_1.get()
+                            invoiceno = ein_b_entry_1.get()
+                            terms = ecomb_t_2.get()
+                            invoicedate = eaid_entry_1.get_date()
+                            duedate = eaid_entry_2.get_date()
+                            bname = eai_b_entry_1.get('1.0', 'end-1c')
+                            placosupply = eai_p_comb_2.get()
+                            product = eai_comb_p_1.get()
+                            hsn = eai_entry_p_1.get()
+                            description = eai_entry_p_1_2.get('1.0', 'end-1c')
+                            qty = eai_entry_p_1_3.get()
+                            price = eai_entry_p_1_4.get()
+                            total = eai_entry_p_1_5.get()
+                            tax = eai_comb_p_1_2.get()
+                            subtotal = esub_entry_1.get()
+                            grandtotal = egrand_entry_1.get()
+                            product2 = eai_comb_P_2.get()
+                            hsn2 = eai_entry_p_2.get()
+                            description2 = eai_entry_p_2_1.get('1.0', 'end-1c')
+                            qty2 = eai_entry_2_2.get()
+                            price2 = eai_entry_2_3.get()
+                            total2 = eai_entry_2_4.get()
+                            tax2 = eai_comb_P_2_2.get()
+                            product3 = eai_comb_p_3.get()
+                            hsn3 = eai_entry_3.get()
+                            description3 = eai_entry_3_1.get('1.0', 'end-1c')
+                            qty3 = eai_entry_3_2.get()
+                            price3 = eai_entry_3_3.get()
+                            total3 = eai_entry_3_4.get()
+                            tax3 = eai_comb_P_3_2.get()
+                            product4 = eai_comb_p_4.get()
+                            hsn4 = eai_entry_4.get()
+                            description4 = eai_entry_4_1.get('1.0', 'end-1c')
+                            qty4 = eai_entry_4_2.get()
+                            price4 = eai_entry_4_3.get()
+                            total4 = eai_entry_4_4.get()
+                            tax4 = eai_comb_P_4_2.get()
+                            amtrecvd = eamount_entry_1.get()
+                            taxamount = etax_entry_1.get()
+                            baldue = ebal_entry_1.get()
+
+
+                            usr_sql = "SELECT id FROM auth_user WHERE username=%s"
+                            usr_val = (nm_ent.get(),)
+                            fbcursor.execute(usr_sql,usr_val)
+                            usr_data = fbcursor.fetchone()
+
+                            cmp_sql = "SELECT cid FROM app1_company WHERE id_id=%s"
+                            cmp_val = (usr_data[0],)
+                            fbcursor.execute(cmp_sql,cmp_val)
+                            cmp_data = fbcursor.fetchone()
+                            cid = cmp_data[0]
+
+                            inv_sql_2 = "UPDATE app1_invoice set customername=%s,email=%s,invoiceno=%s,terms=%s,invoicedate=%s,duedate=%s,bname=%s,placosupply=%s,product=%s,hsn=%s,description=%s,qty=%s,price=%s,total=%s,tax=%s,subtotal=%s,grandtotal=%s,product2=%s,hsn2=%s,description2=%s,qty2=%s,price2=%s,total2=%s,tax2=%s,product3=%s,hsn3=%s,description3=%s,qty3=%s,price3=%s,total3=%s,tax3=%s,product4=%s,hsn4=%s,description4=%s,qty4=%s,price4=%s,total4=%s,tax4=%s,amtrecvd=%s,taxamount=%s,baldue=%s,cid_id=%s where invoiceid=%s and email = %s"
+                            inv_val_2=(customername,email,invoiceno,terms,invoicedate,duedate,bname,placosupply,product,hsn,description,qty,price,total,tax,subtotal,grandtotal,product2,hsn2,description2,qty2,price2,total2,tax2,product3,hsn3,description3,qty3,price3,total3,tax3,product4,hsn4,description4,qty4,price4,total4,tax4,amtrecvd,taxamount,baldue,cid,inv_edit_id_1,inv_edit_id_2)
+                            fbcursor.execute(inv_sql_2,inv_val_2,)
+                            finsysdb.commit()
+
+                            #----------Refresh Insert Tree--------#
+
+                            for record in inv_tree.get_children():
+                                    inv_tree.delete(record)
+
+                            sql_pr="select * from auth_user where username=%s"
+                            sql_pr_val=(nm_ent.get(),)
+                            fbcursor.execute(sql_pr,sql_pr_val,)
+                            pr_dtl=fbcursor.fetchone()
+
+                            sql = "select * from app1_company where id_id=%s"
+                            val = (pr_dtl[0],)
+                            fbcursor.execute(sql, val,)
+                            cmp_dtl=fbcursor.fetchone()
+
+                            c_sql_1 = "SELECT * FROM app1_invoice where cid_id=%s"
+                            c_val_1 = (cmp_dtl[0],)
+                            fbcursor.execute(c_sql_1,c_val_1,)
+                            i_data_1 = fbcursor.fetchall()
+
+                            count0 = 0
+                            for i in i_data_1:
+                                if True:
+                                    inv_tree.insert(parent='',index='end',iid=i,text='',values=(i[0],i[5],i[1],i[2],i[6],i[17],i[41]))
+                                else:
+                                    pass
+                            count0 += 1
+
+                                
+                            inv_frame_edit_1.destroy()
+                            inv_frame.grid(row=0,column=0,sticky='nsew')
                         
 
                         inv_canvas_edit_1.create_polygon(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,smooth=True,fill="#1b3857",tags=("aipoly1"))
@@ -3519,64 +4261,7 @@ def main_sign_in():
                             else:
                                 pass
                         
-                        def ei_details_3(event):
-                            inv_to_str_1 = eai_comb_p_3.get()
-
-                            sql = "select * from app1_inventory where name=%s and cid_id=%s"
-                            val = (inv_to_str_1,cmp_dtl_i[0],)
-                            fbcursor.execute(sql,val)
-                            inv_sel_1 = fbcursor.fetchone()
-
-                            sql = "select * from app1_noninventory where name=%s and cid_id=%s"
-                            val = (inv_to_str_1,cmp_dtl_i[0],)
-                            fbcursor.execute(sql,val)
-                            inv_sel_2 = fbcursor.fetchone()
-
-                            sql = "select * from app1_bundle where name=%s and cid_id=%s"
-                            val = (inv_to_str_1,cmp_dtl_i[0],)
-                            fbcursor.execute(sql,val)
-                            inv_sel_3 = fbcursor.fetchone() 
-
-                            if inv_sel_1 is not None:
-                                
-                                eai_entry_3.delete(0,END)
-                                eai_entry_3.insert(0,inv_sel_1[4])
-                                eai_entry_3_1.delete('1.0',END)
-                                eai_entry_3_1.insert('1.0',inv_sel_1[11])
-                                eai_entry_3_3.delete(0,END)
-                                eai_entry_3_3.insert(0,inv_sel_1[12])
-                                eai_comb_P_3_2.delete(0,'end')
-                                eai_comb_P_3_2.insert(0, inv_sel_1[14])
-                                inv_canvas_edit_1.itemconfig('aientry18',state='normal')
-                                inv_canvas_edit_1.itemconfig('aientry21',state='normal')
-                                inv_canvas_edit_1.itemconfig('aicombo10',state='normal')
-
-                            elif inv_sel_2 is not None:
-                                
-                                eai_entry_3.delete(0,END)
-                                eai_entry_3.insert(0,inv_sel_2[4])
-                                eai_entry_3_1.delete('1.0',END)
-                                eai_entry_3_1.insert('1.0',inv_sel_2[7])
-                                eai_entry_3_3.delete(0,END)
-                                eai_entry_3_3.insert(0,inv_sel_2[8])
-                                eai_comb_P_3_2.delete(0,'end')
-                                eai_comb_P_3_2.insert(0, inv_sel_2[10])
-                                inv_canvas_edit_1.itemconfig('aientry18',state='normal')
-                                inv_canvas_edit_1.itemconfig('aientry21',state='normal')
-                                inv_canvas_edit_1.itemconfig('aicombo10',state='normal')
-
-                            elif inv_sel_3 is not None:
-                                
-                                eai_entry_3.delete(0,END)
-                                eai_entry_3.insert(0,inv_sel_3[3])
-                                eai_entry_3_1.delete('1.0',END)
-                                eai_entry_3_1.insert('1.0',inv_sel_3[4])
-                                inv_canvas_edit_1.itemconfig('aientry18',state='hidden')
-                                inv_canvas_edit_1.itemconfig('aientry21',state='hidden')
-                                inv_canvas_edit_1.itemconfig('aicombo10',state='hidden')
-                                
-                            else:
-                                pass
+                        
 
                         def ei_details_4(event):
                             inv_to_str_1 = eai_comb_p_4.get()
@@ -3693,17 +4378,182 @@ def main_sign_in():
                         window_eai_entry_p_1_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_2,tags=('aientry4'))
                         eai_entry_p_1_2.insert(1.0,edit_invo[11])
 
-                        eai_entry_p_1_3=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
-                        window_eai_entry_p_1_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_3,tags=('aientry5'))
-                        eai_entry_p_1_3.delete(0,'end')
-                        eai_entry_p_1_3.insert(0,edit_invo[12])
+                        
 
                         eai_entry_p_1_4=Spinbox(inv_canvas_edit_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                         window_eai_entry_p_1_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_4,tags=('aientry6'))
                         eai_entry_p_1_4.delete(0,'end')
                         eai_entry_p_1_4.insert(0,edit_invo[13])
 
-                        eai_entry_p_1_5=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                        def emultiply_num_i1(event):
+                            num1= float(eai_entry_p_1_3.get())
+                            num2= float(eai_entry_p_1_4.get())
+                            mul_i= round(num1 * num2,2)
+                            eai_entry_p_1_5.delete(0, END)
+                            eai_entry_p_1_5.insert(0,mul_i)
+
+                            try:
+                                n1 = float(een_str_1.get())
+                            except:
+                                n1=0.0
+                            try:
+                                n2 = float(een_str_2.get())
+                            except:
+                                n2 = 0.0
+                            try:
+                                n3 = float(een_str_3.get())
+                            except:
+                                n3 = 0.0
+                            try:
+                                n4 = float(een_str_4.get())
+                            except:
+                                n4 = 0.0
+                            sum_i = n1+n2+n3+n4
+                            esub_entry_1.delete(0, END)
+                            esub_entry_1.insert(0,round(sum_i,2))
+
+                            global t1,t2,t3,t4
+                            if eai_comb_p_1_2.get() == '28.0% GST (28%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(28/100)
+                            elif eai_comb_p_1_2.get() == '28.0% IGST (28%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(28/100)
+                            elif eai_comb_p_1_2.get() == '18.0% GST (18%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(18/100)
+                            elif eai_comb_p_1_2.get() == '18.0% IGST (18%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(18/100)
+                            elif eai_comb_p_1_2.get() == '15.0% ST (100%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(15/100)
+                            elif eai_comb_p_1_2.get() == '14.5% ST (100%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(14.5/100)
+                            elif eai_comb_p_1_2.get() == '14.00% ST (100%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(14/100)
+                            elif eai_comb_p_1_2.get() == '14.0% VAT (100%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(14/100)
+                            elif eai_comb_p_1_2.get() == '12.36% ST (100%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(12.36/100)
+                            elif eai_comb_p_1_2.get() == '12.0% GST (12%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(12/100)
+                            elif eai_comb_p_1_2.get() == '12.0% IGST (12%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(12/100)
+                            elif eai_comb_p_1_2.get() == '6.0% GST (6%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(6/100)
+                            elif eai_comb_p_1_2.get() == '6.0% IGST (6%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(6/100)
+                            elif eai_comb_p_1_2.get() == '5.0% GST (5%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(5/100)
+                            elif eai_comb_p_1_2.get() == '5.0% IGST (5%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(5/100)
+                            elif eai_comb_p_1_2.get() == '5.0% VAT (100%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(5/100)
+                            elif eai_comb_p_1_2.get() == '4.0% VAT (100%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(4/100)
+                            elif eai_comb_p_1_2.get() == '3.0% GST (3%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(3/100)
+                            elif eai_comb_p_1_2.get() == '3.0% IGST (3%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(3/100)
+                            elif eai_comb_p_1_2.get() == '2.0% CST (100%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(2/100)
+                            elif eai_comb_p_1_2.get() == '0.25% GST (O.25%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(0.25/100)
+                            elif eai_comb_p_1_2.get() == '0.25% IGST (0.25%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(0.25/100)
+                            elif eai_comb_p_1_2.get() == '0% GST (0%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(0/100)
+                            elif eai_comb_p_1_2.get() == '0% IGST (0%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(0/100)
+                            elif eai_comb_p_1_2.get() == 'Exempt GST (0%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(0/100)
+                            elif eai_comb_p_1_2.get() == 'Exempt IGST (0%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(0/100)
+                            elif eai_comb_p_1_2.get() == 'Out of Scope(0%)':
+                                y1 = float(een_str_1.get())
+                                t1 = y1*(0/100)
+                            else:
+                                pass
+
+                            try:
+                                tm1  = t1
+                            except:
+                                pass
+                            try:
+                                tm2 = t2
+                            except:
+                                tm2 = 0.0
+                            try:
+                                tm3 = t3
+                            except:
+                                tm3 = 0.0
+                            try:
+                                tm4  = t4
+                            except:
+                                tm4 = 0.0
+                            
+                            
+                            sum_ii = tm1+tm2+tm3+tm4
+                            etax_entry_1.delete(0, END)
+                            etax_entry_1.insert(0,round(sum_ii,2))
+
+                            try:
+                                m1 = float(esub_str.get())
+                            except:
+                                m1 =0.0
+                            try:
+                                m2 = float(etax_str.get())
+                            except:
+                                m2 =0.0
+
+                            sum_iii = m1+m2
+                            egrand_entry_1.delete(0, END)
+                            egrand_entry_1.insert(0,round(sum_iii,2))
+
+
+                            try:
+                                x1 = float(egrd_str.get())
+                            except:
+                                x1 = 0.0
+                            try:
+                                x2 = float(eamount_entry_1.get())
+                            except:
+                                x2 = 0.0
+                            sum_iv = x1-x2
+                            ebal_entry_1.delete(0, END)
+                            ebal_entry_1.insert(0,round(sum_iv,2))
+
+                        eai_entry_p_1_3=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_eai_entry_p_1_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_3,tags=('aientry5'))
+                        eai_entry_p_1_3.bind("<Button-1>",emultiply_num_i1)
+                        eai_entry_p_1_3.delete(0,'end')
+                        eai_entry_p_1_3.insert(0,edit_invo[12])
+
+                        
+                        een_str_1 = StringVar()
+                        eai_entry_p_1_5=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white",textvariable=een_str_1)
                         window_eai_entry_p_1_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_1_5,tags=('aientry7'))
                         eai_entry_p_1_5.delete(0,'end')
                         eai_entry_p_1_5.insert(0,edit_invo[14])
@@ -3737,17 +4587,180 @@ def main_sign_in():
                         window_eai_entry_p_2_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_p_2_1,tags=('aientry11'))
                         eai_entry_p_2_1.insert(1.0,edit_invo[20])
 
-                        eai_entry_2_2=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
-                        window_eai_entry_2_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_2,tags=('aientry14'))
-                        eai_entry_2_2.delete(0,'end')
-                        eai_entry_2_2.insert(0,edit_invo[21])
+                        
 
                         eai_entry_2_3=Spinbox(inv_canvas_edit_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                         window_eai_entry_2_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_3,tags=('aientry17'))
                         eai_entry_2_3.delete(0,'end')
                         eai_entry_2_3.insert(0,edit_invo[22])
 
-                        eai_entry_2_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                        def emultiply_num_i2(event):
+                            num1= float(eai_entry_2_2.get())
+                            num2= float(eai_entry_2_3.get())
+                            mul_i= round(num1 * num2,2)
+                            eai_entry_2_4.delete(0, END)
+                            eai_entry_2_4.insert(0,mul_i)
+
+                            try:
+                                n1 = float(een_str_1.get())
+                            except:
+                                n1=0.0
+                            try:
+                                n2 = float(een_str_2.get())
+                            except:
+                                n2 = 0.0
+                            try:
+                                n3 = float(een_str_3.get())
+                            except:
+                                n3 = 0.0
+                            try:
+                                n4 = float(een_str_4.get())
+                            except:
+                                n4 = 0.0
+                            sum_i = n1+n2+n3+n4
+                            esub_entry_1.delete(0, END)
+                            esub_entry_1.insert(0,round(sum_i,2))
+
+                            global t1,t2,t3,t4
+                            if eai_comb_P_2_2.get() == '28.0% GST (28%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(28/100)
+                            elif eai_comb_P_2_2.get() == '28.0% IGST (28%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(28/100)
+                            elif eai_comb_P_2_2.get() == '18.0% GST (18%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(18/100)
+                            elif eai_comb_P_2_2.get() == '18.0% IGST (18%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(18/100)
+                            elif eai_comb_P_2_2.get() == '15.0% ST (100%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(15/100)
+                            elif eai_comb_P_2_2.get() == '14.5% ST (100%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(14.5/100)
+                            elif eai_comb_P_2_2.get() == '14.00% ST (100%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(14/100)
+                            elif eai_comb_P_2_2.get() == '14.0% VAT (100%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(14/100)
+                            elif eai_comb_P_2_2.get() == '12.36% ST (100%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(12.36/100)
+                            elif eai_comb_P_2_2.get() == '12.0% GST (12%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(12/100)
+                            elif eai_comb_P_2_2.get() == '12.0% IGST (12%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(12/100)
+                            elif eai_comb_P_2_2.get() == '6.0% GST (6%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(6/100)
+                            elif eai_comb_P_2_2.get() == '6.0% IGST (6%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(6/100)
+                            elif eai_comb_P_2_2.get() == '5.0% GST (5%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(5/100)
+                            elif eai_comb_P_2_2.get() == '5.0% IGST (5%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(5/100)
+                            elif eai_comb_P_2_2.get() == '5.0% VAT (100%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(5/100)
+                            elif eai_comb_P_2_2.get() == '4.0% VAT (100%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(4/100)
+                            elif eai_comb_P_2_2.get() == '3.0% GST (3%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(3/100)
+                            elif eai_comb_P_2_2.get() == '3.0% IGST (3%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(3/100)
+                            elif eai_comb_P_2_2.get() == '2.0% CST (100%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(2/100)
+                            elif eai_comb_P_2_2.get() == '0.25% GST (O.25%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(0.25/100)
+                            elif eai_comb_P_2_2.get() == '0.25% IGST (0.25%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(0.25/100)
+                            elif eai_comb_P_2_2.get() == '0% GST (0%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(0/100)
+                            elif eai_comb_P_2_2.get() == '0% IGST (0%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(0/100)
+                            elif eai_comb_P_2_2.get() == 'Exempt GST (0%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(0/100)
+                            elif eai_comb_P_2_2.get() == 'Exempt IGST (0%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(0/100)
+                            elif eai_comb_P_2_2.get() == 'Out of Scope(0%)':
+                                y2 = float(een_str_2.get())
+                                t2 = y2*(0/100)
+                            else:
+                                pass
+
+                            try:
+                                tm1  = t1
+                            except:
+                                pass
+                            try:
+                                tm2 = t2
+                            except:
+                                pass
+                            try:
+                                tm3 = t3
+                            except:
+                                tm3 = 0.0
+                            try:
+                                tm4  = t4
+                            except:
+                                tm4 = 0.0
+                            
+                            
+                            sum_ii = tm1+tm2+tm3+tm4
+                            etax_entry_1.delete(0, END)
+                            etax_entry_1.insert(0,round(sum_ii,2))
+
+                            try:
+                                m1 = float(esub_str.get())
+                            except:
+                                m1 =0.0
+                            try:
+                                m2 = float(etax_str.get())
+                            except:
+                                m2 =0.0
+
+                            sum_iii = m1+m2
+                            egrand_entry_1.delete(0, END)
+                            egrand_entry_1.insert(0,round(sum_iii,2))
+
+                            try:
+                                x1 = float(egrd_str.get())
+                            except:
+                                x1 = 0.0
+                            try:
+                                x2 = float(eamount_entry_1.get())
+                            except:
+                                x2 = 0.0
+                            sum_iv = x1-x2
+                            ebal_entry_1.delete(0, END)
+                            ebal_entry_1.insert(0,round(sum_iv,2))
+
+                        eai_entry_2_2=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_eai_entry_2_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_2,tags=('aientry14'))
+                        eai_entry_2_2.bind("<Button-1>",emultiply_num_i2)
+                        eai_entry_2_2.delete(0,'end')
+                        eai_entry_2_2.insert(0,edit_invo[21])
+
+                        een_str_2 = StringVar()
+                        eai_entry_2_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white",textvariable=een_str_2)
                         window_eai_entry_2_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_2_4,tags=('aientry20'))
                         eai_entry_2_4.delete(0,'end')
                         eai_entry_2_4.insert(0,edit_invo[23])
@@ -3780,17 +4793,180 @@ def main_sign_in():
                         window_eai_entry_3_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_1,tags=('aientry12'))
                         eai_entry_3_1.insert(1.0,edit_invo[27])
 
-                        eai_entry_3_2=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
-                        window_eai_entry_3_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_2,tags=('aientry15'))
-                        eai_entry_3_2.delete(0,'end')
-                        eai_entry_3_2.insert(0,edit_invo[28])
+                        
 
                         eai_entry_3_3=Spinbox(inv_canvas_edit_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                         window_eai_entry_3_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_3,tags=('aientry18'))
                         eai_entry_3_3.delete(0,'end')
                         eai_entry_3_3.insert(0,edit_invo[29])
 
-                        eai_entry_3_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                        def emultiply_num_i3(event):
+                            num1= float(eai_entry_3_2.get())
+                            num2= float(eai_entry_3_3.get())
+                            mul_i= round(num1 * num2,2)
+                            eai_entry_3_4.delete(0, END)
+                            eai_entry_3_4.insert(0,mul_i)
+
+                            try:
+                                n1 = float(een_str_1.get())
+                            except:
+                                n1=0.0
+                            try:
+                                n2 = float(een_str_2.get())
+                            except:
+                                n2 = 0.0
+                            try:
+                                n3 = float(een_str_3.get())
+                            except:
+                                n3 = 0.0
+                            try:
+                                n4 = float(een_str_4.get())
+                            except:
+                                n4 = 0.0
+                            sum_i = n1+n2+n3+n4
+                            esub_entry_1.delete(0, END)
+                            esub_entry_1.insert(0,round(sum_i,2))
+
+                            global t1,t2,t3,t4
+                            if eai_comb_P_3_2.get() == '28.0% GST (28%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(28/100)
+                            elif eai_comb_P_3_2.get() == '28.0% IGST (28%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(28/100)
+                            elif eai_comb_P_3_2.get() == '18.0% GST (18%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(18/100)
+                            elif eai_comb_P_3_2.get() == '18.0% IGST (18%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(18/100)
+                            elif eai_comb_P_3_2.get() == '15.0% ST (100%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(15/100)
+                            elif eai_comb_P_3_2.get() == '14.5% ST (100%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(14.5/100)
+                            elif eai_comb_P_3_2.get() == '14.00% ST (100%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(14/100)
+                            elif eai_comb_P_3_2.get() == '14.0% VAT (100%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(14/100)
+                            elif eai_comb_P_3_2.get() == '12.36% ST (100%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(12.36/100)
+                            elif eai_comb_P_3_2.get() == '12.0% GST (12%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(12/100)
+                            elif eai_comb_P_3_2.get() == '12.0% IGST (12%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(12/100)
+                            elif eai_comb_P_3_2.get() == '6.0% GST (6%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(6/100)
+                            elif eai_comb_P_3_2.get() == '6.0% IGST (6%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(6/100)
+                            elif eai_comb_P_3_2.get() == '5.0% GST (5%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(5/100)
+                            elif eai_comb_P_3_2.get() == '5.0% IGST (5%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(5/100)
+                            elif eai_comb_P_3_2.get() == '5.0% VAT (100%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(5/100)
+                            elif eai_comb_P_3_2.get() == '4.0% VAT (100%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(4/100)
+                            elif eai_comb_P_3_2.get() == '3.0% GST (3%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(3/100)
+                            elif eai_comb_P_3_2.get() == '3.0% IGST (3%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(3/100)
+                            elif eai_comb_P_3_2.get() == '2.0% CST (100%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(2/100)
+                            elif eai_comb_P_3_2.get() == '0.25% GST (O.25%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(0.25/100)
+                            elif eai_comb_P_3_2.get() == '0.25% IGST (0.25%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(0.25/100)
+                            elif eai_comb_P_3_2.get() == '0% GST (0%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(0/100)
+                            elif eai_comb_P_3_2.get() == '0% IGST (0%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(0/100)
+                            elif eai_comb_P_3_2.get() == 'Exempt GST (0%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(0/100)
+                            elif eai_comb_P_3_2.get() == 'Exempt IGST (0%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(0/100)
+                            elif eai_comb_P_3_2.get() == 'Out of Scope(0%)':
+                                y3 = float(een_str_3.get())
+                                t3 = y3*(0/100)
+                            else:
+                                pass
+
+                            try:
+                                tm1  = t1
+                            except:
+                                pass
+                            try:
+                                tm2 = t2
+                            except:
+                                pass
+                            try:
+                                tm3 = t3
+                            except:
+                                pass
+                            try:
+                                tm4  = t4
+                            except:
+                                tm4 = 0.0
+                            
+                            
+                            sum_ii = tm1+tm2+tm3+tm4
+                            etax_entry_1.delete(0, END)
+                            etax_entry_1.insert(0,round(sum_ii,2))
+
+                            try:
+                                m1 = float(esub_str.get())
+                            except:
+                                m1 =0.0
+                            try:
+                                m2 = float(etax_str.get())
+                            except:
+                                m2 =0.0
+
+                            sum_iii = m1+m2
+                            egrand_entry_1.delete(0, END)
+                            egrand_entry_1.insert(0,round(sum_iii,2))
+
+                            try:
+                                x1 = float(egrd_str.get())
+                            except:
+                                x1 = 0.0
+                            try:
+                                x2 = float(eamount_entry_1.get())
+                            except:
+                                x2 = 0.0
+                            sum_iv = x1-x2
+                            ebal_entry_1.delete(0, END)
+                            ebal_entry_1.insert(0,round(sum_iv,2))
+
+                        eai_entry_3_2=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_eai_entry_3_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_2,tags=('aientry15'))
+                        eai_entry_3_2.bind("<Button-1>",emultiply_num_i3)
+                        eai_entry_3_2.delete(0,'end')
+                        eai_entry_3_2.insert(0,edit_invo[28])
+
+                        een_str_3 = StringVar()
+                        eai_entry_3_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white",textvariable=een_str_3)
                         window_eai_entry_3_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_3_4,tags=('aientry21'))
                         eai_entry_3_4.delete(0,'end')
                         eai_entry_3_4.insert(0,edit_invo[30])
@@ -3822,17 +4998,182 @@ def main_sign_in():
                         window_eai_entry_4_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_1,tags=('aientry13'))
                         eai_entry_4_1.insert(1.0,edit_invo[34])
 
-                        eai_entry_4_2=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
-                        window_eai_entry_4_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_2,tags=('aientry16'))
-                        eai_entry_4_2.delete(0,'end')
-                        eai_entry_4_2.insert(0,edit_invo[35])
+                        
 
                         eai_entry_4_3=Spinbox(inv_canvas_edit_1,width=16,from_=0 ,to=1000000,justify=LEFT,background='#2f516f',foreground='white')
                         window_eai_entry_4_3 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_3,tags=('aientry19'))
                         eai_entry_4_3.delete(0,'end')
                         eai_entry_4_3.insert(0,edit_invo[36])
 
-                        eai_entry_4_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white")
+                        def emultiply_num_i4(event):
+                            num1= float(eai_entry_4_2.get())
+                            num2= float(eai_entry_4_3.get())
+                            mul_i= round(num1 * num2,2)
+                            eai_entry_4_4.delete(0, END)
+                            eai_entry_4_4.insert(0,mul_i)
+
+                            
+                            try:
+                                n1 = float(een_str_1.get())
+                            except:
+                                n1=0.0
+                            try:
+                                n2 = float(een_str_2.get())
+                            except:
+                                n2 = 0.0
+                            try:
+                                n3 = float(een_str_3.get())
+                            except:
+                                n3 = 0.0
+                            try:
+                                n4 = float(een_str_4.get())
+                            except:
+                                n4 = 0.0
+                            sum_i = n1+n2+n3+n4
+                            esub_entry_1.delete(0, END)
+                            esub_entry_1.insert(0,round(sum_i,2))
+
+                            global t1,t2,t3,t4
+                            if eai_comb_P_4_2.get() == '28.0% GST (28%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(28/100)
+                            elif eai_comb_P_4_2.get() == '28.0% IGST (28%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(28/100)
+                            elif eai_comb_P_4_2.get() == '18.0% GST (18%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(18/100)
+                            elif eai_comb_P_4_2.get() == '18.0% IGST (18%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(18/100)
+                            elif eai_comb_P_4_2.get() == '15.0% ST (100%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(15/100)
+                            elif eai_comb_P_4_2.get() == '14.5% ST (100%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(14.5/100)
+                            elif eai_comb_P_4_2.get() == '14.00% ST (100%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(14/100)
+                            elif eai_comb_P_4_2.get() == '14.0% VAT (100%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(14/100)
+                            elif eai_comb_P_4_2.get() == '12.36% ST (100%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(12.36/100)
+                            elif eai_comb_P_4_2.get() == '12.0% GST (12%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(12/100)
+                            elif eai_comb_P_4_2.get() == '12.0% IGST (12%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(12/100)
+                            elif eai_comb_P_4_2.get() == '6.0% GST (6%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y1*(6/100)
+                            elif eai_comb_P_4_2.get() == '6.0% IGST (6%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(6/100)
+                            elif eai_comb_P_4_2.get() == '5.0% GST (5%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(5/100)
+                            elif eai_comb_P_4_2.get() == '5.0% IGST (5%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(5/100)
+                            elif eai_comb_P_4_2.get() == '5.0% VAT (100%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(5/100)
+                            elif eai_comb_P_4_2.get() == '4.0% VAT (100%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(4/100)
+                            elif eai_comb_P_4_2.get() == '3.0% GST (3%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(3/100)
+                            elif eai_comb_P_4_2.get() == '3.0% IGST (3%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(3/100)
+                            elif eai_comb_P_4_2.get() == '2.0% CST (100%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(2/100)
+                            elif eai_comb_P_4_2.get() == '0.25% GST (O.25%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(0.25/100)
+                            elif eai_comb_P_4_2.get() == '0.25% IGST (0.25%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(0.25/100)
+                            elif eai_comb_P_4_2.get() == '0% GST (0%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(0/100)
+                            elif eai_comb_P_4_2.get() == '0% IGST (0%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(0/100)
+                            elif eai_comb_P_4_2.get() == 'Exempt GST (0%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(0/100)
+                            elif eai_comb_P_4_2.get() == 'Exempt IGST (0%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(0/100)
+                            elif eai_comb_P_4_2.get() == 'Out of Scope(0%)':
+                                y4 = float(een_str_4.get())
+                                t4 = y4*(0/100)
+                            else:
+                                pass
+
+                            try:
+                                tm1  = t1
+                            except:
+                                pass
+                            try:
+                                tm2 = t2
+                            except:
+                                pass
+                            try:
+                                tm3 = t3
+                            except:
+                                pass
+                            try:
+                                tm4  = t4
+                            except:
+                                pass
+                            
+                            
+                            sum_ii = tm1+tm2+tm3+tm4
+                            etax_entry_1.delete(0, END)
+                            etax_entry_1.insert(0,round(sum_ii,2))
+
+                            try:
+                                m1 = float(esub_str.get())
+                            except:
+                                m1 =0.0
+                            try:
+                                m2 = float(etax_str.get())
+                            except:
+                                m2 =0.0
+
+                            sum_iii = m1+m2
+                            egrand_entry_1.delete(0, END)
+                            egrand_entry_1.insert(0,round(sum_iii,2))
+
+                            try:
+                                x1 = float(egrd_str.get())
+                            except:
+                                x1 = 0.0
+                            try:
+                                x2 = float(eamount_entry_1.get())
+                            except:
+                                x2 = 0.0
+                            sum_iv = x1-x2
+                            ebal_entry_1.delete(0, END)
+                            ebal_entry_1.insert(0,round(sum_iv,2))
+
+                        eai_entry_4_2=Spinbox(inv_canvas_edit_1,width=13,from_=0 ,to=1000,justify=LEFT,background='#2f516f',foreground='white')
+                        window_eai_entry_4_2 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_2,tags=('aientry16'))
+                        eai_entry_4_2.bind("<Button-1>",emultiply_num_i4)
+                        eai_entry_4_2.delete(0,'end')
+                        eai_entry_4_2.insert(0,edit_invo[35])
+
+
+                        een_str_4 = StringVar()
+                        eai_entry_4_4=Entry(inv_canvas_edit_1,width=16,justify=LEFT,background='#2f516f',foreground="white",textvariable=een_str_4)
                         window_eai_entry_4_4 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eai_entry_4_4,tags=('aientry22'))
                         eai_entry_4_4.delete(0,'end')
                         eai_entry_4_4.insert(0,edit_invo[37])
@@ -3870,23 +5211,36 @@ def main_sign_in():
                         label_5 = Label(inv_canvas_edit_1,width=12,height=1,text="Balance Due", font=('arial 10'),background="#1b3857",fg="white") 
                         window_label_5 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=label_5,tags=('ailabel27'))
 
-                        esub_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
+                        esub_str=StringVar()
+                        esub_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white",textvariable=esub_str)
                         window_esub_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=esub_entry_1,tags=('aientry23'))
+                        esub_entry_1.delete(0,'end')
+                        esub_entry_1.insert(0,edit_invo[16])
 
-                        etax_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
+                        etax_str=StringVar()
+                        etax_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white",textvariable=etax_str)
                         window_etax_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=etax_entry_1,tags=('aientry24'))
+                        etax_entry_1.delete(0,'end')
+                        etax_entry_1.insert(0,edit_invo[40])
 
-                        egrand_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
+                        egrd_str=StringVar()
+                        egrand_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white",textvariable=egrd_str)
                         window_egrand_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=egrand_entry_1,tags=('aientry25'))
+                        egrand_entry_1.delete(0,'end')
+                        egrand_entry_1.insert(0,edit_invo[17])
 
                         eamount_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
                         window_eamount_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=eamount_entry_1,tags=('aientry26'))
+                        eamount_entry_1.delete(0,'end')
+                        eamount_entry_1.insert(0,edit_invo[39])
 
                         ebal_entry_1=Entry(inv_canvas_edit_1,width=36,justify=LEFT,background='#2f516f',foreground="white")
                         window_ebal_entry_1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", height=30, window=ebal_entry_1,tags=('aientry27'))
+                        ebal_entry_1.delete(0,'end')
+                        ebal_entry_1.insert(0,edit_invo[41])
                         
 
-                        eai_save_btn1=Button(inv_canvas_edit_1,text='Save', width=15,height=2,foreground="white",background="#1b3857",font='arial 12')
+                        eai_save_btn1=Button(inv_canvas_edit_1,text='Save', width=15,height=2,foreground="white",background="#1b3857",font='arial 12',command=sales_edit_new_inv)
                         window_eai_save_btn1 = inv_canvas_edit_1.create_window(0, 0, anchor="nw", window=eai_save_btn1,tags=('aibutton2'))
 
                         def einv_back_1_():
@@ -4098,8 +5452,12 @@ def main_sign_in():
                             dcanvas.coords("aivline22",dwidth/1.56,dheight/0.545,dwidth/1.182,dheight/0.545)
 
                             dcanvas.coords("aivlabel13",dwidth/1.54,dheight/0.59)
+
+                            dcanvas.coords("aivlabels13",dwidth/1.3,dheight/0.59)
                             dcanvas.coords("aivlabel14",dwidth/1.54,dheight/0.565)
+                            dcanvas.coords("aivlabels14",dwidth/1.3,dheight/0.565)
                             dcanvas.coords("aivlabel15",dwidth/1.5,dheight/0.54)
+                            dcanvas.coords("aivlabels15",dwidth/1.3,dheight/0.54)
 
                             dcanvas.coords("aivline23",dwidth/10,dheight/0.4,dwidth/1.12,dheight/0.4)
 
@@ -4356,11 +5714,22 @@ def main_sign_in():
                         label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Subtotal", font=('arial 12 bold'),background="white",fg="black") 
                         window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel13"))
 
+                        label_1 = Label(inv_canvas_view_1,width=5,height=1,text=view_invo[16], font=('arial 12 bold'),background="white",fg="black") 
+                        window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabels13"))
+
                         label_1 = Label(inv_canvas_view_1,width=11,height=1,text="Tax Amount", font=('arial 12 bold'),background="white",fg="black") 
                         window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel14"))
 
+                        label_1 = Label(inv_canvas_view_1,width=5,height=1,text=view_invo[40], font=('arial 12 bold'),background="white",fg="black") 
+                        window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabels14"))
+
+
                         label_1 = Label(inv_canvas_view_1,width=5,height=1,text="Total", font=('arial 12 bold'),background="white",fg="black") 
                         window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabel15"))
+
+                        label_1 = Label(inv_canvas_view_1,width=5,height=1,text=view_invo[17], font=('arial 12 bold'),background="white",fg="black") 
+                        window_label_1 = inv_canvas_view_1.create_window(0, 0, anchor="nw", window=label_1, tags=("aivlabels15"))
+
 
                         inv_canvas_view_1.create_line(0, 0, 0, 0, fill='grey',width=1, tags=('aivline23'))
 
@@ -4379,7 +5748,7 @@ def main_sign_in():
 
                         if inv_del == True:
                             inv_id_1 = inv_tree.item(inv_tree.focus())["values"][0]
-                            inv_id_2 = inv_tree.item(inv_tree.focus())["values"][4]
+                            inv_id_2 = inv_tree.item(inv_tree.focus())["values"][3]
 
                             sql_u = 'select * from auth_user where username=%s'
                             val_u = (nm_ent.get(),)
@@ -4559,8 +5928,9 @@ def main_sign_in():
                 fgthi = ttk.Style()
                 fgthi.configure('mystyle105.Treeview.Heading', background='#2f516f',State='DISABLE')
 
-                cus_tree = ttk.Treeview(cus_canvas, columns = (1,2,3,4,5,6,7), height = 10, show = "headings",style='mystyle105.Treeview')
-                cus_tree.pack(side = 'top')
+                cus_scrollbar = Scrollbar(cus_frame,orient="vertical")
+
+                cus_tree = ttk.Treeview(cus_canvas, columns = (1,2,3,4,5,6,7), height = 10, show = "headings",style='mystyle105.Treeview',yscrollcommand=cus_scrollbar.set)
                 cus_tree.heading(1)
                 cus_tree.heading(2, text="CUSTOMER")
                 cus_tree.heading(3, text="GST TYPE")
@@ -4577,6 +5947,9 @@ def main_sign_in():
                 cus_tree.column(6, width = 200)
                 cus_tree.column(7, width = 150)
                 window_label_4 = cus_canvas.create_window(0, 0, anchor="nw", window=cus_tree,tags=('ctree1'))
+
+                cus_scrollbar.config(command=cus_tree.yview)
+                cus_scrollbar.grid(row=0,column=2,sticky='ns')
 
                 sql_pr="select * from auth_user where username=%s"
                 sql_pr_val=(nm_ent.get(),)
@@ -4882,13 +6255,34 @@ def main_sign_in():
                     label_2 = Label(cus_canvas_1,width=10,height=1,text="GSTIN", font=('arial 12'),background="#1b3857",fg="white") 
                     window_label_2 = cus_canvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel9"))
 
+                    def gst_validate(value):
+        
+                        """
+                        Validat the email entry
+                        :param value:
+                        :return:
+                        """
+                        pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                        if re.fullmatch(pattern, value) is None:
+                            
+                            return False
+
+                        entry_cus_gin5.config(fg="white")
+                        return True
+
+                    def gst_invalidate():
+                        entry_cus_gin5.config(fg="red")
+
                     def ac_gst_in(event):
                         if entry_cus_gin5.get()=="29APPCK7465F1Z1":
                             entry_cus_gin5.delete(0,END)
                         else:
                             pass
                     
-                    entry_cus_gin5=Entry(cus_canvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
+                    entry_cus_gin5=Entry(cus_canvas_1,width=34,justify=LEFT,background='#2f516f',font=('arial 10'))
+                    val_gst = (cus_canvas_1.register(gst_validate), '%P')
+                    ival_gst = (cus_canvas_1.register(gst_invalidate),)
+                    entry_cus_gin5.config(validate='focusout', validatecommand=val_gst, invalidcommand=ival_gst)
                     window_entry_cus_gin5 = cus_canvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_cus_gin5, tags=("acentry5"))
                     entry_cus_gin5.insert(0,"29APPCK7465F1Z1")
                     entry_cus_gin5.bind("<Button-1>",ac_gst_in)
@@ -4903,7 +6297,28 @@ def main_sign_in():
                         else:
                             pass
 
-                    entry_cus_pan6=Entry(cus_canvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
+                    def pan_validate(value):
+        
+                        """
+                        Validat the email entry
+                        :param value:
+                        :return:
+                        """
+                        pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                        if re.fullmatch(pattern, value) is None:
+                            
+                            return False
+
+                        entry_cus_pan6.config(fg="white")
+                        return True
+
+                    def pan_invalidate():
+                        entry_cus_pan6.config(fg="red")
+
+                    entry_cus_pan6=Entry(cus_canvas_1,width=34,justify=LEFT,background='#2f516f',font=('arial 10'))
+                    val_pan = (cus_canvas_1.register(pan_validate), '%P')
+                    ival_pan = (cus_canvas_1.register(pan_invalidate),)
+                    entry_cus_pan6.config(validate='focusout', validatecommand=val_pan, invalidcommand=ival_pan)
                     window_entry_cus_pan6 = cus_canvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_cus_pan6, tags=("acentry6"))
                     entry_cus_pan6.insert(0,"APPCK7465F")
                     entry_cus_pan6.bind("<Button-1>",ac_pan_no)
@@ -4911,7 +6326,28 @@ def main_sign_in():
                     label_2 = Label(cus_canvas_1,width=5,height=1,text="Email", font=('arial 12'),background="#1b3857",fg="white") 
                     window_label_2 = cus_canvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel11"))
 
-                    entry_cus_em7=Entry(cus_canvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                    def email_validate(value):
+        
+                        """
+                        Validat the email entry
+                        :param value:
+                        :return:
+                        """
+                        pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                        if re.fullmatch(pattern, value) is None:
+                            
+                            return False
+
+                        entry_cus_em7.config(fg="white")
+                        return True
+
+                    def email_invalidate():
+                        entry_cus_em7.config(fg="red")
+
+                    entry_cus_em7=Entry(cus_canvas_1,width=40,justify=LEFT,background='#2f516f')
+                    val_email = (cus_canvas_1.register(email_validate), '%P')
+                    ival_email = (cus_canvas_1.register(email_invalidate),)
+                    entry_cus_em7.config(validate='focusout', validatecommand=val_email, invalidcommand=ival_email)
                     window_entry_cus_em7 = cus_canvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_cus_em7, tags=("acentry7"))
 
                     label_2 = Label(cus_canvas_1,width=10,height=1,text="Website", font=('arial 12'),background="#1b3857",fg="white") 
@@ -5178,6 +6614,11 @@ def main_sign_in():
                         c_editid_1 = cus_tree.item(cus_tree.focus())["values"][5]
                         print(c_editid_1)
 
+                        sql_u = 'select * from auth_user where username=%s'
+                        val_u = (nm_ent.get(),)
+                        fbcursor.execute(sql_u,val_u)
+                        pr_dtl = fbcursor.fetchone()
+
                         sql = "select * from app1_company where id_id=%s"
                         val = (pr_dtl[0],)
                         fbcursor.execute(sql, val,)
@@ -5336,9 +6777,31 @@ def main_sign_in():
 
                         label_2 = Label(cus_ecanvas_1,width=10,height=1,text="GSTIN", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel9"))
+
+                        def gst_validate(value):
+        
+                            """
+                            Validat the email entry
+                            :param value:
+                            :return:
+                            """
+                            pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                            if re.fullmatch(pattern, value) is None:
+                                
+                                return False
+
+                            entry_ecus_5.config(fg="white")
+                            return True
+
+                        def gst_invalidate():
+                            entry_ecus_5.config(fg="red")
+
                         
 
-                        entry_ecus_5=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
+                        entry_ecus_5=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',font=('arial 10'))
+                        eval_gst = (cus_ecanvas_1.register(gst_validate), '%P')
+                        eival_gst = (cus_ecanvas_1.register(gst_invalidate),)
+                        entry_ecus_5.config(validate='focusout', validatecommand=eval_gst, invalidcommand=eival_gst)
                         window_entry_ecus_5 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_5, tags=("acentry5"))
                         entry_ecus_5.delete(0,'end')
                         entry_ecus_5.insert(0, edit_cus[7])
@@ -5346,7 +6809,29 @@ def main_sign_in():
                         label_2 = Label(cus_ecanvas_1,width=10,height=1,text="PAN NO", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel10"))
 
-                        entry_ecus_6=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',foreground="white",font=('arial 10'))
+                        def pan_validate(value):
+        
+                            """
+                            Validat the email entry
+                            :param value:
+                            :return:
+                            """
+                            pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                            if re.fullmatch(pattern, value) is None:
+                                
+                                return False
+
+                            entry_ecus_6.config(fg="white")
+                            return True
+
+                        def pan_invalidate():
+                            entry_ecus_6.config(fg="red")
+
+
+                        entry_ecus_6=Entry(cus_ecanvas_1,width=34,justify=LEFT,background='#2f516f',font=('arial 10'))
+                        eval_pan = (cus_ecanvas_1.register(pan_validate), '%P')
+                        eival_pan = (cus_ecanvas_1.register(pan_invalidate),)
+                        entry_ecus_6.config(validate='focusout', validatecommand=eval_pan, invalidcommand=eival_pan)
                         window_entry_ecus_6 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_6, tags=("acentry6"))
                         entry_ecus_6.delete(0,'end')
                         entry_ecus_6.insert(0, edit_cus[8])
@@ -5354,7 +6839,28 @@ def main_sign_in():
                         label_2 = Label(cus_ecanvas_1,width=5,height=1,text="Email", font=('arial 12'),background="#1b3857",fg="white") 
                         window_label_2 = cus_ecanvas_1.create_window(0, 0, anchor="nw", window=label_2, tags=("aclabel11"))
 
-                        entry_ecus_7=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f',foreground="white")
+                        def email_validate(value):
+        
+                            """
+                            Validat the email entry
+                            :param value:
+                            :return:
+                            """
+                            pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+                            if re.fullmatch(pattern, value) is None:
+                                
+                                return False
+
+                            entry_ecus_7.config(fg="white")
+                            return True
+
+                        def email_invalidate():
+                            entry_ecus_7.config(fg="red")
+
+                        entry_ecus_7=Entry(cus_ecanvas_1,width=40,justify=LEFT,background='#2f516f')
+                        eval_email = (cus_ecanvas_1.register(email_validate), '%P')
+                        eival_email = (cus_ecanvas_1.register(email_invalidate),)
+                        entry_ecus_7.config(validate='focusout', validatecommand=eval_email, invalidcommand=eival_email)
                         window_entry_ecus_7 = cus_ecanvas_1.create_window(0, 0, anchor="nw", height=30,window=entry_ecus_7, tags=("acentry7"))
                         entry_ecus_7.delete(0,'end')
                         entry_ecus_7.insert(0, edit_cus[9])
@@ -18981,10 +20487,11 @@ def main_sign_in():
                 fgth = ttk.Style()
                 fgth.theme_use("default")
                 fgth.configure("Treeview", background="#2f516f", foreground="white",fieldbackground="#2f516f",rowheight=25,font=(None,11))
-                fgth.configure("Treeview.Heading",background="#1b3857",activeforeground="black",foreground="white",font=(None,11))  
+                fgth.configure("Treeview.Heading",background="#1b3857",activeforeground="black",foreground="white",font=(None,11)) 
 
-                pro_tree = ttk.Treeview(pro_canvas, columns = (1,2,3,4,5,6),show = "headings")
-                # pro_tree.pack(side = 'top')
+                pro_scrollbar = Scrollbar(pro_frame,orient="vertical") 
+
+                pro_tree = ttk.Treeview(pro_canvas, columns = (1,2,3,4,5,6),show = "headings",yscrollcommand=pro_scrollbar.set)
                 pro_tree.heading(1)
                 pro_tree.heading(2, text="TYPE")
                 pro_tree.heading(3, text="NAME")
@@ -18999,6 +20506,9 @@ def main_sign_in():
                 pro_tree.column(5, width = 200)
                 pro_tree.column(6, width = 150)
                 window_label_4 = pro_canvas.create_window(0, 0, anchor="nw", window=pro_tree,tags=('ptree1'))
+
+                pro_scrollbar.config(command=pro_tree.yview)
+                pro_scrollbar.grid(row=0,column=2,sticky='ns')
 
                 sql_p="select * from auth_user where username=%s"
                 sql_p_val=(nm_ent.get(),)
